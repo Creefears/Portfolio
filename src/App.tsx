@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { useThemeStore } from './store/themeStore';
 import { useProjectStore } from './store/projectStore';
 import { useCareerStore } from './store/careerStore';
+import { AnimatePresence } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ThemeToggle from './components/ThemeToggle';
@@ -49,6 +50,7 @@ function App() {
   const { isDarkMode } = useThemeStore();
   const { fetchProjects } = useProjectStore();
   const { fetchExperiences } = useCareerStore();
+  const location = useLocation();
 
   useEffect(() => {
     // Fetch data on app initialization
@@ -57,14 +59,14 @@ function App() {
   }, [fetchProjects, fetchExperiences]);
 
   return (
-    <Router>
-      <div className={`min-h-screen flex flex-col ${isDarkMode ? 'dark' : ''}`}>
-        <div className="bg-white dark:bg-gray-900 flex-grow">
-          <TitleUpdater />
-          <Navbar />
-          <main>
-            <Suspense fallback={<LoadingSpinner />}>
-              <Routes>
+    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'dark' : ''}`}>
+      <div className="bg-white dark:bg-gray-900 flex-grow">
+        <TitleUpdater />
+        <Navbar />
+        <main>
+          <Suspense fallback={<LoadingSpinner />}>
+            <AnimatePresence mode="wait">
+              <Routes location={location} key={location.pathname}>
                 <Route path="/" element={<Home />} />
                 <Route path="/portfolio" element={<Portfolio />} />
                 <Route path="/a-propos" element={<About />} />
@@ -72,14 +74,22 @@ function App() {
                 <Route path="/prise-de-vue-reel" element={<RealFootage />} />
                 <Route path="/buy-gold" element={<BuyGold />} />
               </Routes>
-            </Suspense>
-          </main>
-          <ThemeToggle />
-          <Footer />
-        </div>
+            </AnimatePresence>
+          </Suspense>
+        </main>
+        <ThemeToggle />
+        <Footer />
       </div>
+    </div>
+  );
+}
+
+function AppWrapper() {
+  return (
+    <Router>
+      <App />
     </Router>
   );
 }
 
-export default App;
+export default AppWrapper;
