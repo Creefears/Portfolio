@@ -1,50 +1,72 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { PenTool as ToolIcon, Search, Film, Gamepad2, Plus } from 'lucide-react';
-import { Tool } from '../../../types/project';
+import { PenTool as Tool, Search, Film, Gamepad2, Plus } from 'lucide-react';
+import { Tool as ToolType } from '../../../types/project';
 import { BadgeCreator } from '../BadgeCreator';
 import { useProjectStore } from '../../../store/projectStore';
 import * as Icons from 'lucide-react';
-import { getTools, saveTool } from '../../../lib/supabase';
 
 interface ToolsSectionProps {
-  tools: Tool[];
+  tools: ToolType[];
   error?: string;
   onToolToggle: (toolName: string) => void;
 }
+
+const CUSTOM_TOOLS_KEY = 'custom-tools-storage';
 
 export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) {
   const { userCGIProjects, userRealProjects } = useProjectStore();
   const [showBadgeCreator, setShowBadgeCreator] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'cgi' | 'real'>('all');
-  const [availableTools, setAvailableTools] = useState<Tool[]>([]);
-
-  useEffect(() => {
-    const fetchTools = async () => {
-      try {
-        const tools = await getTools();
-        setAvailableTools(tools);
-      } catch (error) {
-        console.error('Error fetching tools:', error);
-      }
-    };
-    fetchTools();
-  }, []);
-
-  const handleSaveBadge = async (badge: Tool) => {
+  const [customTools, setCustomTools] = useState<ToolType[]>(() => {
     try {
-      const savedTool = await saveTool(badge);
-      setAvailableTools(prev => [...prev, savedTool]);
-      onToolToggle(savedTool.name);
-      setShowBadgeCreator(false);
-    } catch (error) {
-      console.error('Error saving tool:', error);
+      const saved = localStorage.getItem(CUSTOM_TOOLS_KEY);
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
     }
+  });
+
+  // Persist custom tools to localStorage
+  React.useEffect(() => {
+    localStorage.setItem(CUSTOM_TOOLS_KEY, JSON.stringify(customTools));
+  }, [customTools]);
+
+  // Get all unique tools from projects and custom tools
+  const getAllProjectTools = () => {
+    const toolsMap = new Map<string, ToolType>();
+    
+    // Add custom tools first
+    customTools.forEach(tool => {
+      toolsMap.set(tool.name, tool);
+    });
+
+    // Add tools from CGI projects
+    userCGIProjects.forEach(project => {
+      project.tools.forEach(tool => {
+        if (!toolsMap.has(tool.name)) {
+          toolsMap.set(tool.name, tool);
+        }
+      });
+    });
+
+    // Add tools from Real projects
+    userRealProjects.forEach(project => {
+      project.tools.forEach(tool => {
+        if (!toolsMap.has(tool.name)) {
+          toolsMap.set(tool.name, tool);
+        }
+      });
+    });
+
+    return Array.from(toolsMap.values());
   };
 
+  const allTools = getAllProjectTools();
+
   const getFilteredTools = () => {
-    let filteredTools = availableTools;
+    let filteredTools = allTools;
     
     if (selectedCategory !== 'all') {
       filteredTools = filteredTools.filter(tool => {
@@ -54,7 +76,11 @@ export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) 
         const inReal = userRealProjects.some(project => 
           project.tools.some(t => t.name === tool.name)
         );
-        return selectedCategory === 'cgi' ? inCGI : inReal;
+        
+        // Include custom tools in all categories
+        const isCustomTool = customTools.some(t => t.name === tool.name);
+        
+        return isCustomTool || (selectedCategory === 'cgi' ? inCGI : inReal);
       });
     }
 
@@ -67,11 +93,17 @@ export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) 
     return filteredTools;
   };
 
+  const handleSaveBadge = (badge: ToolType) => {
+    setCustomTools(prev => [...prev, badge]);
+    onToolToggle(badge.name);
+    setShowBadgeCreator(false);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-2 text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
         <div className="flex items-center gap-2">
-          <ToolIcon className="w-6 h-6" />
+          <Tool className="w-6 h-6" />
           <h2>Outils</h2>
         </div>
         <motion.button
@@ -93,7 +125,7 @@ export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) 
         <BadgeCreator
           onSave={handleSaveBadge}
           onCancel={() => setShowBadgeCreator(false)}
-          existingBadges={availableTools}
+          existingBadges={allTools}
         />
       ) : (
         <>
@@ -144,18 +176,19 @@ export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) 
           </div>
 
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Rechercher un logiciel..."
-              className="w-full pl-12 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg"
+              className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg"
             />
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {getFilteredTools().map((tool, index) => {
+              const isCustomTool = customTools.some(t => t.name === tool.name);
               const isSelected = tools.some(t => t.name === tool.name);
               const IconComponent = Icons[tool.icon as keyof typeof Icons] || Icons.Code;
 
@@ -176,7 +209,9 @@ export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) 
                     style={{ 
                       backgroundColor: isSelected
                         ? 'rgba(255, 255, 255, 0.2)'
-                        : tool.color
+                        : isCustomTool
+                          ? tool.color
+                          : undefined
                     }}
                   >
                     <IconComponent className={`w-5 h-5 ${isSelected ? 'text-white' : ''}`} />
