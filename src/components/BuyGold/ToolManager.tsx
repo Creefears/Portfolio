@@ -183,7 +183,7 @@ const ToolManager: React.FC<ToolManagerProps> = ({ tools, onClose }) => {
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2 max-h-64 overflow-y-auto pr-2">
             {filteredTools.map((tool) => {
               const IconComponent = Icons[tool.icon as keyof typeof Icons];
               return (
