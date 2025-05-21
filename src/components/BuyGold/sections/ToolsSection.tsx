@@ -26,13 +26,13 @@ export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) 
 
   const getFilteredTools = () => {
     let filteredTools = allTools;
-    
+
     if (selectedCategory) {
       filteredTools = filteredTools.filter(tool => tool.category === selectedCategory);
     }
 
     if (searchTerm) {
-      filteredTools = filteredTools.filter(tool => 
+      filteredTools = filteredTools.filter(tool =>
         tool.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
@@ -48,6 +48,7 @@ export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) 
           <h2>Outils</h2>
         </div>
         <motion.button
+          type="button" // ✅ Correction ici
           onClick={() => setShowToolManager(!showToolManager)}
           className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm"
           whileHover={{ scale: 1.05 }}
@@ -72,7 +73,7 @@ export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) 
           <div className="flex items-center justify-between">
             <div className="flex gap-2">
               <motion.button
-                type="button"
+                type="button" // ✅ Correction ici
                 onClick={() => setSelectedCategory(null)}
                 className={`px-3 py-1 rounded-lg text-sm ${
                   !selectedCategory
@@ -85,7 +86,7 @@ export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) 
                 Tous
               </motion.button>
               <motion.button
-                type="button"
+                type="button" // ✅ Correction ici
                 onClick={() => setSelectedCategory('3D')}
                 className={`px-3 py-1 rounded-lg text-sm flex items-center gap-2 ${
                   selectedCategory === '3D'
@@ -99,7 +100,7 @@ export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) 
                 3D
               </motion.button>
               <motion.button
-                type="button"
+                type="button" // ✅ Correction ici
                 onClick={() => setSelectedCategory('Video')}
                 className={`px-3 py-1 rounded-lg text-sm flex items-center gap-2 ${
                   selectedCategory === 'Video'
@@ -133,6 +134,7 @@ export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) 
 
               return (
                 <motion.button
+                  type="button" // ✅ Correction ici
                   key={tool.id || index}
                   onClick={() => onToolToggle(tool.name)}
                   className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
@@ -145,7 +147,7 @@ export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) 
                 >
                   <div
                     className="p-2 rounded-lg"
-                    style={{ 
+                    style={{
                       backgroundColor: isSelected
                         ? 'rgba(255, 255, 255, 0.2)'
                         : tool.color
