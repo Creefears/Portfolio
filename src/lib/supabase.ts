@@ -74,6 +74,7 @@ export const deleteTool = async (id: string): Promise<void> => {
   }
 };
 
+// Project operations
 export const getProjects = async (type?: 'CGI' | 'REAL'): Promise<Project[]> => {
   try {
     let query = supabase
@@ -95,27 +96,20 @@ export const getProjects = async (type?: 'CGI' | 'REAL'): Promise<Project[]> => 
   }
 };
 
-export const saveProject = async (project: Project, type: 'cgi' | 'real'): Promise<Project> => {
+export const saveProject = async (project: Project): Promise<Project> => {
   try {
     const { data, error } = await supabase
       .from('projects')
       .insert([{
         ...project,
-        type: type.toUpperCase(),
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }])
       .select()
       .single();
 
-    if (error) {
-      throw error;
-    }
-
-    if (!data) {
-      throw new Error('No data returned from Supabase after insert');
-    }
-
+    if (error) throw error;
+    if (!data) throw new Error('No data returned from Supabase after insert');
     return data;
   } catch (error) {
     handleSupabaseError(error, 'project save');
@@ -133,9 +127,7 @@ export const updateProject = async (project: Project, id: string): Promise<void>
       })
       .eq('id', id);
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
   } catch (error) {
     handleSupabaseError(error, 'project update');
     throw error;
@@ -149,15 +141,14 @@ export const deleteProject = async (id: string): Promise<void> => {
       .delete()
       .eq('id', id);
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
   } catch (error) {
     handleSupabaseError(error, 'project delete');
     throw error;
   }
 };
 
+// Experience operations
 export const getExperiences = async (): Promise<Experience[]> => {
   try {
     const { data, error } = await supabase
@@ -165,10 +156,7 @@ export const getExperiences = async (): Promise<Experience[]> => {
       .select('*')
       .order('year', { ascending: false });
 
-    if (error) {
-      throw error;
-    }
-
+    if (error) throw error;
     return data || [];
   } catch (error) {
     handleSupabaseError(error, 'experiences fetch');
@@ -188,14 +176,8 @@ export const saveExperience = async (experience: Experience): Promise<Experience
       .select()
       .single();
 
-    if (error) {
-      throw error;
-    }
-
-    if (!data) {
-      throw new Error('No data returned from Supabase after insert');
-    }
-
+    if (error) throw error;
+    if (!data) throw new Error('No data returned from Supabase after insert');
     return data;
   } catch (error) {
     handleSupabaseError(error, 'experience save');
@@ -213,9 +195,7 @@ export const updateExperience = async (experience: Experience, id: string): Prom
       })
       .eq('id', id);
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
   } catch (error) {
     handleSupabaseError(error, 'experience update');
     throw error;
@@ -229,9 +209,7 @@ export const deleteExperience = async (id: string): Promise<void> => {
       .delete()
       .eq('id', id);
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
   } catch (error) {
     handleSupabaseError(error, 'experience delete');
     throw error;
