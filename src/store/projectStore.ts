@@ -28,15 +28,17 @@ export const useProjectStore = create<ProjectStore>()(
       addProject: async (project, type) => {
         set({ isLoading: true, error: null });
         try {
+          // First, save to Supabase
           const savedProject = await saveProject({
             ...project,
             type: type.toUpperCase()
-          });
+          }, type);
           
           if (!savedProject) {
             throw new Error('Failed to save project to Supabase');
           }
 
+          // Then update local state
           set(state => ({
             userCGIProjects: type === 'cgi' 
               ? [...state.userCGIProjects, savedProject].sort((a, b) => {
@@ -77,12 +79,14 @@ export const useProjectStore = create<ProjectStore>()(
             throw new Error('Project ID not found');
           }
 
+          // Update in Supabase
           await updateProject({
             ...project,
             id: projectToUpdate.id,
             type: type.toUpperCase()
           }, projectToUpdate.id);
           
+          // Update local state
           set(state => ({
             userCGIProjects: type === 'cgi'
               ? state.userCGIProjects.map((p, i) => i === index ? { ...project, id: projectToUpdate.id } : p)
@@ -111,8 +115,10 @@ export const useProjectStore = create<ProjectStore>()(
             throw new Error('Project ID not found');
           }
 
+          // Delete from Supabase
           await deleteProject(projectToDelete.id);
           
+          // Update local state
           set(state => ({
             userCGIProjects: type === 'cgi'
               ? state.userCGIProjects.filter((_, i) => i !== index)
@@ -138,9 +144,6 @@ export const useProjectStore = create<ProjectStore>()(
             getProjects('CGI'),
             getProjects('REAL')
           ]);
-
-          console.log('Fetched CGI projects:', cgiProjects); // Debug log
-          console.log('Fetched REAL projects:', realProjects); // Debug log
           
           set({
             userCGIProjects: cgiProjects.length > 0 ? cgiProjects : defaultCGIProjects,

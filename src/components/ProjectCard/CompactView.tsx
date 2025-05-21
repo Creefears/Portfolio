@@ -5,7 +5,7 @@ import RoleBadges from './RoleBadges';
 import ToolIcon from '../ToolIcon';
 import { ProjectCardProps } from '../../types/project';
 
-type CompactViewProps = Pick<ProjectCardProps, 'title' | 'shortdescription' | 'image' | 'video' | 'videos' | 'role' | 'tools' | 'year'> & {
+type CompactViewProps = Pick<ProjectCardProps, 'title' | 'shortDescription' | 'image' | 'video' | 'videos' | 'role' | 'tools' | 'year'> & {
   onImageLoad?: () => void;
 };
 
@@ -32,7 +32,7 @@ const itemVariants = {
 
 export function CompactView({
   title,
-  shortdescription,
+  shortDescription,
   image,
   video,
   videos,
@@ -98,7 +98,7 @@ export function CompactView({
           className="text-gray-600 dark:text-gray-400 mb-4 flex-grow text-center"
           variants={itemVariants}
         >
-          {shortdescription}
+          {shortDescription}
         </motion.p>
         <motion.div 
           className="mt-auto"
