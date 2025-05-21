@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Tool } from '../types/project';
 import { getTools, saveTool, deleteTool } from '../lib/supabase';
-import { toast } from '../components/ui/Toast';
 
 interface ToolStore {
   tools: Tool[];
@@ -30,12 +29,10 @@ export const useToolStore = create<ToolStore>()(
             tools: [...state.tools, savedTool],
             isLoading: false
           }));
-          toast.success('Logiciel ajouté avec succès');
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Erreur lors de l\'ajout du logiciel';
+          const errorMessage = error instanceof Error ? error.message : 'Failed to add tool';
           console.error('Error adding tool:', error);
           set({ isLoading: false, error: errorMessage });
-          toast.error(errorMessage);
           throw error;
         }
       },
@@ -48,47 +45,38 @@ export const useToolStore = create<ToolStore>()(
             tools: state.tools.filter(tool => tool.id !== id),
             isLoading: false
           }));
-          toast.success('Logiciel supprimé avec succès');
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Erreur lors de la suppression du logiciel';
+          const errorMessage = error instanceof Error ? error.message : 'Failed to delete tool';
           console.error('Error deleting tool:', error);
           set({ isLoading: false, error: errorMessage });
-          toast.error(errorMessage);
           throw error;
         }
       },
 
       fetchTools: async () => {
-        if (!get().initialized) {
-          set({ isLoading: true, error: null });
-          try {
-            const tools = await getTools();
-            set({
-              tools,
-              isLoading: false,
-              initialized: true,
-              error: null
-            });
-          } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : 'Erreur lors du chargement des logiciels';
-            console.error('Error fetching tools:', error);
-            set({ 
-              isLoading: false, 
-              error: errorMessage,
-              initialized: true
-            });
-            toast.error(errorMessage);
-          }
+        set({ isLoading: true, error: null });
+        try {
+          const tools = await getTools();
+          set({
+            tools,
+            isLoading: false,
+            initialized: true,
+            error: null
+          });
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Failed to fetch tools';
+          console.error('Error fetching tools:', error);
+          set({ 
+            isLoading: false, 
+            error: errorMessage,
+            initialized: true
+          });
         }
       }
     }),
     {
       name: 'tool-storage',
-      version: 1,
-      partialize: (state) => ({
-        tools: state.tools,
-        initialized: state.initialized
-      })
+      version: 1
     }
   )
 );
