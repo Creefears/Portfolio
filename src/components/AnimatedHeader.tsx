@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const projects = [
   {
@@ -62,14 +62,20 @@ const projects = [
 ];
 
 function AnimatedHeader() {
+  const navigate = useNavigate();
+
+  const handleProjectClick = (path: string, index: number) => {
+    navigate(`${path}?project=${index}`);
+  };
+
   return (
     <div className="absolute inset-0 overflow-hidden bg-gray-900">
       {/* Background grid of images */}
       <div className="absolute inset-0 grid grid-cols-1 md:grid-cols-4 gap-1 transform -rotate-12 scale-[1.4] translate-y-[-5%] z-10">
         {projects.map((project, i) => (
-          <Link
+          <div
             key={i}
-            to={`${project.path}?project=${project.index}`}
+            onClick={() => handleProjectClick(project.path, project.index)}
             className="relative h-full overflow-hidden group cursor-pointer"
           >
             <motion.div
@@ -121,7 +127,7 @@ function AnimatedHeader() {
                 className="absolute inset-0 opacity-0 group-hover:opacity-30 bg-gradient-to-r from-transparent via-white to-transparent -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-700"
               />
             </motion.div>
-          </Link>
+          </div>
         ))}
       </div>
 
