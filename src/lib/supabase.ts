@@ -39,10 +39,12 @@ export const getProjects = async (type?: 'CGI' | 'REAL'): Promise<Project[]> => 
     // Map the data to ensure field names match
     const projects = data?.map(project => ({
       ...project,
-      shortdescription: project.shortdescription || project.shortDescription,
-      fulldescription: project.fulldescription || project.fullDescription,
+      shortdescription: project.shortdescription || '',
+      fulldescription: project.fulldescription || '',
       type: project.type || type
     })) || [];
+
+    console.log('Fetched projects:', projects); // Debug log
 
     return projects;
   } catch (error) {

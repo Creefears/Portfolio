@@ -138,6 +138,9 @@ export const useProjectStore = create<ProjectStore>()(
             getProjects('CGI'),
             getProjects('REAL')
           ]);
+
+          console.log('Fetched CGI projects:', cgiProjects); // Debug log
+          console.log('Fetched REAL projects:', realProjects); // Debug log
           
           set({
             userCGIProjects: cgiProjects.length > 0 ? cgiProjects : defaultCGIProjects,
