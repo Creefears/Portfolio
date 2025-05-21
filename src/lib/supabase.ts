@@ -40,10 +40,9 @@ export const getProjects = async (type?: 'CGI' | 'REAL'): Promise<Project[]> => 
     const projects = data?.map(project => ({
       ...project,
       shortdescription: project.shortdescription || project.shortDescription,
-      fulldescription: project.fulldescription || project.fullDescription
+      fulldescription: project.fulldescription || project.fullDescription,
+      type: project.type || type
     })) || [];
-
-    console.log('Fetched projects:', projects); // Debug log
 
     return projects;
   } catch (error) {
@@ -52,13 +51,12 @@ export const getProjects = async (type?: 'CGI' | 'REAL'): Promise<Project[]> => 
   }
 };
 
-export const saveProject = async (project: Project, type: 'cgi' | 'real'): Promise<Project> => {
+export const saveProject = async (project: Project): Promise<Project> => {
   try {
     const { data, error } = await supabase
       .from('projects')
       .insert([{
         ...project,
-        type: type.toUpperCase(),
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }])
