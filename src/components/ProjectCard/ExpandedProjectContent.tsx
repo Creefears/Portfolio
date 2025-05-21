@@ -121,7 +121,7 @@ const ExpandedProjectContent = React.memo(function ExpandedProjectContent({
           </div>
 
           <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-6">
-            {project.fullDescription}
+            {project.fulldescription}
           </p>
 
           {project.images && project.images.length > 0 && (
@@ -138,3 +138,5 @@ const ExpandedProjectContent = React.memo(function ExpandedProjectContent({
     </div>
   );
 });
+
+export default ExpandedProjectContent;
