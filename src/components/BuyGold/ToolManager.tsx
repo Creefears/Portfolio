@@ -23,7 +23,7 @@ interface ToolFormData {
 
 const categories = ['3D', 'Video', 'Design', 'Business', 'Other'];
 
-export function ToolManager({
+export default function ToolManager({
   tools,
   onAddTool,
   onRemoveTool

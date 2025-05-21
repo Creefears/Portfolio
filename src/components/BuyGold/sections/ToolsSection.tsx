@@ -4,7 +4,7 @@ import { PenTool as Tool, Search, Film, Gamepad2, Plus } from 'lucide-react';
 import { Tool as ToolType } from '../../../types/project';
 import { Badge } from '../../ui/Badge';
 import { useProjectStore } from '../../../store/projectStore';
-import { ToolManager } from '../ToolManager';
+import ToolManager from '../ToolManager';
 import * as Icons from 'lucide-react';
 
 interface ToolsSectionProps {
