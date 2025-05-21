@@ -79,8 +79,8 @@ export const saveProject = async (project: Project, type: 'cgi' | 'real'): Promi
     // Transform back to frontend property names
     return {
       ...data,
-      shortDescription: data.shortdescription,
-      fullDescription: data.fulldescription,
+      shortdescription: data.shortdescription,
+      fulldescription: data.fulldescription,
     };
   } catch (error) {
     handleSupabaseError(error, 'project save');
@@ -93,8 +93,8 @@ export const updateProject = async (project: Project, id: string): Promise<void>
     // Transform the data to match database column names
     const transformedProject = {
       ...project,
-      shortdescription: project.shortDescription,
-      fulldescription: project.fullDescription,
+      shortdescription: project.shortdescription,
+      fulldescription: project.fulldescription,
       updated_at: new Date().toISOString()
     };
 
