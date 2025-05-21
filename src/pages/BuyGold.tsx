@@ -215,6 +215,17 @@ function BuyGold() {
         };
 
         if (editingIndex !== null) {
+          // Get the current project being edited
+          const currentProjects = formData.type === 'cgi' ? userCGIProjects : userRealProjects;
+          const projectToUpdate = currentProjects[editingIndex];
+
+          // Check if the project exists and has an ID before updating
+          if (!projectToUpdate?.id) {
+            showToast('Erreur: Impossible de mettre à jour le projet', 'error');
+            console.error('Project update failed: No project ID found');
+            return;
+          }
+
           await updateProject(projectData, editingIndex);
           showToast('Projet mis à jour avec succès !', 'success');
         } else {
