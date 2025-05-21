@@ -4,6 +4,7 @@ export interface Tool {
   short_name: string;
   icon: string;
   color: string;
+  category: string;
 }
 
 export interface CustomRole {
