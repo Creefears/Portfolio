@@ -9,6 +9,16 @@ interface ToastProps {
   onClose: () => void;
 }
 
+// Create a global state to manage toast
+let toastState = {
+  message: '',
+  type: 'success' as 'success' | 'error',
+  isVisible: false,
+  onClose: () => {}
+};
+
+let setToastState: (state: typeof toastState) => void;
+
 export function Toast({ message, type = 'success', isVisible, onClose }: ToastProps) {
   React.useEffect(() => {
     if (isVisible) {
@@ -16,6 +26,13 @@ export function Toast({ message, type = 'success', isVisible, onClose }: ToastPr
       return () => clearTimeout(timer);
     }
   }, [isVisible, onClose]);
+
+  // Store the setState function for external use
+  const [state, setState] = React.useState(toastState);
+  React.useEffect(() => {
+    setToastState = setState;
+    toastState = state;
+  }, [state]);
 
   return (
     <AnimatePresence>
@@ -49,3 +66,27 @@ export function Toast({ message, type = 'success', isVisible, onClose }: ToastPr
     </AnimatePresence>
   );
 }
+
+// Export the toast object with success and error methods
+export const toast = {
+  success: (message: string) => {
+    if (setToastState) {
+      setToastState({
+        message,
+        type: 'success',
+        isVisible: true,
+        onClose: () => setToastState(prev => ({ ...prev, isVisible: false }))
+      });
+    }
+  },
+  error: (message: string) => {
+    if (setToastState) {
+      setToastState({
+        message,
+        type: 'error',
+        isVisible: true,
+        onClose: () => setToastState(prev => ({ ...prev, isVisible: false }))
+      });
+    }
+  }
+};
