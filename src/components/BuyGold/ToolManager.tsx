@@ -19,10 +19,7 @@ interface ToolFormData {
   color: string;
 }
 
-const ToolManager: React.FC<ToolManagerProps> = ({
-  tools,
-  onClose
-}) => {
+const ToolManager: React.FC<ToolManagerProps> = ({ tools, onClose }) => {
   const { addTool, deleteTool } = useToolStore();
   const [formData, setFormData] = useState<ToolFormData>({
     name: '',
@@ -58,10 +55,16 @@ const ToolManager: React.FC<ToolManagerProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       try {
-        await addTool(formData);
+        await addTool({
+          name: formData.name,
+          short_name: formData.short_name,
+          icon: formData.icon,
+          color: formData.color
+        });
+
         setFormData({
           name: '',
           short_name: '',
@@ -72,7 +75,7 @@ const ToolManager: React.FC<ToolManagerProps> = ({
         console.error('Error saving tool:', error);
         setErrors(prev => ({
           ...prev,
-          submit: 'Failed to save tool. Please try again.'
+          submit: 'Échec de l’enregistrement du logiciel.'
         }));
       }
     }
@@ -88,7 +91,7 @@ const ToolManager: React.FC<ToolManagerProps> = ({
     }
   };
 
-  const filteredTools = tools.filter(tool => 
+  const filteredTools = tools.filter(tool =>
     tool.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -118,9 +121,7 @@ const ToolManager: React.FC<ToolManagerProps> = ({
         />
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Icône
-          </label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Icône</label>
           <IconPicker
             value={formData.icon}
             onChange={(value) => setFormData({ ...formData, icon: value })}
@@ -128,9 +129,7 @@ const ToolManager: React.FC<ToolManagerProps> = ({
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Couleur
-          </label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Couleur</label>
           <div className="flex gap-2">
             <input
               type="color"
@@ -145,32 +144,6 @@ const ToolManager: React.FC<ToolManagerProps> = ({
               placeholder="#000000"
               className="flex-1"
             />
-          </div>
-        </div>
-
-        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
-          <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-            Aperçu du logiciel
-          </h4>
-          <div className="flex items-center gap-3 p-3 bg-white dark:bg-gray-700 rounded-lg">
-            <div
-              className="p-2 rounded-lg"
-              style={{ backgroundColor: formData.color }}
-            >
-              {Icons[formData.icon as keyof typeof Icons] && 
-                React.createElement(Icons[formData.icon as keyof typeof Icons], {
-                  className: "w-5 h-5 text-white"
-                })
-              }
-            </div>
-            <div className="flex flex-col">
-              <span className="font-medium text-gray-900 dark:text-gray-100">
-                {formData.name || 'Nom du logiciel'}
-              </span>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
-                {formData.short_name || 'Nom court'}
-              </span>
-            </div>
           </div>
         </div>
 
