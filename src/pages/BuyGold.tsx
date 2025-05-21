@@ -223,15 +223,22 @@ function BuyGold() {
         if (editingIndex !== null) {
           const currentProjects = editingType === 'cgi' ? userCGIProjects : userRealProjects;
           
-          if (!currentProjects || editingIndex < 0 || editingIndex >= currentProjects.length) {
-            showToast('Erreur: Projet introuvable', 'error');
+          // Check if currentProjects exists and the index is valid
+          if (!currentProjects || !Array.isArray(currentProjects)) {
+            showToast('Erreur: Liste de projets non disponible', 'error');
+            return;
+          }
+
+          if (editingIndex < 0 || editingIndex >= currentProjects.length) {
+            showToast('Erreur: Index de projet invalide', 'error');
             return;
           }
 
           const projectToUpdate = currentProjects[editingIndex];
           
-          if (!projectToUpdate?.id) {
-            showToast('Erreur: Impossible de mettre à jour le projet', 'error');
+          // Check if projectToUpdate exists and has an id
+          if (!projectToUpdate || !projectToUpdate.id) {
+            showToast('Erreur: Projet invalide ou ID manquant', 'error');
             return;
           }
 
