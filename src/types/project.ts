@@ -14,8 +14,8 @@ export interface CustomRole {
 export interface Project {
   id?: string;
   title: string;
-  shortDescription: string;
-  fullDescription: string;
+  shortdescription: string;
+  fulldescription: string;
   image: string;
   video?: string;
   videos?: Array<{ title: string; url: string; }>;
@@ -24,14 +24,13 @@ export interface Project {
   role: string;
   customRoles?: CustomRole[];
   tools: Tool[];
-  status?: string;
 }
 
 export interface ProjectCardProps {
   id?: string;
   title: string;
-  shortDescription: string;
-  fullDescription: string;
+  shortdescription: string;
+  fulldescription: string;
   image: string;
   video?: string;
   videos?: Array<{ title: string; url: string; }>;

@@ -44,8 +44,6 @@ function BuyGold() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [videos, setVideos] = useState<Video[]>([]);
-  const [videoTitle, setVideoTitle] = useState('');
-  const [videoUrl, setVideoUrl] = useState('');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error'; visible: boolean }>({
     message: '',
     type: 'success',
@@ -68,8 +66,6 @@ function BuyGold() {
       });
       setSelectedRoles([]);
       setVideos([]);
-      setVideoTitle('');
-      setVideoUrl('');
       setErrors({});
       setEditingIndex(null);
       setEditingType('cgi');
@@ -117,11 +113,7 @@ function BuyGold() {
   };
 
   const handleVideoAdd = (title: string, url: string) => {
-    if (title && url) {
-      setVideos(prev => [...prev, { title, url }]);
-      setVideoTitle('');
-      setVideoUrl('');
-    }
+    setVideos(prev => [...prev, { title, url }]);
   };
 
   const handleVideoRemove = (index: number) => {
@@ -152,18 +144,10 @@ function BuyGold() {
   const handleEdit = (item: Project | Experience, type?: 'cgi' | 'real', index: number) => {
     if (activeTab === 'projects' && type) {
       const project = item as Project;
-      console.log('Project to edit:', project); // Debug log
       setFormData({
         type,
-        title: project.title,
-        shortdescription: project.shortDescription,
-        fulldescription: project.fullDescription,
-        image: project.image,
-        video: project.video || '',
-        images: project.images || [],
-        year: project.year,
-        role: project.role,
-        tools: project.tools
+        ...project,
+        images: project.images || []
       });
       setSelectedRoles(project.role.split(', '));
       setVideos(project.videos || []);
@@ -216,33 +200,11 @@ function BuyGold() {
       if (activeTab === 'projects') {
         const projectData = {
           ...formData,
-          videos: videos.length > 0 ? videos : undefined,
-          shortDescription: formData.shortdescription,
-          fullDescription: formData.fulldescription
+          videos: videos.length > 0 ? videos : undefined
         };
 
         if (editingIndex !== null) {
-          const currentProjects = editingType === 'cgi' ? userCGIProjects : userRealProjects;
-          
-          if (!currentProjects || !Array.isArray(currentProjects)) {
-            showToast('Erreur: Liste de projets non disponible', 'error');
-            return;
-          }
-
-          if (editingIndex < 0 || editingIndex >= currentProjects.length) {
-            showToast('Erreur: Index de projet invalide', 'error');
-            return;
-          }
-
-          const projectToUpdate = currentProjects[editingIndex];
-          console.log('Project to update:', projectToUpdate); // Debug log
-          
-          if (!projectToUpdate?.id) {
-            showToast('Erreur: Projet invalide ou ID manquant', 'error');
-            return;
-          }
-
-          await updateProject(projectData, projectToUpdate.id);
+          await updateProject(projectData, editingType, editingIndex);
           showToast('Projet mis à jour avec succès !', 'success');
         } else {
           await addProject(projectData, formData.type as 'cgi' | 'real');
@@ -250,14 +212,7 @@ function BuyGold() {
         }
       } else {
         if (editingIndex !== null) {
-          const currentExperience = experiences[editingIndex];
-          
-          if (!currentExperience?.id) {
-            showToast('Erreur: Expérience invalide ou ID manquant', 'error');
-            return;
-          }
-
-          await updateExperience(experienceData, currentExperience.id);
+          await updateExperience(experienceData, editingIndex);
           showToast('Expérience mise à jour avec succès !', 'success');
         } else {
           await addExperience(experienceData);
@@ -321,10 +276,6 @@ function BuyGold() {
                   videos={videos}
                   selectedRoles={selectedRoles}
                   editingIndex={editingIndex}
-                  videoTitle={videoTitle}
-                  videoUrl={videoUrl}
-                  setVideoTitle={setVideoTitle}
-                  setVideoUrl={setVideoUrl}
                   onSubmit={handleSubmit}
                   onInputChange={handleInputChange}
                   onRoleToggle={handleRoleToggle}
