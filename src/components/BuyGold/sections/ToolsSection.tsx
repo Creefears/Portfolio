@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Tool as ToolIcon, Search, Plus } from 'lucide-react';
+import { PenTool as ToolIcon, Search, Plus } from 'lucide-react';
 import { Tool } from '../../../types/project';
 import { Badge } from '../../ui/Badge';
 import { useProjectStore } from '../../../store/projectStore';
