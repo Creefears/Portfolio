@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { PenTool as Tool, Search, Film, Gamepad2, Plus } from 'lucide-react';
 import { Tool as ToolType } from '../../../types/project';
 import { Badge } from '../../ui/Badge';
 import { useProjectStore } from '../../../store/projectStore';
+import { useToolStore } from '../../../store/toolStore';
 import ToolManager from '../ToolManager';
 import * as Icons from 'lucide-react';
 
@@ -17,32 +18,11 @@ export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) 
   const [showToolManager, setShowToolManager] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const { userCGIProjects, userRealProjects } = useProjectStore();
+  const { fetchTools, tools: allTools } = useToolStore();
 
-  // Get all unique tools from projects
-  const getAllProjectTools = () => {
-    const toolsMap = new Map<string, ToolType>();
-    
-    userCGIProjects.forEach(project => {
-      project.tools.forEach(tool => {
-        if (!toolsMap.has(tool.name)) {
-          toolsMap.set(tool.name, tool);
-        }
-      });
-    });
-    
-    userRealProjects.forEach(project => {
-      project.tools.forEach(tool => {
-        if (!toolsMap.has(tool.name)) {
-          toolsMap.set(tool.name, tool);
-        }
-      });
-    });
-
-    return Array.from(toolsMap.values());
-  };
-
-  const allTools = getAllProjectTools();
+  useEffect(() => {
+    fetchTools();
+  }, [fetchTools]);
 
   const getFilteredTools = () => {
     let filteredTools = allTools;
@@ -58,17 +38,6 @@ export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) 
     }
 
     return filteredTools;
-  };
-
-  const handleAddTool = (tool: ToolType) => {
-    // Here you would typically save the tool to your database
-    console.log('Adding tool:', tool);
-    setShowToolManager(false);
-  };
-
-  const handleRemoveTool = (index: number) => {
-    // Here you would typically remove the tool from your database
-    console.log('Removing tool at index:', index);
   };
 
   return (
@@ -96,8 +65,7 @@ export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) 
       {showToolManager ? (
         <ToolManager
           tools={allTools}
-          onAddTool={handleAddTool}
-          onRemoveTool={handleRemoveTool}
+          onClose={() => setShowToolManager(false)}
         />
       ) : (
         <>
@@ -165,7 +133,7 @@ export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) 
 
               return (
                 <motion.button
-                  key={index}
+                  key={tool.id || index}
                   onClick={() => onToolToggle(tool.name)}
                   className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
                     isSelected

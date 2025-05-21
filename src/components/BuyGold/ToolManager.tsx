@@ -9,13 +9,11 @@ import { useToolStore } from '../../store/toolStore';
 
 interface ToolManagerProps {
   tools: Tool[];
-  onAddTool: (tool: Tool) => void;
-  onRemoveTool: (index: number) => void;
+  onClose: () => void;
 }
 
 interface ToolFormData {
   name: string;
-  shortName: string;
   icon: string;
   color: string;
   category: string;
@@ -26,12 +24,11 @@ const categories = ['3D', 'Video', 'Design', 'Business', 'Other'];
 
 const ToolManager: React.FC<ToolManagerProps> = ({
   tools,
-  onAddTool,
-  onRemoveTool
+  onClose
 }) => {
+  const { addTool, deleteTool } = useToolStore();
   const [formData, setFormData] = useState<ToolFormData>({
     name: '',
-    shortName: '',
     icon: 'Box',
     color: '#4F46E5',
     category: '3D'
@@ -48,12 +45,6 @@ const ToolManager: React.FC<ToolManagerProps> = ({
       newErrors.name = 'Le nom ne doit pas dépasser 30 caractères';
     }
 
-    if (!formData.shortName.trim()) {
-      newErrors.shortName = 'Le nom court est requis';
-    } else if (formData.shortName.length > 8) {
-      newErrors.shortName = 'Le nom court ne doit pas dépasser 8 caractères';
-    }
-
     if (tools.some(tool => tool.name.toLowerCase() === formData.name.toLowerCase())) {
       newErrors.name = 'Ce logiciel existe déjà';
     }
@@ -67,27 +58,30 @@ const ToolManager: React.FC<ToolManagerProps> = ({
     
     if (validateForm()) {
       try {
-        await useToolStore.getState().addTool({
-          name: formData.name,
-          icon: formData.icon,
-          color: formData.color,
-          category: formData.category,
-          description: formData.description
-        });
-
+        await addTool(formData);
         setFormData({
           name: '',
-          shortName: '',
           icon: 'Box',
           color: '#4F46E5',
           category: '3D'
         });
+        onClose();
       } catch (error) {
         console.error('Error saving tool:', error);
         setErrors(prev => ({
           ...prev,
           submit: 'Failed to save tool. Please try again.'
         }));
+      }
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce logiciel ?')) {
+      try {
+        await deleteTool(id);
+      } catch (error) {
+        console.error('Error deleting tool:', error);
       }
     }
   };
@@ -105,20 +99,11 @@ const ToolManager: React.FC<ToolManagerProps> = ({
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
-          label="Nom complet du logiciel"
+          label="Nom du logiciel"
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           error={errors.name}
           maxLength={30}
-          required
-        />
-
-        <Input
-          label="Nom court"
-          value={formData.shortName}
-          onChange={(e) => setFormData({ ...formData, shortName: e.target.value })}
-          error={errors.shortName}
-          maxLength={8}
           required
         />
 
@@ -193,22 +178,36 @@ const ToolManager: React.FC<ToolManagerProps> = ({
               <span className="font-medium text-gray-900 dark:text-gray-100">
                 {formData.name || 'Nom du logiciel'}
               </span>
-              <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
-                ({formData.shortName || 'Court'})
-              </span>
+              {formData.category && (
+                <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
+                  ({formData.category})
+                </span>
+              )}
             </div>
           </div>
         </div>
 
-        <motion.button
-          type="submit"
-          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <Plus className="w-5 h-5" />
-          <span>Ajouter le logiciel</span>
-        </motion.button>
+        <div className="flex gap-4">
+          <motion.button
+            type="submit"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Plus className="w-5 h-5" />
+            <span>Ajouter le logiciel</span>
+          </motion.button>
+
+          <motion.button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            Annuler
+          </motion.button>
+        </div>
       </form>
 
       {tools.length > 0 && (
@@ -225,11 +224,11 @@ const ToolManager: React.FC<ToolManagerProps> = ({
           </div>
 
           <div className="space-y-2">
-            {filteredTools.map((tool, index) => {
+            {filteredTools.map((tool) => {
               const IconComponent = Icons[tool.icon as keyof typeof Icons];
               return (
                 <div
-                  key={index}
+                  key={tool.id}
                   className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg group"
                 >
                   <div
@@ -248,15 +247,17 @@ const ToolManager: React.FC<ToolManagerProps> = ({
                       </span>
                     )}
                   </div>
-                  <motion.button
-                    type="button"
-                    onClick={() => onRemoveTool(index)}
-                    className="p-1 text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </motion.button>
+                  {tool.id && (
+                    <motion.button
+                      type="button"
+                      onClick={() => handleDelete(tool.id!)}
+                      className="p-1 text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </motion.button>
+                  )}
                 </div>
               );
             })}
