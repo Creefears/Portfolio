@@ -1,68 +1,23 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-
-const projects = [
-  {
-    image: "https://i.imgur.com/pq17cvI.jpg",
-    role: "Intégrale",
-    company: "Naturewave",
-    path: "/cgi",
-    index: 0
-  },
-  {
-    image: "https://i.imgur.com/Y4OX4J9.jpg",
-    role: "Intégrale",
-    company: "CV Vidéo",
-    path: "/cgi",
-    index: 1
-  },
-  {
-    image: "https://i.imgur.com/7upuHV4.jpg",
-    role: "2ème Assistant Réalisateur, 1er Monteur Vidéo",
-    company: "It's Jack",
-    path: "/prise-de-vue-reel",
-    index: 2
-  },
-  {
-    image: "https://i.imgur.com/LTPbXZQ.jpg",
-    role: "1er Assistant Réalisateur",
-    company: "Madness",
-    path: "/prise-de-vue-reel",
-    index: 5
-  },
-  {
-    image: "https://i.imgur.com/0RunzIX.jpg",
-    role: "1er Assistant Réalisateur",
-    company: "Nobodies",
-    path: "/prise-de-vue-reel",
-    index: 1
-  },
-  {
-    image: "https://i.imgur.com/qS47mep.jpg",
-    role: "Concepteur 3D, Modeleur, Animateur",
-    company: "Pletory",
-    path: "/cgi",
-    index: 2
-  },
-  {
-    image: "https://i.imgur.com/isL0Oc3.jpg",
-    role: "Réalisateur, Monteur Vidéo",
-    company: "Pratiks",
-    path: "/prise-de-vue-reel",
-    index: 4
-  },
-  {
-    image: "https://i.imgur.com/nvlr9T3.jpg",
-    role: "Chargé de Production",
-    company: "Sarenza",
-    path: "/prise-de-vue-reel",
-    index: 0
-  }
-];
+import { motion } from 'framer-motion';
+import { useProjectStore } from '../store/projectStore';
 
 function AnimatedHeader() {
   const navigate = useNavigate();
+  const { userCGIProjects, userRealProjects } = useProjectStore();
+  
+  // Combine all projects and get their images
+  const allProjectImages = [...userCGIProjects, ...userRealProjects]
+    .map(project => ({
+      image: project.image,
+      role: project.role,
+      company: project.title,
+      path: project.type?.toLowerCase() === 'cgi' ? '/cgi' : '/prise-de-vue-reel',
+      index: project.type?.toLowerCase() === 'cgi' 
+        ? userCGIProjects.findIndex(p => p.id === project.id)
+        : userRealProjects.findIndex(p => p.id === project.id)
+    }));
 
   const handleProjectClick = (path: string, index: number) => {
     navigate(`${path}?project=${index}`);
@@ -70,9 +25,8 @@ function AnimatedHeader() {
 
   return (
     <div className="absolute inset-0 overflow-hidden bg-gray-900">
-      {/* Background grid of images */}
       <div className="absolute inset-0 grid grid-cols-1 md:grid-cols-4 gap-1 transform -rotate-12 scale-[1.4] translate-y-[-5%] z-10">
-        {projects.map((project, i) => (
+        {allProjectImages.map((project, i) => (
           <div
             key={i}
             onClick={() => handleProjectClick(project.path, project.index)}
@@ -80,7 +34,18 @@ function AnimatedHeader() {
           >
             <motion.div
               initial={{ opacity: 0.6 }}
-              animate={{ opacity: 0.6 }}
+              animate={{ 
+                opacity: 0.6,
+                x: ['-100%', '0%'],
+                transition: {
+                  x: {
+                    duration: 20,
+                    repeat: Infinity,
+                    repeatType: "mirror",
+                    ease: "linear"
+                  }
+                }
+              }}
               whileHover={{ 
                 scale: 1.1,
                 opacity: 1,
