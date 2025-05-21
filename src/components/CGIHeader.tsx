@@ -1,13 +1,18 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useProjectStore } from '../store/projectStore';
+
+const images = [
+  "https://i.imgur.com/pq17cvI.jpg",  // Naturewave
+  "https://i.imgur.com/Y4OX4J9.jpg",  // CV Vidéo
+  "https://i.imgur.com/qS47mep.jpg",  // Pletory
+  "https://i.imgur.com/Cp2td6z.jpg",  // My Little Gravity Falls
+  "https://i.imgur.com/7upuHV4.jpg",  // Additional CGI image
+  "https://i.imgur.com/LTPbXZQ.jpg",  // Additional CGI image
+  "https://i.imgur.com/0RunzIX.jpg",  // Additional CGI image
+  "https://i.imgur.com/isL0Oc3.jpg"   // Additional CGI image
+];
 
 function CGIHeader() {
-  const { userCGIProjects } = useProjectStore();
-  
-  // Get all images from CGI projects
-  const images = userCGIProjects.map(project => project.image);
-
   return (
     <div className="relative h-[50vh] overflow-hidden bg-gray-900">
       <div className="absolute inset-0 grid grid-cols-2 md:grid-cols-4 gap-1 transform -rotate-12 scale-[1.2] translate-y-[-5%]">
@@ -16,17 +21,6 @@ function CGIHeader() {
             key={index}
             className="relative h-full overflow-hidden cursor-pointer"
             initial={{ opacity: 0.8 }}
-            animate={{ 
-              x: ['-100%', '0%'],
-              transition: {
-                x: {
-                  duration: 20,
-                  repeat: Infinity,
-                  repeatType: "mirror",
-                  ease: "linear"
-                }
-              }
-            }}
             whileHover={{ 
               scale: 1.1, 
               zIndex: 10,
