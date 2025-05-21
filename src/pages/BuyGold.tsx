@@ -217,6 +217,14 @@ function BuyGold() {
         if (editingIndex !== null) {
           // Get the current project being edited
           const currentProjects = formData.type === 'cgi' ? userCGIProjects : userRealProjects;
+          
+          // Check if the index is valid and the project exists
+          if (!currentProjects || editingIndex < 0 || editingIndex >= currentProjects.length) {
+            showToast('Erreur: Projet introuvable', 'error');
+            console.error('Project update failed: Invalid index or project not found');
+            return;
+          }
+
           const projectToUpdate = currentProjects[editingIndex];
 
           // Check if the project exists and has an ID before updating
