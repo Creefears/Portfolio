@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Experience } from '../types/experience';
-import type { Project, Tool } from '../types/project';
+import type { Project } from '../types/project';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -23,17 +23,7 @@ export const getProjects = async (type?: 'CGI' | 'REAL'): Promise<Project[]> => 
   try {
     let query = supabase
       .from('projects')
-      .select(`
-        *,
-        project_tools (
-          tools (
-            id,
-            name,
-            icon,
-            color
-          )
-        )
-      `)
+      .select('*')
       .order('created_at', { ascending: false });
 
     if (type) {
@@ -46,58 +36,16 @@ export const getProjects = async (type?: 'CGI' | 'REAL'): Promise<Project[]> => 
       throw error;
     }
 
-    // Transform the nested tools data into the expected format
-    return (data || []).map(project => ({
-      ...project,
-      tools: project.project_tools?.map((pt: any) => pt.tools) || []
-    }));
+    return data || [];
   } catch (error) {
     handleSupabaseError(error, 'projects fetch');
     return [];
   }
 };
 
-export const getTools = async (): Promise<Tool[]> => {
-  try {
-    const { data, error } = await supabase
-      .from('tools')
-      .select('*')
-      .order('name', { ascending: true });
-
-    if (error) {
-      throw error;
-    }
-
-    return data || [];
-  } catch (error) {
-    handleSupabaseError(error, 'tools fetch');
-    return [];
-  }
-};
-
-export const saveTool = async (tool: Tool): Promise<Tool> => {
-  try {
-    const { data, error } = await supabase
-      .from('tools')
-      .insert([tool])
-      .select()
-      .single();
-
-    if (error) {
-      throw error;
-    }
-
-    return data;
-  } catch (error) {
-    handleSupabaseError(error, 'tool save');
-    throw error;
-  }
-};
-
 export const saveProject = async (project: Project, type: 'cgi' | 'real'): Promise<Project> => {
   try {
-    // First, save the project
-    const { data: projectData, error: projectError } = await supabase
+    const { data, error } = await supabase
       .from('projects')
       .insert([{
         ...project,
@@ -108,30 +56,15 @@ export const saveProject = async (project: Project, type: 'cgi' | 'real'): Promi
       .select()
       .single();
 
-    if (projectError) {
-      throw projectError;
+    if (error) {
+      throw error;
     }
 
-    // Then, create the tool relationships
-    if (project.tools?.length > 0) {
-      const toolRelationships = project.tools.map(tool => ({
-        project_id: projectData.id,
-        tool_id: tool.id
-      }));
-
-      const { error: relationError } = await supabase
-        .from('project_tools')
-        .insert(toolRelationships);
-
-      if (relationError) {
-        throw relationError;
-      }
+    if (!data) {
+      throw new Error('No data returned from Supabase after insert');
     }
 
-    return {
-      ...projectData,
-      tools: project.tools || []
-    };
+    return data;
   } catch (error) {
     handleSupabaseError(error, 'project save');
     throw error;
@@ -140,8 +73,7 @@ export const saveProject = async (project: Project, type: 'cgi' | 'real'): Promi
 
 export const updateProject = async (project: Project, id: string): Promise<void> => {
   try {
-    // First, update the project
-    const { error: projectError } = await supabase
+    const { error } = await supabase
       .from('projects')
       .update({
         ...project,
@@ -149,35 +81,8 @@ export const updateProject = async (project: Project, id: string): Promise<void>
       })
       .eq('id', id);
 
-    if (projectError) {
-      throw projectError;
-    }
-
-    // Then, update tool relationships
-    // First, remove existing relationships
-    const { error: deleteError } = await supabase
-      .from('project_tools')
-      .delete()
-      .eq('project_id', id);
-
-    if (deleteError) {
-      throw deleteError;
-    }
-
-    // Then, add new relationships
-    if (project.tools?.length > 0) {
-      const toolRelationships = project.tools.map(tool => ({
-        project_id: id,
-        tool_id: tool.id
-      }));
-
-      const { error: relationError } = await supabase
-        .from('project_tools')
-        .insert(toolRelationships);
-
-      if (relationError) {
-        throw relationError;
-      }
+    if (error) {
+      throw error;
     }
   } catch (error) {
     handleSupabaseError(error, 'project update');
