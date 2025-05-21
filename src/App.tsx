@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { useThemeStore } from './store/themeStore';
 import { useProjectStore } from './store/projectStore';
 import { useCareerStore } from './store/careerStore';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, LazyMotion, domAnimation } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ThemeToggle from './components/ThemeToggle';
@@ -65,16 +65,18 @@ function App() {
         <Navbar />
         <main>
           <Suspense fallback={<LoadingSpinner />}>
-            <AnimatePresence mode="wait">
-              <Routes location={location} key={location.pathname}>
-                <Route path="/" element={<Home />} />
-                <Route path="/portfolio" element={<Portfolio />} />
-                <Route path="/a-propos" element={<About />} />
-                <Route path="/cgi" element={<CGI />} />
-                <Route path="/prise-de-vue-reel" element={<RealFootage />} />
-                <Route path="/buy-gold" element={<BuyGold />} />
-              </Routes>
-            </AnimatePresence>
+            <LazyMotion features={domAnimation}>
+              <AnimatePresence mode="wait">
+                <Routes location={location} key={location.pathname}>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/portfolio" element={<Portfolio />} />
+                  <Route path="/a-propos" element={<About />} />
+                  <Route path="/cgi" element={<CGI />} />
+                  <Route path="/prise-de-vue-reel" element={<RealFootage />} />
+                  <Route path="/buy-gold" element={<BuyGold />} />
+                </Routes>
+              </AnimatePresence>
+            </LazyMotion>
           </Suspense>
         </main>
         <ThemeToggle />
