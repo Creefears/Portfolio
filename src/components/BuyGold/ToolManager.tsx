@@ -23,11 +23,11 @@ interface ToolFormData {
 
 const categories = ['3D', 'Video', 'Design', 'Business', 'Other'];
 
-export default function ToolManager({
+const ToolManager: React.FC<ToolManagerProps> = ({
   tools,
   onAddTool,
   onRemoveTool
-}: ToolManagerProps) {
+}) => {
   const [formData, setFormData] = useState<ToolFormData>({
     name: '',
     shortName: '',
@@ -226,7 +226,7 @@ export default function ToolManager({
                     className="p-2 rounded-lg"
                     style={{ backgroundColor: tool.color }}
                   >
-                    <IconComponent className="w-5 h-5 text-white" />
+                    {IconComponent && <IconComponent className="w-5 h-5 text-white" />}
                   </div>
                   <div className="flex-1">
                     <span className="font-medium text-gray-900 dark:text-gray-100">
@@ -255,4 +255,6 @@ export default function ToolManager({
       )}
     </div>
   );
-}
+};
+
+export default ToolManager;
