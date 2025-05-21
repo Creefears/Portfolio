@@ -45,8 +45,7 @@ export const saveTool = async (tool: Tool): Promise<Tool> => {
         short_name: tool.short_name,
         icon: tool.icon,
         color: tool.color,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        category: tool.category
       }])
       .select()
       .single();
