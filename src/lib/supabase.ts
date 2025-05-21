@@ -36,7 +36,7 @@ export const getTools = async (): Promise<Tool[]> => {
   }
 };
 
-export const saveTool = async (tool: Tool): Promise<Tool> => {
+export const saveTool = async (tool: Omit<Tool, 'id'>): Promise<Tool> => {
   try {
     const { data, error } = await supabase
       .from('tools')
