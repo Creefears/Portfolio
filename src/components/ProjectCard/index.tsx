@@ -14,8 +14,8 @@ import ShareDialog from '../ShareDialog';
 
 function ProjectCard({
   title,
-  shortDescription,
-  fullDescription,
+  shortdescription,
+  fulldescription,
   image,
   video,
   videos,
@@ -167,7 +167,7 @@ function ProjectCard({
           {!isExpanded ? (
             <CompactView
               title={title}
-              shortDescription={shortDescription}
+              shortdescription={shortdescription}
               image={image}
               video={video}
               videos={videos}
@@ -211,7 +211,7 @@ function ProjectCard({
                 />
 
                 <p className="text-gray-600 dark:text-gray-400 text-base md:text-lg leading-relaxed mb-8">
-                  {currentProject.fullDescription}
+                  {currentProject.fulldescription}
                 </p>
 
                 {currentProject.images && currentProject.images.length > 0 && (
@@ -249,7 +249,7 @@ function ProjectCard({
         onClose={() => setIsShareDialogOpen(false)}
         url={generateShareUrl()}
         title={currentProject.title}
-        description={currentProject.shortDescription}
+        description={currentProject.shortdescription}
         image={currentProject.image}
       />
 
