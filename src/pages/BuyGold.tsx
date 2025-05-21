@@ -248,7 +248,14 @@ function BuyGold() {
         }
       } else {
         if (editingIndex !== null) {
-          await updateExperience(experienceData, editingIndex);
+          const currentExperience = experiences[editingIndex];
+          
+          if (!currentExperience?.id) {
+            showToast('Erreur: Expérience invalide ou ID manquant', 'error');
+            return;
+          }
+
+          await updateExperience(experienceData, currentExperience.id);
           showToast('Expérience mise à jour avec succès !', 'success');
         } else {
           await addExperience(experienceData);
