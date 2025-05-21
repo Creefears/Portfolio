@@ -4,7 +4,7 @@ export const defaultCGIProjects: Project[] = [
   {
     title: "Naturewave",
     shortDescription: "Fond d'écran animé en cell-shading",
-    fulldescription: "J'ai créé ce projet dans le but d'obtenir un fond d'écran animé pour mon double écran. Pour atteindre ce style d'aplats de couleurs dans un moteur 3D, j'ai opté pour un rendu en cell-shading, ce qui m'a permis de maîtriser pleinement la palette de couleurs, aussi bien pour l'ambiance de jour que pour celle de nuit.",
+    fullDescription: "J'ai créé ce projet dans le but d'obtenir un fond d'écran animé pour mon double écran. Pour atteindre ce style d'aplats de couleurs dans un moteur 3D, j'ai opté pour un rendu en cell-shading, ce qui m'a permis de maîtriser pleinement la palette de couleurs, aussi bien pour l'ambiance de jour que pour celle de nuit.",
     image: "https://i.imgur.com/pq17cvI.jpg",
     video: "https://drive.google.com/file/d/1Z-szd00Icw4cDRkyRD186_a7Eb2U1DXD/preview",
     year: "2024",
@@ -17,7 +17,7 @@ export const defaultCGIProjects: Project[] = [
   {
     title: "CV Vidéo",
     shortDescription: "Présentation professionnelle animée avec MetaHuman",
-    fulldescription: "Ce CV vidéo a été conçu pour mettre en lumière mes compétences, aussi bien en montage vidéo qu'en 3D. Pour donner vie à l'animation du personnage, j'ai mobilisé l'une des technologies que j'ai affinées : la création d'un MetaHuman à mon effigie, animé avec précision grâce à la facial capture de l'Arkit.",
+    fullDescription: "Ce CV vidéo a été conçu pour mettre en lumière mes compétences, aussi bien en montage vidéo qu'en 3D. Pour donner vie à l'animation du personnage, j'ai mobilisé l'une des technologies que j'ai affinées : la création d'un MetaHuman à mon effigie, animé avec précision grâce à la facial capture de l'Arkit.",
     image: "https://i.imgur.com/Y4OX4J9.jpg",
     video: "https://drive.google.com/file/d/1-NJrI_yPyH44ljYPdIo3_RKP-JLgx8hK/preview",
     year: "2024",
@@ -32,7 +32,7 @@ export const defaultCGIProjects: Project[] = [
   {
     title: "Pletory",
     shortDescription: "Création de métavers pour des clients prestigieux",
-    fulldescription: "Après ma formation à Ynov Campus, j'ai été recruté par une start-up spécialisée dans la création d'univers virtuels, avec un focus particulier sur les métavers. Cette mission m'a conduit à concevoir et développer des métavers pour des clients prestigieux tels qu'Arkea et Swisslife. Ces univers étaient accessibles directement depuis un navigateur web, grâce à des environnements en WebGL développés avec Unity, intégrant des interfaces intuitives et des personnages interactifs pour une expérience immersive.",
+    fullDescription: "Après ma formation à Ynov Campus, j'ai été recruté par une start-up spécialisée dans la création d'univers virtuels, avec un focus particulier sur les métavers. Cette mission m'a conduit à concevoir et développer des métavers pour des clients prestigieux tels qu'Arkea et Swisslife. Ces univers étaient accessibles directement depuis un navigateur web, grâce à des environnements en WebGL développés avec Unity, intégrant des interfaces intuitives et des personnages interactifs pour une expérience immersive.",
     image: "https://i.imgur.com/qS47mep.jpg",
     video: "https://drive.google.com/file/d/1-OViIUZ3UuTrnDrutSJ7eoHEnNd8X0L1/preview",
     year: "2023",
@@ -47,7 +47,7 @@ export const defaultCGIProjects: Project[] = [
   {
     title: "Projets Scolaires",
     shortDescription: "Projets réalisés pendant ma formation",
-    fulldescription: "Durant ma formation à Ynov, j'ai eu l'opportunité de travailler sur divers projets, notamment un temple aztèque et un parcours inspiré de Spider-Man. Ces projets m'ont permis d'explorer différentes techniques de modélisation, de texturing et d'animation, tout en développant mes compétences avec des outils professionnels comme Unreal Engine 5, Maya, Blender et Substance Painter.",
+    fullDescription: "Durant ma formation à Ynov, j'ai eu l'opportunité de travailler sur divers projets, notamment un temple aztèque et un parcours inspiré de Spider-Man. Ces projets m'ont permis d'explorer différentes techniques de modélisation, de texturing et d'animation, tout en développant mes compétences avec des outils professionnels comme Unreal Engine 5, Maya, Blender et Substance Painter.",
     image: "https://i.imgur.com/BygzETy.jpg",
     videos: [
       {
@@ -75,7 +75,7 @@ export const defaultCGIProjects: Project[] = [
   {
     title: "My Little Gravity Falls",
     shortDescription: "Animation parodique de Gravity Falls",
-    fulldescription: "Ce projet YouTube a marqué ma toute première expérience dans le domaine de l'animation. Il s'agit d'une parodie du générique de Gravity Falls, une série animée de Disney, fusionnée avec l'univers du cartoon My Little Pony : Friendship is Magic d'Hasbro. Ce projet a été une étape clé dans l'éveil de ma passion pour l'animation. Bien que je disposais de peu de connaissances sur les techniques d'animation et les logiciels associés, j'ai progressivement trouvé mes marques et appris à maîtriser ce médium créatif.",
+    fullDescription: "Ce projet YouTube a marqué ma toute première expérience dans le domaine de l'animation. Il s'agit d'une parodie du générique de Gravity Falls, une série animée de Disney, fusionnée avec l'univers du cartoon My Little Pony : Friendship is Magic d'Hasbro. Ce projet a été une étape clé dans l'éveil de ma passion pour l'animation. Bien que je disposais de peu de connaissances sur les techniques d'animation et les logiciels associés, j'ai progressivement trouvé mes marques et appris à maîtriser ce médium créatif.",
     image: "https://i.imgur.com/Cp2td6z.jpg",
     video: "https://www.youtube.com/embed/zg4LBVX0Ohg",
     year: "2015",
@@ -93,7 +93,7 @@ export const defaultRealProjects: Project[] = [
   {
     title: "Sarenza.com",
     shortDescription: "Production visuelle pour une plateforme e-commerce",
-    fulldescription: "Pendant mon stage de fin d'études à l'EICAR, j'ai rejoint l'équipe de production visuelle de Sarenza.com, la célèbre plateforme de vente en ligne spécialisée dans les chaussures. Une expérience super enrichissante où j'ai eu la chance de m'impliquer à fond dans l'organisation et la réalisation de tournages et shootings photo pour mettre en valeur les produits et événements de la marque.",
+    fullDescription: "Pendant mon stage de fin d'études à l'EICAR, j'ai rejoint l'équipe de production visuelle de Sarenza.com, la célèbre plateforme de vente en ligne spécialisée dans les chaussures. Une expérience super enrichissante où j'ai eu la chance de m'impliquer à fond dans l'organisation et la réalisation de tournages et shootings photo pour mettre en valeur les produits et événements de la marque.",
     image: "https://i.imgur.com/nvlr9T3.jpg",
     video: "https://drive.google.com/file/d/1s2YxnP0QuJdvVcHs8UpKjGxoVFHxU9F_/preview",
     images: [
@@ -115,7 +115,7 @@ export const defaultRealProjects: Project[] = [
   {
     title: "Nobodies",
     shortDescription: "Clip musical horrifique en extérieur",
-    fulldescription: "Ce clip musical horrifique, réalisé par Antoine Beaudet, a été une expérience aussi captivante qu'enrichissante. Tourner exclusivement en extérieur, souvent dans des conditions exigeantes et imprévisibles, et principalement de nuit, a apporté une dimension unique au projet.",
+    fullDescription: "Ce clip musical horrifique, réalisé par Antoine Beaudet, a été une expérience aussi captivante qu'enrichissante. Tourner exclusivement en extérieur, souvent dans des conditions exigeantes et imprévisibles, et principalement de nuit, a apporté une dimension unique au projet.",
     image: "https://i.imgur.com/0RunzIX.jpg",
     video: "https://drive.google.com/file/d/1IpnljpGJfGQ5BzejAFmk-D2Qit_dw9LJ/preview",
     year: "2017",
@@ -128,7 +128,7 @@ export const defaultRealProjects: Project[] = [
   {
     title: "It's Jack",
     shortDescription: "Spot publicitaire années 50",
-    fulldescription: "Ce spot publicitaire, réalisé par François Gastinel, m'a permis de mettre en pratique mes compétences en montage vidéo tout en assistant le réalisateur dans la production. Lors de la phase de montage, j'ai suivi les directives et respecté la vision artistique du réalisateur, qui souhaitait donner au projet une esthétique noir des années 50.",
+    fullDescription: "Ce spot publicitaire, réalisé par François Gastinel, m'a permis de mettre en pratique mes compétences en montage vidéo tout en assistant le réalisateur dans la production. Lors de la phase de montage, j'ai suivi les directives et respecté la vision artistique du réalisateur, qui souhaitait donner au projet une esthétique noir des années 50.",
     image: "https://i.imgur.com/7upuHV4.jpg",
     video: "https://drive.google.com/file/d/1xonu8bs0YZc8lhDQFVmPPFLURrT0aYtD/preview",
     year: "2017",
@@ -142,7 +142,7 @@ export const defaultRealProjects: Project[] = [
   {
     title: "Timelapse Go",
     shortDescription: "Production de timelapses de construction",
-    fulldescription: "Ma première expérience professionnelle en tant qu'intermittent du spectacle s'est déroulée au sein de la société multimédia polyvalente Timelapse Go. Cette entreprise était spécialisée dans la création de vidéos timelapse documentant la construction de bâtiments. Mon rôle était très diversifié, incluant le montage des vidéos timelapse.",
+    fullDescription: "Ma première expérience professionnelle en tant qu'intermittent du spectacle s'est déroulée au sein de la société multimédia polyvalente Timelapse Go. Cette entreprise était spécialisée dans la création de vidéos timelapse documentant la construction de bâtiments. Mon rôle était très diversifié, incluant le montage des vidéos timelapse.",
     image: "https://i.imgur.com/ohaBOrG.jpg",
     video: "https://www.youtube.com/embed/5AOWbQHeoHI",
     year: "2016",
@@ -156,7 +156,7 @@ export const defaultRealProjects: Project[] = [
   {
     title: "Pratiks",
     shortDescription: "Production de tutoriels YouTube",
-    fulldescription: "En parallèle de Timelapse Go, j'ai participé à la production de tutoriels variés pour la chaîne YouTube Pratiks. Mon rôle incluait l'écriture, la captation d'images et la réalisation des vidéos tutoriels.",
+    fullDescription: "En parallèle de Timelapse Go, j'ai participé à la production de tutoriels variés pour la chaîne YouTube Pratiks. Mon rôle incluait l'écriture, la captation d'images et la réalisation des vidéos tutoriels.",
     image: "https://i.imgur.com/isL0Oc3.jpg",
     video: "https://www.youtube.com/embed/KYRVvtuq3zY",
     year: "2016",
@@ -170,7 +170,7 @@ export const defaultRealProjects: Project[] = [
   {
     title: "Madness",
     shortDescription: "Court-métrage psychologique et horrifique",
-    fulldescription: "Ce court-métrage psychologique et horrifique, réalisé par François Gastinel, a marqué ma toute première expérience en tant qu'Assistant Réalisateur sur un tournage. Pour ce projet, j'ai pris en charge l'organisation des journées de tournage, l'élaboration du plan de travail, ainsi que la coordination des décors et des lieux de tournage.",
+    fullDescription: "Ce court-métrage psychologique et horrifique, réalisé par François Gastinel, a marqué ma toute première expérience en tant qu'Assistant Réalisateur sur un tournage. Pour ce projet, j'ai pris en charge l'organisation des journées de tournage, l'élaboration du plan de travail, ainsi que la coordination des décors et des lieux de tournage.",
     image: "https://i.imgur.com/LTPbXZQ.jpg",
     video: "https://drive.google.com/file/d/1DjEq9iovIQBFCK4MotEOeOJzOYxLpolb/preview",
     year: "2016",
@@ -183,7 +183,7 @@ export const defaultRealProjects: Project[] = [
   {
     title: "Creefears",
     shortDescription: "Chaîne YouTube Gaming Horror",
-    fulldescription: "Cette playlist représente mes premiers pas dans la production vidéo, un domaine qui me passionnait déjà et qui a solidifié mon intérêt pour les années à venir. À travers cette chaîne YouTube dédiée au Gaming Horror, j'ai eu l'opportunité de développer et perfectionner mes compétences en montage vidéo, captation, storytelling, et même en réalisation de courts-métrages, notamment pour les introductions de certaines vidéos nécessitant une attention particulière aux détails.",
+    fullDescription: "Cette playlist représente mes premiers pas dans la production vidéo, un domaine qui me passionnait déjà et qui a solidifié mon intérêt pour les années à venir. À travers cette chaîne YouTube dédiée au Gaming Horror, j'ai eu l'opportunité de développer et perfectionner mes compétences en montage vidéo, captation, storytelling, et même en réalisation de courts-métrages, notamment pour les introductions de certaines vidéos nécessitant une attention particulière aux détails.",
     image: "https://i.imgur.com/V00RlDs.jpg",
     video: "https://www.youtube.com/embed/videoseries?si=cLL57PWpQmja-TdV&list=PL26TfmA2gBYFBng9aldgU-PfCh1sZZN_p",
     year: "2014",
