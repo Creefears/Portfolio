@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vj-logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Portfolio de Victor Jacob - Lead Artist 3D & Spécialiste en Animation. Découvrez mes projets en animation 3D et création audiovisuelle." />
+    <meta name="keywords" content="Victor Jacob, 3D, Animation, CGI, Audiovisuel, Portfolio, Artist 3D, Lead Artist" />
+    <meta name="author" content="Victor Jacob" />
+    
+    <!-- Preload critical assets -->
+    <link 
+      rel="preload" 
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+      crossorigin
+    />
+    <link 
+      rel="preload" 
+      href="https://i.imgur.com/f9X3Y7v.jpg" 
+      as="image"
+      fetchpriority="high"
+    />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Victor Jacob - Portfolio" />
+    <meta property="og:title" content="Victor Jacob - Portfolio" />
+    <meta property="og:description" content="Lead Artist 3D & Spécialiste en Animation" />
+    <meta property="og:image" content="https://i.imgur.com/f9X3Y7v.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content="https://vicjacob.space" />
+    <meta property="og:locale" content="fr_FR" />
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@vicjacob" />
+    <meta name="twitter:creator" content="@vicjacob" />
+    <meta name="twitter:title" content="Victor Jacob - Portfolio" />
+    <meta name="twitter:description" content="Lead Artist 3D & Spécialiste en Animation" />
+    <meta name="twitter:image" content="https://i.imgur.com/f9X3Y7v.jpg" />
+    <meta name="twitter:image:alt" content="Victor Jacob - Portfolio" />
+    
+    <meta name="theme-color" content="#4F46E5" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    </noscript>
+
+    <!-- Security headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' https: data:; connect-src 'self' https:; media-src 'self' https:; object-src 'none'; frame-src https:; worker-src 'self' blob:;">
+    
+    <title>Victor Jacob - Portfolio</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
