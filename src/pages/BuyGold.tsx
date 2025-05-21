@@ -44,6 +44,8 @@ function BuyGold() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [videos, setVideos] = useState<Video[]>([]);
+  const [videoTitle, setVideoTitle] = useState('');
+  const [videoUrl, setVideoUrl] = useState('');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error'; visible: boolean }>({
     message: '',
     type: 'success',
@@ -66,6 +68,8 @@ function BuyGold() {
       });
       setSelectedRoles([]);
       setVideos([]);
+      setVideoTitle('');
+      setVideoUrl('');
       setErrors({});
       setEditingIndex(null);
       setEditingType('cgi');
@@ -311,6 +315,10 @@ function BuyGold() {
                   onVideoRemove={handleVideoRemove}
                   onImagesChange={handleImagesChange}
                   onReset={resetForm}
+                  videoTitle={videoTitle}
+                  setVideoTitle={setVideoTitle}
+                  videoUrl={videoUrl}
+                  setVideoUrl={setVideoUrl}
                 />
 
                 <div className="space-y-8 mt-8">

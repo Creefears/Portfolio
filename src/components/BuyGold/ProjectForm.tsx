@@ -15,6 +15,10 @@ interface ProjectFormProps {
   videos: Video[];
   selectedRoles: string[];
   editingIndex: number | null;
+  videoTitle: string;
+  videoUrl: string;
+  setVideoTitle: (title: string) => void;
+  setVideoUrl: (url: string) => void;
   onSubmit: (e: React.FormEvent) => void;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
   onRoleToggle: (role: string) => void;
@@ -31,6 +35,10 @@ export function ProjectForm({
   videos,
   selectedRoles,
   editingIndex,
+  videoTitle,
+  videoUrl,
+  setVideoTitle,
+  setVideoUrl,
   onSubmit,
   onInputChange,
   onRoleToggle,
@@ -91,8 +99,12 @@ export function ProjectForm({
           formData={formData}
           errors={errors}
           videos={videos}
+          videoTitle={videoTitle}
+          videoUrl={videoUrl}
+          setVideoTitle={setVideoTitle}
+          setVideoUrl={setVideoUrl}
           onChange={handleInputChange}
-          onVideoAdd={(title, url) => onVideoAdd(title, formatVideoUrl(url))}
+          onVideoAdd={onVideoAdd}
           onVideoRemove={onVideoRemove}
           onImagesChange={onImagesChange}
         />

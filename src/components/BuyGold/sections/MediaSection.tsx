@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Image, Film, Plus, Trash2 } from 'lucide-react';
 import { Input } from '../../ui/Input';
-import { TextArea } from '../../ui/TextArea';
 import { FormData, FormErrors, Video } from '../types';
 import { MediaPreview } from '../../ui/MediaPreview';
 import { VideoInput } from '../../ui/VideoInput';
@@ -11,6 +10,10 @@ interface MediaSectionProps {
   formData: FormData;
   errors: FormErrors;
   videos: Video[];
+  videoTitle: string;
+  videoUrl: string;
+  setVideoTitle: (title: string) => void;
+  setVideoUrl: (url: string) => void;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onVideoAdd: (title: string, url: string) => void;
   onVideoRemove: (index: number) => void;
@@ -21,13 +24,15 @@ export function MediaSection({
   formData,
   errors,
   videos,
+  videoTitle,
+  videoUrl,
+  setVideoTitle,
+  setVideoUrl,
   onChange,
   onVideoAdd,
   onVideoRemove,
   onImagesChange
 }: MediaSectionProps) {
-  const [videoTitle, setVideoTitle] = useState('');
-  const [videoUrl, setVideoUrl] = useState('');
   const [imageUrl, setImageUrl] = useState('');
 
   const handleAddVideo = (e?: React.MouseEvent) => {
