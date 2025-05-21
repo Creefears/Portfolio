@@ -319,6 +319,10 @@ function BuyGold() {
                   videos={videos}
                   selectedRoles={selectedRoles}
                   editingIndex={editingIndex}
+                  videoTitle={videoTitle}
+                  videoUrl={videoUrl}
+                  setVideoTitle={setVideoTitle}
+                  setVideoUrl={setVideoUrl}
                   onSubmit={handleSubmit}
                   onInputChange={handleInputChange}
                   onRoleToggle={handleRoleToggle}
@@ -327,10 +331,6 @@ function BuyGold() {
                   onVideoRemove={handleVideoRemove}
                   onImagesChange={handleImagesChange}
                   onReset={resetForm}
-                  videoTitle={videoTitle}
-                  setVideoTitle={setVideoTitle}
-                  videoUrl={videoUrl}
-                  setVideoUrl={setVideoUrl}
                 />
 
                 <div className="space-y-8 mt-8">
