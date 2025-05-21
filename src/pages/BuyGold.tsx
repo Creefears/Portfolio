@@ -215,7 +215,7 @@ function BuyGold() {
         };
 
         if (editingIndex !== null) {
-          await updateProject(projectData, editingType, editingIndex);
+          await updateProject(projectData, editingIndex);
           showToast('Projet mis à jour avec succès !', 'success');
         } else {
           await addProject(projectData, formData.type as 'cgi' | 'real');

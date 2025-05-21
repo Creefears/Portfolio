@@ -39,8 +39,8 @@ export const getProjects = async (type?: 'CGI' | 'REAL'): Promise<Project[]> => 
     // Transform the data to match frontend property names
     const transformedData = data?.map(project => ({
       ...project,
-      shortdescription: project.shortdescription,
-      fulldescription: project.fulldescription,
+      shortDescription: project.shortdescription,
+      fullDescription: project.fulldescription,
     })) || [];
 
     return transformedData;
@@ -55,8 +55,8 @@ export const saveProject = async (project: Project, type: 'cgi' | 'real'): Promi
     // Transform the data to match database column names
     const transformedProject = {
       ...project,
-      shortdescription: project.shortdescription,
-      fulldescription: project.fulldescription,
+      shortdescription: project.shortDescription,
+      fulldescription: project.fullDescription,
       type: type.toUpperCase(),
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
@@ -79,8 +79,8 @@ export const saveProject = async (project: Project, type: 'cgi' | 'real'): Promi
     // Transform back to frontend property names
     return {
       ...data,
-      shortdescription: data.shortdescription,
-      fulldescription: data.fulldescription,
+      shortDescription: data.shortdescription,
+      fullDescription: data.fulldescription,
     };
   } catch (error) {
     handleSupabaseError(error, 'project save');
@@ -93,8 +93,8 @@ export const updateProject = async (project: Project, id: string): Promise<void>
     // Transform the data to match database column names
     const transformedProject = {
       ...project,
-      shortdescription: project.shortdescription,
-      fulldescription: project.fulldescription,
+      shortdescription: project.shortDescription,
+      fulldescription: project.fullDescription,
       updated_at: new Date().toISOString()
     };
 
