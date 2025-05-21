@@ -10,7 +10,7 @@ import { formatVideoUrl } from '../../utils/projectUtils';
 interface VideoInputProps {
   value: string;
   onChange: (value: string) => void;
-  onSubmit?: () => void;
+  onSubmit?: (e?: React.MouseEvent) => void;
   placeholder?: string;
   showPreview?: boolean;
   className?: string;
@@ -31,11 +31,12 @@ export function VideoInput({
     onChange(newValue);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.MouseEvent) => {
+    e.preventDefault();
     if (value) {
       const formattedUrl = videoType === 'iframe' ? value : formatVideoUrl(value);
       onChange(formattedUrl);
-      if (onSubmit) onSubmit();
+      if (onSubmit) onSubmit(e);
     }
   };
 

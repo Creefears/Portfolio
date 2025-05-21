@@ -30,8 +30,10 @@ export function MediaSection({
   const [videoUrl, setVideoUrl] = useState('');
   const [imageUrl, setImageUrl] = useState('');
 
-  const handleAddVideo = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleAddVideo = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+    }
     if (videoTitle && videoUrl) {
       onVideoAdd(videoTitle, videoUrl);
       setVideoTitle('');
