@@ -1,59 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as Tooltip from '@radix-ui/react-tooltip';
-import { Box, Gamepad2, Joystick, Film, FileSpreadsheet, Calendar, PenTool, Wand2, Palette, Play, Clapperboard, Cuboid as Cube, Brush } from 'lucide-react';
+import { Box, Gamepad2, Film, Wand2, Image, Palette, Brush, FileSpreadsheet, Calendar, Play } from 'lucide-react';
 import { clsx } from 'clsx';
 
-const toolColors: Record<string, { light: string; dark: string }> = {
-  'Blender': { light: 'bg-orange-500', dark: 'bg-orange-800' },
-  'Unity': { light: 'bg-blue-500', dark: 'bg-blue-800' },
-  'Unreal Engine 5': { light: 'bg-purple-500', dark: 'bg-purple-800' },
-  'Adobe Premiere': { light: 'bg-indigo-500', dark: 'bg-indigo-800' },
-  'Adobe After Effects': { light: 'bg-pink-500', dark: 'bg-pink-800' },
-  'Adobe Photoshop': { light: 'bg-sky-500', dark: 'bg-sky-800' },
-  'Adobe Animate': { light: 'bg-yellow-500', dark: 'bg-yellow-800' },
-  'Microsoft Office': { light: 'bg-emerald-500', dark: 'bg-emerald-800' },
-  'Movie Magic Scheduling': { light: 'bg-red-500', dark: 'bg-red-800' },
-  'Sony Vegas': { light: 'bg-violet-500', dark: 'bg-violet-800' },
-  'DaVinci Resolve': { light: 'bg-teal-500', dark: 'bg-teal-800' },
-  'Autodesk Maya': { light: 'bg-cyan-500', dark: 'bg-cyan-800' },
-  'Substance Painter': { light: 'bg-rose-500', dark: 'bg-rose-800' },
+const toolIcons: Record<string, { icon: React.ElementType; color: string }> = {
+  'Blender': { icon: Box, color: '#EA7600' },
+  'Unity': { icon: Gamepad2, color: '#4C9EDE' },
+  'Unreal Engine 5': { icon: Gamepad2, color: '#6C2B90' },
+  'Adobe Premiere': { icon: Film, color: '#9999FF' },
+  'Adobe After Effects': { icon: Wand2, color: '#CF96FD' },
+  'Adobe Photoshop': { icon: Image, color: '#31A8FF' },
+  'Adobe Animate': { icon: Palette, color: '#FF8AC9' },
+  'Microsoft Office': { icon: FileSpreadsheet, color: '#D83B01' },
+  'Movie Magic Scheduling': { icon: Calendar, color: '#FF4B4B' },
+  'Sony Vegas': { icon: Play, color: '#7B68EE' },
+  'Autodesk Maya': { icon: Box, color: '#00A4E3' },
+  'Substance Painter': { icon: Brush, color: '#C4282D' }
 };
-
-const toolIcons: Record<string, React.ElementType> = {
-  'Blender': Box,
-  'Unity': Gamepad2,
-  'Unreal Engine 5': Joystick,
-  'Adobe Premiere': Film,
-  'Adobe After Effects': Wand2,
-  'Adobe Photoshop': PenTool,
-  'Adobe Animate': Palette,
-  'Microsoft Office': FileSpreadsheet,
-  'Movie Magic Scheduling': Calendar,
-  'Sony Vegas': Play,
-  'DaVinci Resolve': Clapperboard,
-  'Autodesk Maya': Cube,
-  'Substance Painter': Brush,
-};
-
-// Shortened names for hover effect
-const shortNames: Record<string, string> = {
-  'Blender': 'Blender',
-  'Unity': 'Unity',
-  'Unreal Engine 5': 'UE5',
-  'Adobe Premiere': 'Premiere',
-  'Adobe After Effects': 'AE',
-  'Adobe Photoshop': 'PS',
-  'Adobe Animate': 'Animate',
-  'Microsoft Office': 'Office',
-  'Movie Magic Scheduling': 'MMS',
-  'Sony Vegas': 'Vegas',
-  'DaVinci Resolve': 'DaVinci',
-  'Autodesk Maya': 'Maya',
-  'Substance Painter': 'Substance',
-};
-
-// Static variable to track the currently expanded icon
-let currentExpandedIcon: string | null = null;
 
 interface ToolIconProps {
   name: string;
@@ -70,7 +33,6 @@ const ToolIcon = React.memo(function ToolIcon({ name, className, size = 20, show
   useEffect(() => {
     setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
     
-    // Cleanup timeout on unmount
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -78,33 +40,22 @@ const ToolIcon = React.memo(function ToolIcon({ name, className, size = 20, show
     };
   }, []);
 
-  const Icon = toolIcons[name] || Film;
-  const colors = toolColors[name] || { light: 'bg-gray-500', dark: 'bg-gray-800' };
-  const shortName = shortNames[name] || name;
+  const toolConfig = toolIcons[name] || { icon: Box, color: '#6366f1' };
+  const IconComponent = toolConfig.icon;
 
   const closeIcon = () => {
     setIsExpanded(false);
-    currentExpandedIcon = null;
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
     e.preventDefault();
     if (isMobile) {
-      // If another icon is expanded, close it
-      if (currentExpandedIcon && currentExpandedIcon !== name) {
-        document.dispatchEvent(new CustomEvent('closeToolIcon', { detail: currentExpandedIcon }));
-      }
-
-      // Toggle current icon
       setIsExpanded(!isExpanded);
-      currentExpandedIcon = isExpanded ? null : name;
-
-      // Clear existing timeout
+      
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
 
-      // Set new timeout if expanding
       if (!isExpanded) {
         timeoutRef.current = setTimeout(() => {
           closeIcon();
@@ -113,19 +64,16 @@ const ToolIcon = React.memo(function ToolIcon({ name, className, size = 20, show
     }
   };
 
-  // Listen for close events from other icons
   useEffect(() => {
-    const handleCloseEvent = (e: CustomEvent) => {
-      if (e.detail === name) {
-        closeIcon();
-      }
+    const handleCloseEvent = () => {
+      closeIcon();
     };
 
-    document.addEventListener('closeToolIcon', handleCloseEvent as EventListener);
+    document.addEventListener('closeToolIcon', handleCloseEvent);
     return () => {
-      document.removeEventListener('closeToolIcon', handleCloseEvent as EventListener);
+      document.removeEventListener('closeToolIcon', handleCloseEvent);
     };
-  }, [name]);
+  }, []);
 
   return (
     <Tooltip.Provider>
@@ -142,13 +90,12 @@ const ToolIcon = React.memo(function ToolIcon({ name, className, size = 20, show
                 isExpanded ? "scale-110 z-10" : "",
                 "hover:scale-110 hover:z-10",
                 "hover:shadow-lg dark:hover:shadow-black/30",
-                colors.light,
-                "dark:" + colors.dark,
                 className
               )}
+              style={{ backgroundColor: toolConfig.color }}
             >
               <div className="flex items-center">
-                <Icon 
+                <IconComponent 
                   size={size} 
                   className="text-white transition-all duration-300" 
                 />
@@ -162,7 +109,7 @@ const ToolIcon = React.memo(function ToolIcon({ name, className, size = 20, show
                     )}
                   >
                     <span className="text-white text-xs md:text-sm font-medium whitespace-nowrap">
-                      {shortName}
+                      {name}
                     </span>
                   </div>
                 )}
