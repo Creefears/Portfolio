@@ -17,7 +17,8 @@ export function BadgeCreator({ onSave, onCancel, existingBadges = [] }: BadgeCre
     name: '',
     icon: 'Code',
     color: '#4F46E5',
-    category: '3D'
+    category: '3D',
+    description: ''
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -45,7 +46,8 @@ export function BadgeCreator({ onSave, onCancel, existingBadges = [] }: BadgeCre
         name: '',
         icon: 'Code',
         color: '#4F46E5',
-        category: '3D'
+        category: '3D',
+        description: ''
       });
     }
   };
@@ -85,6 +87,18 @@ export function BadgeCreator({ onSave, onCancel, existingBadges = [] }: BadgeCre
 
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Description (optionnelle)
+            </label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg resize-y min-h-[100px]"
+              placeholder="Description du logiciel..."
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Icône
             </label>
             <IconPicker
@@ -117,9 +131,16 @@ export function BadgeCreator({ onSave, onCancel, existingBadges = [] }: BadgeCre
             >
               <IconComponent className="w-5 h-5 text-white" />
             </div>
-            <span className="font-medium text-gray-900 dark:text-gray-100">
-              {formData.name || 'Nom du logiciel'}
-            </span>
+            <div className="flex flex-col">
+              <span className="font-medium text-gray-900 dark:text-gray-100">
+                {formData.name || 'Nom du logiciel'}
+              </span>
+              {formData.description && (
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  {formData.description}
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
