@@ -2,7 +2,8 @@ export interface Tool {
   name: string;
   icon: string;
   color: string;
-  role?: string;
+  category?: string;
+  description?: string;
 }
 
 export interface CustomRole {

@@ -16,9 +16,12 @@ export function BadgeCreator({ onSave, onCancel, existingBadges = [] }: BadgeCre
   const [formData, setFormData] = useState<Tool>({
     name: '',
     icon: 'Code',
-    color: '#4F46E5'
+    color: '#4F46E5',
+    category: '3D'
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const categories = ['3D', 'Video', 'Design', 'Business', 'Other'];
 
   const validateForm = (): boolean => {
     const newErrors: { [key: string]: string } = {};
@@ -41,7 +44,8 @@ export function BadgeCreator({ onSave, onCancel, existingBadges = [] }: BadgeCre
       setFormData({
         name: '',
         icon: 'Code',
-        color: '#4F46E5'
+        color: '#4F46E5',
+        category: '3D'
       });
     }
   };
@@ -63,6 +67,21 @@ export function BadgeCreator({ onSave, onCancel, existingBadges = [] }: BadgeCre
             error={errors.name}
             required
           />
+
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Catégorie
+            </label>
+            <select
+              value={formData.category}
+              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
+            >
+              {categories.map(category => (
+                <option key={category} value={category}>{category}</option>
+              ))}
+            </select>
+          </div>
 
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
