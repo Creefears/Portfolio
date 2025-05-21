@@ -138,3 +138,5 @@ const ExpandedProjectContent = React.memo(function ExpandedProjectContent({
     </div>
   );
 });
+
+export default ExpandedProjectContent;
