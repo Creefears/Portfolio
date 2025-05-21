@@ -28,17 +28,12 @@ export const useProjectStore = create<ProjectStore>()(
       addProject: async (project, type) => {
         set({ isLoading: true, error: null });
         try {
-          // First, save to Supabase
-          const savedProject = await saveProject({
-            ...project,
-            type: type.toUpperCase()
-          }, type);
+          const savedProject = await saveProject(project, type);
           
           if (!savedProject) {
-            throw new Error('Failed to save project to Supabase');
+            throw new Error('Failed to save project');
           }
 
-          // Then update local state
           set(state => ({
             userCGIProjects: type === 'cgi' 
               ? [...state.userCGIProjects, savedProject].sort((a, b) => {
@@ -75,18 +70,14 @@ export const useProjectStore = create<ProjectStore>()(
           const projects = type === 'cgi' ? get().userCGIProjects : get().userRealProjects;
           const projectToUpdate = projects[index];
           
-          if (!projectToUpdate.id) {
+          if (!projectToUpdate?.id) {
             throw new Error('Project ID not found');
           }
 
-          // Update in Supabase
-          await updateProject({
-            ...project,
-            id: projectToUpdate.id,
-            type: type.toUpperCase()
-          }, projectToUpdate.id);
+          console.log('Updating project:', { project, id: projectToUpdate.id });
           
-          // Update local state
+          await updateProject(project, projectToUpdate.id);
+          
           set(state => ({
             userCGIProjects: type === 'cgi'
               ? state.userCGIProjects.map((p, i) => i === index ? { ...project, id: projectToUpdate.id } : p)
@@ -111,14 +102,12 @@ export const useProjectStore = create<ProjectStore>()(
           const projects = type === 'cgi' ? get().userCGIProjects : get().userRealProjects;
           const projectToDelete = projects[index];
           
-          if (!projectToDelete.id) {
+          if (!projectToDelete?.id) {
             throw new Error('Project ID not found');
           }
 
-          // Delete from Supabase
           await deleteProject(projectToDelete.id);
           
-          // Update local state
           set(state => ({
             userCGIProjects: type === 'cgi'
               ? state.userCGIProjects.filter((_, i) => i !== index)
