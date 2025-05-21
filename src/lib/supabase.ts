@@ -36,7 +36,14 @@ export const getProjects = async (type?: 'CGI' | 'REAL'): Promise<Project[]> => 
       throw error;
     }
 
-    return data || [];
+    // Transform the data to match frontend property names
+    const transformedData = data?.map(project => ({
+      ...project,
+      shortDescription: project.shortdescription,
+      fullDescription: project.fulldescription,
+    })) || [];
+
+    return transformedData;
   } catch (error) {
     handleSupabaseError(error, 'projects fetch');
     return [];
@@ -45,14 +52,19 @@ export const getProjects = async (type?: 'CGI' | 'REAL'): Promise<Project[]> => 
 
 export const saveProject = async (project: Project, type: 'cgi' | 'real'): Promise<Project> => {
   try {
+    // Transform the data to match database column names
+    const transformedProject = {
+      ...project,
+      shortdescription: project.shortDescription,
+      fulldescription: project.fullDescription,
+      type: type.toUpperCase(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
     const { data, error } = await supabase
       .from('projects')
-      .insert([{
-        ...project,
-        type: type.toUpperCase(),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }])
+      .insert([transformedProject])
       .select()
       .single();
 
@@ -64,7 +76,12 @@ export const saveProject = async (project: Project, type: 'cgi' | 'real'): Promi
       throw new Error('No data returned from Supabase after insert');
     }
 
-    return data;
+    // Transform back to frontend property names
+    return {
+      ...data,
+      shortDescription: data.shortdescription,
+      fullDescription: data.fulldescription,
+    };
   } catch (error) {
     handleSupabaseError(error, 'project save');
     throw error;
@@ -73,12 +90,17 @@ export const saveProject = async (project: Project, type: 'cgi' | 'real'): Promi
 
 export const updateProject = async (project: Project, id: string): Promise<void> => {
   try {
+    // Transform the data to match database column names
+    const transformedProject = {
+      ...project,
+      shortdescription: project.shortDescription,
+      fulldescription: project.fullDescription,
+      updated_at: new Date().toISOString()
+    };
+
     const { error } = await supabase
       .from('projects')
-      .update({
-        ...project,
-        updated_at: new Date().toISOString()
-      })
+      .update(transformedProject)
       .eq('id', id);
 
     if (error) {
