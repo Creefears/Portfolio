@@ -5,6 +5,7 @@ import * as Icons from 'lucide-react';
 import { Input } from '../ui/Input';
 import { Tool } from '../../types/project';
 import { IconPicker } from '../ui/IconPicker';
+import { useToolStore } from '../../store/toolStore';
 
 interface ToolManagerProps {
   tools: Tool[];
@@ -61,24 +62,33 @@ const ToolManager: React.FC<ToolManagerProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (validateForm()) {
-      onAddTool({
-        name: formData.name,
-        icon: formData.icon,
-        color: formData.color,
-        category: formData.category,
-        description: formData.description
-      });
-      setFormData({
-        name: '',
-        shortName: '',
-        icon: 'Box',
-        color: '#4F46E5',
-        category: '3D'
-      });
+      try {
+        await useToolStore.getState().addTool({
+          name: formData.name,
+          icon: formData.icon,
+          color: formData.color,
+          category: formData.category,
+          description: formData.description
+        });
+
+        setFormData({
+          name: '',
+          shortName: '',
+          icon: 'Box',
+          color: '#4F46E5',
+          category: '3D'
+        });
+      } catch (error) {
+        console.error('Error saving tool:', error);
+        setErrors(prev => ({
+          ...prev,
+          submit: 'Failed to save tool. Please try again.'
+        }));
+      }
     }
   };
 
