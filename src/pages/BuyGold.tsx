@@ -115,6 +115,8 @@ function BuyGold() {
   const handleVideoAdd = (title: string, url: string) => {
     if (title && url) {
       setVideos(prev => [...prev, { title, url }]);
+      setVideoTitle('');
+      setVideoUrl('');
     }
   };
 
@@ -215,26 +217,21 @@ function BuyGold() {
         };
 
         if (editingIndex !== null) {
-          // Get the current project being edited
-          const currentProjects = formData.type === 'cgi' ? userCGIProjects : userRealProjects;
+          const currentProjects = editingType === 'cgi' ? userCGIProjects : userRealProjects;
           
-          // Check if the index is valid and the project exists
           if (!currentProjects || editingIndex < 0 || editingIndex >= currentProjects.length) {
             showToast('Erreur: Projet introuvable', 'error');
-            console.error('Project update failed: Invalid index or project not found');
             return;
           }
 
           const projectToUpdate = currentProjects[editingIndex];
-
-          // Check if the project exists and has an ID before updating
+          
           if (!projectToUpdate?.id) {
             showToast('Erreur: Impossible de mettre à jour le projet', 'error');
-            console.error('Project update failed: No project ID found');
             return;
           }
 
-          await updateProject(projectData, editingIndex);
+          await updateProject(projectData, projectToUpdate.id);
           showToast('Projet mis à jour avec succès !', 'success');
         } else {
           await addProject(projectData, formData.type as 'cgi' | 'real');
