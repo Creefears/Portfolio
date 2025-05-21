@@ -107,7 +107,7 @@ function BuyGold() {
       const toolExists = prev.tools.some(t => t.name === toolName);
       const newTools = toolExists
         ? prev.tools.filter(t => t.name !== toolName)
-        : [...prev.tools, { name: toolName, icon: '' }];
+        : [...prev.tools, { name: toolName, icon: '', color: '', category: '' }];
       return { ...prev, tools: newTools };
     });
   };

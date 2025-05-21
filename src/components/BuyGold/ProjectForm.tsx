@@ -7,7 +7,6 @@ import { MediaSection } from './sections/MediaSection';
 import { RolesSection } from './sections/RolesSection';
 import { ToolsSection } from './sections/ToolsSection';
 import { ProjectTypeSelect } from './sections/ProjectTypeSelect';
-import { formatVideoUrl } from '../../utils/projectUtils';
 
 interface ProjectFormProps {
   formData: FormData;
@@ -40,34 +39,9 @@ export function ProjectForm({
   onImagesChange,
   onReset
 }: ProjectFormProps) {
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Format video URLs before submitting
-    if (formData.video) {
-      formData.video = formatVideoUrl(formData.video);
-    }
-    onSubmit(e);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    // Format video URL when it's changed
-    if (name === 'video') {
-      onInputChange({
-        ...e,
-        target: {
-          ...e.target,
-          value: formatVideoUrl(value)
-        }
-      });
-    } else {
-      onInputChange(e);
-    }
-  };
-
   return (
     <motion.form 
-      onSubmit={handleSubmit}
+      onSubmit={onSubmit}
       className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden mb-12"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -84,15 +58,15 @@ export function ProjectForm({
         <BasicInfo
           formData={formData}
           errors={errors}
-          onChange={handleInputChange}
+          onChange={onInputChange}
         />
 
         <MediaSection
           formData={formData}
           errors={errors}
           videos={videos}
-          onChange={handleInputChange}
-          onVideoAdd={(title, url) => onVideoAdd(title, formatVideoUrl(url))}
+          onChange={onInputChange}
+          onVideoAdd={onVideoAdd}
           onVideoRemove={onVideoRemove}
           onImagesChange={onImagesChange}
         />
