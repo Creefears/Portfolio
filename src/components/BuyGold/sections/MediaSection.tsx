@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Image, Film, Plus, Trash2 } from 'lucide-react';
 import { Input } from '../../ui/Input';
