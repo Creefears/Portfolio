@@ -223,7 +223,6 @@ function BuyGold() {
         if (editingIndex !== null) {
           const currentProjects = editingType === 'cgi' ? userCGIProjects : userRealProjects;
           
-          // Check if currentProjects exists and the index is valid
           if (!currentProjects || !Array.isArray(currentProjects)) {
             showToast('Erreur: Liste de projets non disponible', 'error');
             return;
@@ -236,8 +235,7 @@ function BuyGold() {
 
           const projectToUpdate = currentProjects[editingIndex];
           
-          // Check if projectToUpdate exists and has an id
-          if (!projectToUpdate || !projectToUpdate.id) {
+          if (!projectToUpdate?.id) {
             showToast('Erreur: Projet invalide ou ID manquant', 'error');
             return;
           }
