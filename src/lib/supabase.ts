@@ -39,8 +39,8 @@ export const getProjects = async (type?: 'CGI' | 'REAL'): Promise<Project[]> => 
     // Transform the data to match frontend property names
     const transformedData = data?.map(project => ({
       ...project,
-      shortDescription: project.shortdescription,
-      fullDescription: project.fulldescription,
+      shortdescription: project.shortdescription,
+      fulldescription: project.fulldescription,
     })) || [];
 
     return transformedData;
