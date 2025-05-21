@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Experience } from '../types/experience';
 import type { Project } from '../types/project';
+import type { Tool } from '../types/project';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -19,6 +20,61 @@ const handleSupabaseError = (error: unknown, operation: string) => {
   throw error;
 };
 
+// Tool operations
+export const getTools = async (): Promise<Tool[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('tools')
+      .select('*')
+      .order('name');
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    handleSupabaseError(error, 'tools fetch');
+    return [];
+  }
+};
+
+export const saveTool = async (tool: Tool): Promise<Tool> => {
+  try {
+    const { data, error } = await supabase
+      .from('tools')
+      .insert([{
+        name: tool.name,
+        icon: tool.icon,
+        color: tool.color,
+        category: tool.category,
+        description: tool.description,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }])
+      .select()
+      .single();
+
+    if (error) throw error;
+    if (!data) throw new Error('No data returned from Supabase after insert');
+    return data;
+  } catch (error) {
+    handleSupabaseError(error, 'tool save');
+    throw error;
+  }
+};
+
+export const deleteTool = async (id: string): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('tools')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  } catch (error) {
+    handleSupabaseError(error, 'tool delete');
+    throw error;
+  }
+};
+
 export const getProjects = async (type?: 'CGI' | 'REAL'): Promise<Project[]> => {
   try {
     let query = supabase
@@ -32,10 +88,7 @@ export const getProjects = async (type?: 'CGI' | 'REAL'): Promise<Project[]> => 
 
     const { data, error } = await query;
 
-    if (error) {
-      throw error;
-    }
-
+    if (error) throw error;
     return data || [];
   } catch (error) {
     handleSupabaseError(error, 'projects fetch');
