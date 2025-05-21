@@ -36,29 +36,20 @@ export const getProjects = async (type?: 'CGI' | 'REAL'): Promise<Project[]> => 
       throw error;
     }
 
-    // Map the data to ensure field names match
-    const projects = data?.map(project => ({
-      ...project,
-      shortdescription: project.shortdescription || '',
-      fulldescription: project.fulldescription || '',
-      type: project.type || type
-    })) || [];
-
-    console.log('Fetched projects:', projects); // Debug log
-
-    return projects;
+    return data || [];
   } catch (error) {
     handleSupabaseError(error, 'projects fetch');
     return [];
   }
 };
 
-export const saveProject = async (project: Project): Promise<Project> => {
+export const saveProject = async (project: Project, type: 'cgi' | 'real'): Promise<Project> => {
   try {
     const { data, error } = await supabase
       .from('projects')
       .insert([{
         ...project,
+        type: type.toUpperCase(),
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }])
