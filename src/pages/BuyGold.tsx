@@ -113,7 +113,9 @@ function BuyGold() {
   };
 
   const handleVideoAdd = (title: string, url: string) => {
-    setVideos(prev => [...prev, { title, url }]);
+    if (title && url) {
+      setVideos(prev => [...prev, { title, url }]);
+    }
   };
 
   const handleVideoRemove = (index: number) => {
@@ -146,8 +148,15 @@ function BuyGold() {
       const project = item as Project;
       setFormData({
         type,
-        ...project,
-        images: project.images || []
+        title: project.title,
+        shortdescription: project.shortDescription,
+        fulldescription: project.fullDescription,
+        image: project.image,
+        video: project.video || '',
+        images: project.images || [],
+        year: project.year,
+        role: project.role,
+        tools: project.tools
       });
       setSelectedRoles(project.role.split(', '));
       setVideos(project.videos || []);
@@ -200,7 +209,9 @@ function BuyGold() {
       if (activeTab === 'projects') {
         const projectData = {
           ...formData,
-          videos: videos.length > 0 ? videos : undefined
+          videos: videos.length > 0 ? videos : undefined,
+          shortDescription: formData.shortdescription,
+          fullDescription: formData.fulldescription
         };
 
         if (editingIndex !== null) {
