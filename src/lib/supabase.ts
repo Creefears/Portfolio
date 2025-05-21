@@ -42,6 +42,7 @@ export const saveTool = async (tool: Tool): Promise<Tool> => {
       .from('tools')
       .insert([{
         name: tool.name,
+        short_name: tool.short_name,
         icon: tool.icon,
         color: tool.color,
         created_at: new Date().toISOString(),
