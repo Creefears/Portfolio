@@ -44,8 +44,6 @@ export const saveTool = async (tool: Tool): Promise<Tool> => {
         name: tool.name,
         icon: tool.icon,
         color: tool.color,
-        category: tool.category,
-        description: tool.description,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }])

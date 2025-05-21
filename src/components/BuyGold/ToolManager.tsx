@@ -16,11 +16,7 @@ interface ToolFormData {
   name: string;
   icon: string;
   color: string;
-  category: string;
-  description?: string;
 }
-
-const categories = ['3D', 'Video', 'Design', 'Business', 'Other'];
 
 const ToolManager: React.FC<ToolManagerProps> = ({
   tools,
@@ -30,8 +26,7 @@ const ToolManager: React.FC<ToolManagerProps> = ({
   const [formData, setFormData] = useState<ToolFormData>({
     name: '',
     icon: 'Box',
-    color: '#4F46E5',
-    category: '3D'
+    color: '#4F46E5'
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [searchTerm, setSearchTerm] = useState('');
@@ -62,8 +57,7 @@ const ToolManager: React.FC<ToolManagerProps> = ({
         setFormData({
           name: '',
           icon: 'Box',
-          color: '#4F46E5',
-          category: '3D'
+          color: '#4F46E5'
         });
         onClose();
       } catch (error) {
@@ -87,8 +81,7 @@ const ToolManager: React.FC<ToolManagerProps> = ({
   };
 
   const filteredTools = tools.filter(tool => 
-    tool.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    tool.category?.toLowerCase().includes(searchTerm.toLowerCase())
+    tool.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -106,21 +99,6 @@ const ToolManager: React.FC<ToolManagerProps> = ({
           maxLength={30}
           required
         />
-
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Catégorie
-          </label>
-          <select
-            value={formData.category}
-            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-            className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
-          >
-            {categories.map(category => (
-              <option key={category} value={category}>{category}</option>
-            ))}
-          </select>
-        </div>
 
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -153,12 +131,6 @@ const ToolManager: React.FC<ToolManagerProps> = ({
           </div>
         </div>
 
-        <Input
-          label="Description (optionnelle)"
-          value={formData.description || ''}
-          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-        />
-
         <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
           <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
             Aperçu du logiciel
@@ -174,16 +146,9 @@ const ToolManager: React.FC<ToolManagerProps> = ({
                 })
               }
             </div>
-            <div className="flex-1">
-              <span className="font-medium text-gray-900 dark:text-gray-100">
-                {formData.name || 'Nom du logiciel'}
-              </span>
-              {formData.category && (
-                <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
-                  ({formData.category})
-                </span>
-              )}
-            </div>
+            <span className="font-medium text-gray-900 dark:text-gray-100">
+              {formData.name || 'Nom du logiciel'}
+            </span>
           </div>
         </div>
 
@@ -237,16 +202,9 @@ const ToolManager: React.FC<ToolManagerProps> = ({
                   >
                     {IconComponent && <IconComponent className="w-5 h-5 text-white" />}
                   </div>
-                  <div className="flex-1">
-                    <span className="font-medium text-gray-900 dark:text-gray-100">
-                      {tool.name}
-                    </span>
-                    {tool.category && (
-                      <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
-                        ({tool.category})
-                      </span>
-                    )}
-                  </div>
+                  <span className="flex-1 font-medium text-gray-900 dark:text-gray-100">
+                    {tool.name}
+                  </span>
                   {tool.id && (
                     <motion.button
                       type="button"
