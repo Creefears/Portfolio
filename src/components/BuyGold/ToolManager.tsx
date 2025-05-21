@@ -6,7 +6,6 @@ import { Input } from '../ui/Input';
 import { Tool } from '../../types/project';
 import { IconPicker } from '../ui/IconPicker';
 import { useToolStore } from '../../store/toolStore';
-import { toast } from '../ui/Toast';
 
 interface ToolManagerProps {
   tools: Tool[];
@@ -33,7 +32,6 @@ const ToolManager: React.FC<ToolManagerProps> = ({
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [searchTerm, setSearchTerm] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateForm = (): boolean => {
     const newErrors: { [key: string]: string } = {};
@@ -61,10 +59,7 @@ const ToolManager: React.FC<ToolManagerProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (isSubmitting) return;
-    
     if (validateForm()) {
-      setIsSubmitting(true);
       try {
         await addTool(formData);
         setFormData({
@@ -76,9 +71,10 @@ const ToolManager: React.FC<ToolManagerProps> = ({
         onClose();
       } catch (error) {
         console.error('Error saving tool:', error);
-        toast.error('Erreur lors de la sauvegarde du logiciel');
-      } finally {
-        setIsSubmitting(false);
+        setErrors(prev => ({
+          ...prev,
+          submit: 'Failed to save tool. Please try again.'
+        }));
       }
     }
   };
@@ -89,7 +85,6 @@ const ToolManager: React.FC<ToolManagerProps> = ({
         await deleteTool(id);
       } catch (error) {
         console.error('Error deleting tool:', error);
-        toast.error('Erreur lors de la suppression du logiciel');
       }
     }
   };
@@ -112,7 +107,6 @@ const ToolManager: React.FC<ToolManagerProps> = ({
           error={errors.name}
           maxLength={30}
           required
-          disabled={isSubmitting}
         />
 
         <Input
@@ -122,7 +116,6 @@ const ToolManager: React.FC<ToolManagerProps> = ({
           error={errors.short_name}
           maxLength={10}
           required
-          disabled={isSubmitting}
         />
 
         <div className="space-y-2">
@@ -145,7 +138,6 @@ const ToolManager: React.FC<ToolManagerProps> = ({
               value={formData.color}
               onChange={(e) => setFormData({ ...formData, color: e.target.value })}
               className="w-12 h-12 rounded-lg cursor-pointer"
-              disabled={isSubmitting}
             />
             <Input
               type="text"
@@ -153,7 +145,6 @@ const ToolManager: React.FC<ToolManagerProps> = ({
               onChange={(e) => setFormData({ ...formData, color: e.target.value })}
               placeholder="#000000"
               className="flex-1"
-              disabled={isSubmitting}
             />
           </div>
         </div>
@@ -187,15 +178,12 @@ const ToolManager: React.FC<ToolManagerProps> = ({
         <div className="flex gap-4">
           <motion.button
             type="submit"
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg transition-colors ${
-              isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-indigo-700'
-            }`}
-            whileHover={!isSubmitting ? { scale: 1.02 } : {}}
-            whileTap={!isSubmitting ? { scale: 0.98 } : {}}
-            disabled={isSubmitting}
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
             <Plus className="w-5 h-5" />
-            <span>{isSubmitting ? 'Sauvegarde...' : 'Ajouter le logiciel'}</span>
+            <span>Ajouter le logiciel</span>
           </motion.button>
 
           <motion.button
@@ -204,7 +192,6 @@ const ToolManager: React.FC<ToolManagerProps> = ({
             className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            disabled={isSubmitting}
           >
             Annuler
           </motion.button>
