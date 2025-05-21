@@ -1,13 +1,18 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useProjectStore } from '../store/projectStore';
+
+const images = [
+  "https://i.imgur.com/nvlr9T3.jpg",  // Sarenza
+  "https://i.imgur.com/0RunzIX.jpg",  // Nobodies
+  "https://i.imgur.com/7upuHV4.jpg",  // It's Jack
+  "https://i.imgur.com/ohaBOrG.jpg",  // Timelapse Go
+  "https://i.imgur.com/isL0Oc3.jpg",  // Pratiks
+  "https://i.imgur.com/LTPbXZQ.jpg",  // Madness
+  "https://i.imgur.com/V00RlDs.jpg",  // Creefears
+  "https://i.imgur.com/qS47mep.jpg"   // Additional image
+];
 
 function RealFootageHeader() {
-  const { userRealProjects } = useProjectStore();
-  
-  // Get all images from Real Footage projects
-  const images = userRealProjects.map(project => project.image);
-
   return (
     <div className="relative h-[50vh] overflow-hidden bg-gray-900">
       <div className="absolute inset-0 grid grid-cols-2 md:grid-cols-4 gap-1 transform -rotate-12 scale-[1.2] translate-y-[-5%]">
@@ -16,17 +21,6 @@ function RealFootageHeader() {
             key={index}
             className="relative h-full overflow-hidden cursor-pointer"
             initial={{ opacity: 0.8 }}
-            animate={{ 
-              x: ['-100%', '0%'],
-              transition: {
-                x: {
-                  duration: 20,
-                  repeat: Infinity,
-                  repeatType: "mirror",
-                  ease: "linear"
-                }
-              }
-            }}
             whileHover={{ 
               scale: 1.1, 
               zIndex: 10,

@@ -12,6 +12,8 @@ interface ToolsSectionProps {
   onToolToggle: (toolName: string) => void;
 }
 
+const CUSTOM_TOOLS_KEY = 'custom-tools-storage';
+
 export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) {
   const { userCGIProjects, userRealProjects } = useProjectStore();
   const [showBadgeCreator, setShowBadgeCreator] = useState(false);
@@ -19,7 +21,7 @@ export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) 
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'cgi' | 'real'>('all');
   const [customTools, setCustomTools] = useState<ToolType[]>(() => {
     try {
-      const saved = localStorage.getItem('custom-tools-storage');
+      const saved = localStorage.getItem(CUSTOM_TOOLS_KEY);
       return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
@@ -28,7 +30,7 @@ export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) 
 
   // Persist custom tools to localStorage
   React.useEffect(() => {
-    localStorage.setItem('custom-tools-storage', JSON.stringify(customTools));
+    localStorage.setItem(CUSTOM_TOOLS_KEY, JSON.stringify(customTools));
   }, [customTools]);
 
   // Get all unique tools from projects and custom tools
