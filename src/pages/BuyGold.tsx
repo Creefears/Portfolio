@@ -152,6 +152,7 @@ function BuyGold() {
   const handleEdit = (item: Project | Experience, type?: 'cgi' | 'real', index: number) => {
     if (activeTab === 'projects' && type) {
       const project = item as Project;
+      console.log('Project to edit:', project); // Debug log
       setFormData({
         type,
         title: project.title,
@@ -234,6 +235,7 @@ function BuyGold() {
           }
 
           const projectToUpdate = currentProjects[editingIndex];
+          console.log('Project to update:', projectToUpdate); // Debug log
           
           if (!projectToUpdate?.id) {
             showToast('Erreur: Projet invalide ou ID manquant', 'error');
