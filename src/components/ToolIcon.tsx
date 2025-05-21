@@ -2,21 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import { Box, Gamepad2, Film, Wand2, Image, Palette, Brush, FileSpreadsheet, Calendar, Play } from 'lucide-react';
 import { clsx } from 'clsx';
-
-const toolIcons: Record<string, { icon: React.ElementType; color: string }> = {
-  'Blender': { icon: Box, color: '#EA7600' },
-  'Unity': { icon: Gamepad2, color: '#4C9EDE' },
-  'Unreal Engine 5': { icon: Gamepad2, color: '#6C2B90' },
-  'Adobe Premiere': { icon: Film, color: '#9999FF' },
-  'Adobe After Effects': { icon: Wand2, color: '#CF96FD' },
-  'Adobe Photoshop': { icon: Image, color: '#31A8FF' },
-  'Adobe Animate': { icon: Palette, color: '#FF8AC9' },
-  'Microsoft Office': { icon: FileSpreadsheet, color: '#D83B01' },
-  'Movie Magic Scheduling': { icon: Calendar, color: '#FF4B4B' },
-  'Sony Vegas': { icon: Play, color: '#7B68EE' },
-  'Autodesk Maya': { icon: Box, color: '#00A4E3' },
-  'Substance Painter': { icon: Brush, color: '#C4282D' }
-};
+import * as Icons from 'lucide-react';
+import { useToolStore } from '../store/toolStore';
 
 interface ToolIconProps {
   name: string;
@@ -29,6 +16,7 @@ const ToolIcon = React.memo(function ToolIcon({ name, className, size = 20, show
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout>();
+  const { tools } = useToolStore();
 
   useEffect(() => {
     setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
@@ -40,8 +28,9 @@ const ToolIcon = React.memo(function ToolIcon({ name, className, size = 20, show
     };
   }, []);
 
-  const toolConfig = toolIcons[name] || { icon: Box, color: '#6366f1' };
-  const IconComponent = toolConfig.icon;
+  const tool = tools.find(t => t.name === name);
+  const IconComponent = tool ? Icons[tool.icon as keyof typeof Icons] : Box;
+  const shortName = tool?.short_name || name;
 
   const closeIcon = () => {
     setIsExpanded(false);
@@ -92,7 +81,7 @@ const ToolIcon = React.memo(function ToolIcon({ name, className, size = 20, show
                 "hover:shadow-lg dark:hover:shadow-black/30",
                 className
               )}
-              style={{ backgroundColor: toolConfig.color }}
+              style={{ backgroundColor: tool?.color || '#6366f1' }}
             >
               <div className="flex items-center">
                 <IconComponent 
@@ -109,7 +98,7 @@ const ToolIcon = React.memo(function ToolIcon({ name, className, size = 20, show
                     )}
                   >
                     <span className="text-white text-xs md:text-sm font-medium whitespace-nowrap">
-                      {name}
+                      {shortName}
                     </span>
                   </div>
                 )}

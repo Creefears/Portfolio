@@ -14,6 +14,7 @@ interface ToolManagerProps {
 
 interface ToolFormData {
   name: string;
+  short_name: string;
   icon: string;
   color: string;
 }
@@ -25,6 +26,7 @@ const ToolManager: React.FC<ToolManagerProps> = ({
   const { addTool, deleteTool } = useToolStore();
   const [formData, setFormData] = useState<ToolFormData>({
     name: '',
+    short_name: '',
     icon: 'Box',
     color: '#4F46E5'
   });
@@ -38,6 +40,12 @@ const ToolManager: React.FC<ToolManagerProps> = ({
       newErrors.name = 'Le nom est requis';
     } else if (formData.name.length > 30) {
       newErrors.name = 'Le nom ne doit pas dépasser 30 caractères';
+    }
+
+    if (!formData.short_name.trim()) {
+      newErrors.short_name = 'Le nom court est requis';
+    } else if (formData.short_name.length > 10) {
+      newErrors.short_name = 'Le nom court ne doit pas dépasser 10 caractères';
     }
 
     if (tools.some(tool => tool.name.toLowerCase() === formData.name.toLowerCase())) {
@@ -56,6 +64,7 @@ const ToolManager: React.FC<ToolManagerProps> = ({
         await addTool(formData);
         setFormData({
           name: '',
+          short_name: '',
           icon: 'Box',
           color: '#4F46E5'
         });
@@ -97,6 +106,15 @@ const ToolManager: React.FC<ToolManagerProps> = ({
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           error={errors.name}
           maxLength={30}
+          required
+        />
+
+        <Input
+          label="Nom court (affiché au survol)"
+          value={formData.short_name}
+          onChange={(e) => setFormData({ ...formData, short_name: e.target.value })}
+          error={errors.short_name}
+          maxLength={10}
           required
         />
 
@@ -146,9 +164,14 @@ const ToolManager: React.FC<ToolManagerProps> = ({
                 })
               }
             </div>
-            <span className="font-medium text-gray-900 dark:text-gray-100">
-              {formData.name || 'Nom du logiciel'}
-            </span>
+            <div className="flex flex-col">
+              <span className="font-medium text-gray-900 dark:text-gray-100">
+                {formData.name || 'Nom du logiciel'}
+              </span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                {formData.short_name || 'Nom court'}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -202,9 +225,14 @@ const ToolManager: React.FC<ToolManagerProps> = ({
                   >
                     {IconComponent && <IconComponent className="w-5 h-5 text-white" />}
                   </div>
-                  <span className="flex-1 font-medium text-gray-900 dark:text-gray-100">
-                    {tool.name}
-                  </span>
+                  <div className="flex-1">
+                    <span className="font-medium text-gray-900 dark:text-gray-100">
+                      {tool.name}
+                    </span>
+                    <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
+                      ({tool.short_name})
+                    </span>
+                  </div>
                   {tool.id && (
                     <motion.button
                       type="button"
