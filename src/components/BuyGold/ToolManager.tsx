@@ -68,7 +68,6 @@ const ToolManager: React.FC<ToolManagerProps> = ({
           icon: 'Box',
           color: '#4F46E5'
         });
-        onClose();
       } catch (error) {
         console.error('Error saving tool:', error);
         setErrors(prev => ({
