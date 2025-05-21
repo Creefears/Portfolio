@@ -55,8 +55,8 @@ export const saveProject = async (project: Project, type: 'cgi' | 'real'): Promi
     // Transform the data to match database column names
     const transformedProject = {
       ...project,
-      shortdescription: project.shortdescription,
-      fulldescription: project.fulldescription,
+      shortdescription: project.shortDescription,
+      fulldescription: project.fullDescription,
       type: type.toUpperCase(),
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
@@ -93,8 +93,8 @@ export const updateProject = async (project: Project, id: string): Promise<void>
     // Transform the data to match database column names
     const transformedProject = {
       ...project,
-      shortdescription: project.shortdescription,
-      fulldescription: project.fulldescription,
+      shortdescription: project.shortDescription,
+      fulldescription: project.fullDescription,
       updated_at: new Date().toISOString()
     };
 
