@@ -5,7 +5,6 @@ import { Tool as ToolType } from '../../../types/project';
 import { BadgeCreator } from '../BadgeCreator';
 import { useProjectStore } from '../../../store/projectStore';
 import * as Icons from 'lucide-react';
-import { Toast } from '../../ui/Toast';
 
 interface ToolsSectionProps {
   tools: ToolType[];
@@ -28,7 +27,6 @@ export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) 
       return [];
     }
   });
-  const [toast, setToast] = useState({ show: false, message: '', type: 'success' as 'success' | 'error' });
 
   // Persist custom tools to localStorage
   React.useEffect(() => {
@@ -95,28 +93,10 @@ export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) 
     return filteredTools;
   };
 
-  const handleSaveBadge = async (badge: ToolType) => {
-    try {
-      setCustomTools(prev => [...prev, badge]);
-      onToolToggle(badge.name);
-      setShowBadgeCreator(false);
-      setToast({
-        show: true,
-        message: 'Outil ajouté avec succès',
-        type: 'success'
-      });
-      
-      // Auto-hide toast after 3 seconds
-      setTimeout(() => {
-        setToast(prev => ({ ...prev, show: false }));
-      }, 3000);
-    } catch (error) {
-      setToast({
-        show: true,
-        message: 'Erreur lors de l\'ajout de l\'outil',
-        type: 'error'
-      });
-    }
+  const handleSaveBadge = (badge: ToolType) => {
+    setCustomTools(prev => [...prev, badge]);
+    onToolToggle(badge.name);
+    setShowBadgeCreator(false);
   };
 
   return (
@@ -243,13 +223,6 @@ export function ToolsSection({ tools, error, onToolToggle }: ToolsSectionProps) 
           </div>
         </>
       )}
-
-      <Toast
-        message={toast.message}
-        type={toast.type}
-        isVisible={toast.show}
-        onClose={() => setToast(prev => ({ ...prev, show: false }))}
-      />
     </div>
   );
 }

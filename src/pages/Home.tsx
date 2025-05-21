@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import AnimatedHeader from '../components/AnimatedHeader';
-import { ProjectBanner } from '../components/ProjectBanner';
 
 function Home() {
   return (
@@ -89,8 +88,6 @@ function Home() {
           </div>
         </div>
       </div>
-
-      <ProjectBanner />
     </motion.div>
   );
 }
