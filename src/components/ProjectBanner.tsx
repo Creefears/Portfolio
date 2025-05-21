@@ -65,7 +65,7 @@ export function ProjectBanner() {
         {[...allProjects, ...allProjects].map((project, index) => (
           <Link
             key={`${project.id}-${index}`}
-            to={`/${project.type.toLowerCase() === 'cgi' ? 'cgi' : 'prise-de-vue-reel'}?project=${index % allProjects.length}`}
+            to={`/${project.type?.toLowerCase() === 'cgi' ? 'cgi' : 'prise-de-vue-reel'}?project=${index % allProjects.length}`}
             className="relative flex-none w-72 h-48 overflow-hidden rounded-lg transform transition-transform duration-300 hover:scale-105"
           >
             <motion.img
