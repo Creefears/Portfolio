@@ -1,6 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
-import type { Role } from '../types/role';
 import type { Experience } from '../types/experience';
+import type { Project } from '../types/project';
+import type { Tool } from '../types/project';
+import type { Role } from '../types/role';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -9,78 +11,77 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true
-  },
-  db: {
-    schema: 'public'
-  }
-});
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Role operations with optimized error handling and caching
-const ROLES_CACHE_KEY = 'roles_cache';
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-
-let rolesCache: {
-  data: Role[] | null;
-  timestamp: number;
-} = {
-  data: null,
-  timestamp: 0
+const handleSupabaseError = (error: unknown, operation: string) => {
+  const timestamp = new Date().toISOString();
+  console.error(`[${timestamp}] Supabase ${operation} error:`, error);
+  return {
+    message: error instanceof Error ? error.message : 'An unknown error occurred',
+    timestamp,
+    operation
+  };
 };
 
+// Role operations
 export const getRoles = async (): Promise<Role[]> => {
   try {
-    // Check cache first
-    const now = Date.now();
-    if (rolesCache.data && (now - rolesCache.timestamp) < CACHE_DURATION) {
-      return rolesCache.data;
-    }
-
     const { data, error } = await supabase
       .from('roles')
       .select('*')
       .order('name');
 
     if (error) throw error;
-
-    // Update cache
-    rolesCache = {
-      data: data || [],
-      timestamp: now
-    };
-
     return data || [];
   } catch (error) {
-    console.error('Error fetching roles:', error);
-    // Return cached data if available, otherwise empty array
-    return rolesCache.data || [];
+    handleSupabaseError(error, 'roles fetch');
+    return [];
   }
 };
 
 export const saveRole = async (role: Partial<Role>): Promise<Role> => {
   try {
-    const { data, error } = await supabase
-      .from('roles')
-      .upsert([{
-        ...role,
-        updated_at: new Date().toISOString()
-      }])
-      .select()
-      .single();
+    let query;
+    
+    if (role.id) {
+      // Update existing role
+      query = supabase
+        .from('roles')
+        .update({
+          name: role.name,
+          color: role.color,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', role.id)
+        .select();
+    } else {
+      // Insert new role
+      query = supabase
+        .from('roles')
+        .insert([{
+          name: role.name,
+          color: role.color,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }])
+        .select();
+    }
 
-    if (error) throw error;
-    if (!data) throw new Error('No data returned');
+    const { data, error } = await query.single();
 
-    // Invalidate cache
-    rolesCache.data = null;
+    if (error) {
+      const errorInfo = handleSupabaseError(error, 'role save');
+      throw new Error(errorInfo.message);
+    }
+
+    if (!data) {
+      throw new Error('No data returned from Supabase after role operation');
+    }
 
     return data;
   } catch (error) {
-    console.error('Error saving role:', error);
-    throw error;
+    const errorInfo = handleSupabaseError(error, 'role save');
+    throw new Error(errorInfo.message);
   }
 };
 
@@ -91,13 +92,181 @@ export const deleteRole = async (id: string): Promise<void> => {
       .delete()
       .eq('id', id);
 
-    if (error) throw error;
-
-    // Invalidate cache
-    rolesCache.data = null;
+    if (error) {
+      const errorInfo = handleSupabaseError(error, 'role delete');
+      throw new Error(errorInfo.message);
+    }
   } catch (error) {
-    console.error('Error deleting role:', error);
-    throw error;
+    const errorInfo = handleSupabaseError(error, 'role delete');
+    throw new Error(errorInfo.message);
+  }
+};
+
+// Tool operations
+export const getTools = async (): Promise<Tool[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('tools')
+      .select('*')
+      .order('name');
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    handleSupabaseError(error, 'tools fetch');
+    return [];
+  }
+};
+
+export const saveTool = async (tool: Partial<Tool>): Promise<Tool> => {
+  try {
+    let query;
+    
+    if (tool.id) {
+      // Update existing tool
+      query = supabase
+        .from('tools')
+        .update({
+          name: tool.name,
+          short_name: tool.short_name,
+          icon: tool.icon,
+          color: tool.color,
+          category: tool.category,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', tool.id)
+        .select();
+    } else {
+      // Insert new tool
+      query = supabase
+        .from('tools')
+        .insert([{
+          ...tool,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }])
+        .select();
+    }
+
+    const { data, error } = await query.single();
+
+    if (error) {
+      const errorInfo = handleSupabaseError(error, 'tool save');
+      throw new Error(errorInfo.message);
+    }
+
+    if (!data) {
+      throw new Error('No data returned from Supabase after tool operation');
+    }
+
+    return data;
+  } catch (error) {
+    const errorInfo = handleSupabaseError(error, 'tool save');
+    throw new Error(errorInfo.message);
+  }
+};
+
+export const deleteTool = async (id: string): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('tools')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      const errorInfo = handleSupabaseError(error, 'tool delete');
+      throw new Error(errorInfo.message);
+    }
+  } catch (error) {
+    const errorInfo = handleSupabaseError(error, 'tool delete');
+    throw new Error(errorInfo.message);
+  }
+};
+
+// Project operations
+export const getProjects = async (type?: 'CGI' | 'REAL'): Promise<Project[]> => {
+  try {
+    let query = supabase
+      .from('projects')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (type) {
+      query = query.eq('type', type);
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    handleSupabaseError(error, 'projects fetch');
+    return [];
+  }
+};
+
+export const saveProject = async (project: Project): Promise<Project> => {
+  try {
+    const { data, error } = await supabase
+      .from('projects')
+      .insert([{
+        ...project,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }])
+      .select()
+      .single();
+
+    if (error) {
+      const errorInfo = handleSupabaseError(error, 'project save');
+      throw new Error(errorInfo.message);
+    }
+
+    if (!data) {
+      throw new Error('No data returned from Supabase after project insert');
+    }
+
+    return data;
+  } catch (error) {
+    const errorInfo = handleSupabaseError(error, 'project save');
+    throw new Error(errorInfo.message);
+  }
+};
+
+export const updateProject = async (project: Project, id: string): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('projects')
+      .update({
+        ...project,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id);
+
+    if (error) {
+      const errorInfo = handleSupabaseError(error, 'project update');
+      throw new Error(errorInfo.message);
+    }
+  } catch (error) {
+    const errorInfo = handleSupabaseError(error, 'project update');
+    throw new Error(errorInfo.message);
+  }
+};
+
+export const deleteProject = async (id: string): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('projects')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      const errorInfo = handleSupabaseError(error, 'project delete');
+      throw new Error(errorInfo.message);
+    }
+  } catch (error) {
+    const errorInfo = handleSupabaseError(error, 'project delete');
+    throw new Error(errorInfo.message);
   }
 };
 
@@ -107,17 +276,17 @@ export const getExperiences = async (): Promise<Experience[]> => {
     const { data, error } = await supabase
       .from('experiences')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('year', { ascending: false });
 
     if (error) throw error;
     return data || [];
   } catch (error) {
-    console.error('Error fetching experiences:', error);
-    throw error;
+    handleSupabaseError(error, 'experiences fetch');
+    return [];
   }
 };
 
-export const saveExperience = async (experience: Partial<Experience>): Promise<Experience> => {
+export const saveExperience = async (experience: Experience): Promise<Experience> => {
   try {
     const { data, error } = await supabase
       .from('experiences')
@@ -129,35 +298,39 @@ export const saveExperience = async (experience: Partial<Experience>): Promise<E
       .select()
       .single();
 
-    if (error) throw error;
-    if (!data) throw new Error('No data returned');
+    if (error) {
+      const errorInfo = handleSupabaseError(error, 'experience save');
+      throw new Error(errorInfo.message);
+    }
+
+    if (!data) {
+      throw new Error('No data returned from Supabase after experience insert');
+    }
 
     return data;
   } catch (error) {
-    console.error('Error saving experience:', error);
-    throw error;
+    const errorInfo = handleSupabaseError(error, 'experience save');
+    throw new Error(errorInfo.message);
   }
 };
 
-export const updateExperience = async (experience: Partial<Experience>, id: string): Promise<Experience> => {
+export const updateExperience = async (experience: Experience, id: string): Promise<void> => {
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('experiences')
       .update({
         ...experience,
         updated_at: new Date().toISOString()
       })
-      .eq('id', id)
-      .select()
-      .single();
+      .eq('id', id);
 
-    if (error) throw error;
-    if (!data) throw new Error('No data returned');
-
-    return data;
+    if (error) {
+      const errorInfo = handleSupabaseError(error, 'experience update');
+      throw new Error(errorInfo.message);
+    }
   } catch (error) {
-    console.error('Error updating experience:', error);
-    throw error;
+    const errorInfo = handleSupabaseError(error, 'experience update');
+    throw new Error(errorInfo.message);
   }
 };
 
@@ -168,24 +341,12 @@ export const deleteExperience = async (id: string): Promise<void> => {
       .delete()
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      const errorInfo = handleSupabaseError(error, 'experience delete');
+      throw new Error(errorInfo.message);
+    }
   } catch (error) {
-    console.error('Error deleting experience:', error);
-    throw error;
-  }
-};
-
-// Project operations
-export const deleteProject = async (id: string): Promise<void> => {
-  try {
-    const { error } = await supabase
-      .from('projects')
-      .delete()
-      .eq('id', id);
-
-    if (error) throw error;
-  } catch (error) {
-    console.error('Error deleting project:', error);
-    throw error;
+    const errorInfo = handleSupabaseError(error, 'experience delete');
+    throw new Error(errorInfo.message);
   }
 };
