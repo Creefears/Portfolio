@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import type { Experience } from '../types/experience';
 import type { Project } from '../types/project';
 import type { Tool } from '../types/project';
+import type { Role } from '../types/role';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -47,6 +48,87 @@ const handleSupabaseError = (error: unknown, operation: string) => {
     operation,
     details: errorDetails
   };
+};
+
+// Role operations
+export const getRoles = async (): Promise<Role[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('roles')
+      .select('*')
+      .order('name');
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    handleSupabaseError(error, 'roles fetch');
+    return [];
+  }
+};
+
+export const saveRole = async (role: Partial<Role>): Promise<Role> => {
+  try {
+    let query;
+    
+    if (role.id) {
+      // Update existing role
+      query = supabase
+        .from('roles')
+        .update({
+          name: role.name,
+          description: role.description,
+          icon: role.icon,
+          color: role.color,
+          permissions: role.permissions,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', role.id)
+        .select();
+    } else {
+      // Insert new role
+      query = supabase
+        .from('roles')
+        .insert([{
+          ...role,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }])
+        .select();
+    }
+
+    const { data, error } = await query.single();
+
+    if (error) {
+      const errorInfo = handleSupabaseError(error, 'role save');
+      throw new Error(errorInfo.message);
+    }
+
+    if (!data) {
+      throw new Error('No data returned from Supabase after role operation');
+    }
+
+    return data;
+  } catch (error) {
+    const errorInfo = handleSupabaseError(error, 'role save');
+    throw new Error(errorInfo.message);
+  }
+};
+
+export const deleteRole = async (id: string): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('roles')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      const errorInfo = handleSupabaseError(error, 'role delete');
+      throw new Error(errorInfo.message);
+    }
+  } catch (error) {
+    const errorInfo = handleSupabaseError(error, 'role delete');
+    throw new Error(errorInfo.message);
+  }
 };
 
 // Tool operations
