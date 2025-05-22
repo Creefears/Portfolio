@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { useThemeStore } from './store/themeStore';
 import { useProjectStore } from './store/projectStore';
 import { useCareerStore } from './store/careerStore';
-import { AnimatePresence, LazyMotion, domAnimation, m } from 'framer-motion';
+import { AnimatePresence, LazyMotion, domAnimation } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ThemeToggle from './components/ThemeToggle';
@@ -46,11 +46,10 @@ function TitleUpdater() {
   return null;
 }
 
-// Main App component that requires router context
-function AppContent() {
-  const isDarkMode = useThemeStore(state => state.isDarkMode);
-  const fetchProjects = useProjectStore(state => state.fetchProjects);
-  const fetchExperiences = useCareerStore(state => state.fetchExperiences);
+function App() {
+  const { isDarkMode } = useThemeStore();
+  const { fetchProjects } = useProjectStore();
+  const { fetchExperiences } = useCareerStore();
   const location = useLocation();
 
   useEffect(() => {
@@ -66,16 +65,18 @@ function AppContent() {
         <Navbar />
         <main>
           <Suspense fallback={<LoadingSpinner />}>
-            <AnimatePresence mode="wait">
-              <Routes location={location} key={location.pathname}>
-                <Route path="/" element={<Home />} />
-                <Route path="/portfolio" element={<Portfolio />} />
-                <Route path="/a-propos" element={<About />} />
-                <Route path="/cgi" element={<CGI />} />
-                <Route path="/prise-de-vue-reel" element={<RealFootage />} />
-                <Route path="/buy-gold" element={<BuyGold />} />
-              </Routes>
-            </AnimatePresence>
+            <LazyMotion features={domAnimation}>
+              <AnimatePresence mode="wait">
+                <Routes location={location} key={location.pathname}>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/portfolio" element={<Portfolio />} />
+                  <Route path="/a-propos" element={<About />} />
+                  <Route path="/cgi" element={<CGI />} />
+                  <Route path="/prise-de-vue-reel" element={<RealFootage />} />
+                  <Route path="/buy-gold" element={<BuyGold />} />
+                </Routes>
+              </AnimatePresence>
+            </LazyMotion>
           </Suspense>
         </main>
         <ThemeToggle />
@@ -85,15 +86,12 @@ function AppContent() {
   );
 }
 
-// Root component that provides all necessary context
-function App() {
+function AppWrapper() {
   return (
     <Router>
-      <LazyMotion features={domAnimation} strict>
-        <AppContent />
-      </LazyMotion>
+      <App />
     </Router>
   );
 }
 
-export default App;
+export default AppWrapper;
