@@ -1,14 +1,16 @@
 import React from 'react';
 
 interface ProjectOverlayProps {
-  handleClose: (e: React.MouseEvent) => void;
+  onClick: () => void;
 }
 
-export function ProjectOverlay({ handleClose }: ProjectOverlayProps) {
+const ProjectOverlay: React.FC<ProjectOverlayProps> = ({ onClick }) => {
   return (
     <div
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
-      onClick={handleClose}
+      className="fixed inset-0 bg-black bg-opacity-60 z-40"
+      onClick={onClick}
     />
   );
-}
+};
+
+export { ProjectOverlay };
