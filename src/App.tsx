@@ -46,6 +46,18 @@ function TitleUpdater() {
   return null;
 }
 
+function App() {
+  return (
+    <Router>
+      <LazyMotion features={domAnimation}>
+        <MotionConfig reducedMotion="user">
+          <AppContent />
+        </MotionConfig>
+      </LazyMotion>
+    </Router>
+  );
+}
+
 function AppContent() {
   const { isDarkMode } = useThemeStore();
   const { fetchProjects } = useProjectStore();
@@ -81,18 +93,6 @@ function AppContent() {
         <Footer />
       </div>
     </div>
-  );
-}
-
-function App() {
-  return (
-    <Router>
-      <LazyMotion features={domAnimation}>
-        <MotionConfig reducedMotion="user">
-          <AppContent />
-        </MotionConfig>
-      </LazyMotion>
-    </Router>
   );
 }
 
