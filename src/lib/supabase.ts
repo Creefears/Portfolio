@@ -174,3 +174,18 @@ export const deleteExperience = async (id: string): Promise<void> => {
     throw error;
   }
 };
+
+// Project operations
+export const deleteProject = async (id: string): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('projects')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error deleting project:', error);
+    throw error;
+  }
+};
