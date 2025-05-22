@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { useThemeStore } from './store/themeStore';
 import { useProjectStore } from './store/projectStore';
 import { useCareerStore } from './store/careerStore';
-import { AnimatePresence, LazyMotion, domAnimation } from 'framer-motion';
+import { AnimatePresence, LazyMotion, domAnimation, MotionConfig } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ThemeToggle from './components/ThemeToggle';
@@ -46,7 +46,7 @@ function TitleUpdater() {
   return null;
 }
 
-function App() {
+function AppContent() {
   const { isDarkMode } = useThemeStore();
   const { fetchProjects } = useProjectStore();
   const { fetchExperiences } = useCareerStore();
@@ -65,18 +65,16 @@ function App() {
         <Navbar />
         <main>
           <Suspense fallback={<LoadingSpinner />}>
-            <LazyMotion features={domAnimation}>
-              <AnimatePresence mode="wait">
-                <Routes location={location} key={location.pathname}>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/portfolio" element={<Portfolio />} />
-                  <Route path="/a-propos" element={<About />} />
-                  <Route path="/cgi" element={<CGI />} />
-                  <Route path="/prise-de-vue-reel" element={<RealFootage />} />
-                  <Route path="/buy-gold" element={<BuyGold />} />
-                </Routes>
-              </AnimatePresence>
-            </LazyMotion>
+            <AnimatePresence mode="wait">
+              <Routes location={location} key={location.pathname}>
+                <Route path="/" element={<Home />} />
+                <Route path="/portfolio" element={<Portfolio />} />
+                <Route path="/a-propos" element={<About />} />
+                <Route path="/cgi" element={<CGI />} />
+                <Route path="/prise-de-vue-reel" element={<RealFootage />} />
+                <Route path="/buy-gold" element={<BuyGold />} />
+              </Routes>
+            </AnimatePresence>
           </Suspense>
         </main>
         <ThemeToggle />
@@ -86,12 +84,16 @@ function App() {
   );
 }
 
-function AppWrapper() {
+function App() {
   return (
     <Router>
-      <App />
+      <LazyMotion features={domAnimation}>
+        <MotionConfig reducedMotion="user">
+          <AppContent />
+        </MotionConfig>
+      </LazyMotion>
     </Router>
   );
 }
 
-export default AppWrapper;
+export default App;
