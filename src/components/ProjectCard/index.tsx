@@ -40,7 +40,7 @@ function ProjectCard({
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const currentProject = allProjects[currentIndex];
   const location = useLocation();
-  const allTools = useToolStore(state => state.tools);
+  const { tools: allTools } = useToolStore();
 
 const slugify = (text: string) =>
   text
@@ -101,9 +101,14 @@ useEffect(() => {
         detail: { isOpen: false }
       }));
     }
-    const projectTools = currentProject.tools.map(toolName =>
-  allTools.find(tool => tool.name === toolName || tool.short_name === toolName)
+    const projectTools = (currentProject.tools || []).map(t =>
+  allTools.find(tool =>
+    typeof t === 'string'
+      ? tool.name === t || tool.short_name === t
+      : tool.name === t.name || tool.short_name === t.name
+  )
 ).filter(Boolean);
+
 
     return () => {
       document.body.style.overflow = 'unset';
