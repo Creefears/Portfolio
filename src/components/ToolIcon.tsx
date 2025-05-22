@@ -29,7 +29,16 @@ const ToolIcon = React.memo(function ToolIcon({ name, className, size = 20, show
   }, []);
 
   const tool = tools.find(t => t.name === name);
-  let IconComponent: React.ElementType = Box;
+
+let IconComponent: React.ElementType = Box;
+
+if (!tool) {
+  console.warn(`❌ Aucun tool trouvé avec le nom "${name}"`);
+} else if (tool.icon && tool.icon in Icons) {
+  IconComponent = Icons[tool.icon as keyof typeof Icons];
+} else {
+  console.warn(`❌ Icône invalide "${tool.icon}" pour "${tool.name}"`);
+}
 
 if (tool?.icon) {
   const iconKey = tool.icon as keyof typeof Icons;
