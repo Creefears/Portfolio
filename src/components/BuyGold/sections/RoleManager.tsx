@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Search, Trash2, Edit2 } from 'lucide-react';
-import { Input } from '../ui/Input';
-import { useRoleStore } from '../../store/roleStore';
-import { Toast } from '../ui/Toast';
-import { Role } from '../../types/role';
+import { Input } from '../../ui/Input';
+import { useRoleStore } from '../../../store/roleStore';
+import { Toast } from '../../ui/Toast';
+import { Role } from '../../../types/role';
 
 interface RoleManagerProps {
   onClose: () => void;
