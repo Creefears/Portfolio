@@ -73,7 +73,7 @@ export function RoleManager({ onClose }: RoleManagerProps) {
     };
 
     const nextColor = Object.values(colors)[
-      (Object.values(colors).findIndex(c => c[type] === formData.colors[type]) + 1) % Object.keys(colors).length
+      (Object.values(colors).findIndex(c => c[type] === formData.colors?.[type]) + 1) % Object.keys(colors).length
     ];
 
     setFormData(prev => ({
@@ -88,6 +88,12 @@ export function RoleManager({ onClose }: RoleManagerProps) {
   const filteredRoles = roles.filter(role => 
     role.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Default colors if none are set
+  const defaultColors = {
+    bg: 'bg-gray-100',
+    text: 'text-gray-800'
+  };
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg space-y-6">
@@ -112,19 +118,19 @@ export function RoleManager({ onClose }: RoleManagerProps) {
             <button
               type="button"
               onClick={() => handleColorChange('bg')}
-              className={`px-4 py-2 rounded-lg ${formData.colors.bg} ${formData.colors.text} transition-colors`}
+              className={`px-4 py-2 rounded-lg ${formData.colors?.bg || defaultColors.bg} ${formData.colors?.text || defaultColors.text} transition-colors`}
             >
               Changer la couleur de fond
             </button>
             <button
               type="button"
               onClick={() => handleColorChange('text')}
-              className={`px-4 py-2 rounded-lg ${formData.colors.bg} ${formData.colors.text} transition-colors`}
+              className={`px-4 py-2 rounded-lg ${formData.colors?.bg || defaultColors.bg} ${formData.colors?.text || defaultColors.text} transition-colors`}
             >
               Changer la couleur du texte
             </button>
           </div>
-          <div className={`p-3 rounded-lg ${formData.colors.bg} ${formData.colors.text}`}>
+          <div className={`p-3 rounded-lg ${formData.colors?.bg || defaultColors.bg} ${formData.colors?.text || defaultColors.text}`}>
             Aperçu du badge
           </div>
         </div>
@@ -171,7 +177,7 @@ export function RoleManager({ onClose }: RoleManagerProps) {
                 key={role.id || role.name}
                 className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg group hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                <span className={`px-3 py-1 rounded-full ${role.colors.bg} ${role.colors.text}`}>
+                <span className={`px-3 py-1 rounded-full ${role.colors?.bg || defaultColors.bg} ${role.colors?.text || defaultColors.text}`}>
                   {role.name}
                 </span>
                 <motion.button
