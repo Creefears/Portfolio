@@ -1,21 +1,23 @@
 /*
-  # Create roles table and policies
+  # Project Roles Schema
 
   1. New Tables
-    - `roles`
-      - `id` (uuid, primary key)
-      - `name` (text, unique)
-      - `description` (text, optional)
-      - `icon` (text)
-      - `color` (text)
-      - `permissions` (jsonb, optional)
-      - `created_at` (timestamptz)
-      - `updated_at` (timestamptz)
-  
+    - `roles` table to store project role definitions:
+      - `id` (uuid, primary key) - Unique identifier
+      - `name` (text, unique) - Role name like "Réalisateur", "Assistant Réalisateur"
+      - `description` (text, optional) - Optional role description
+      - `icon` (text) - Lucide icon name for the role
+      - `color` (text) - Badge background color in hex format
+      - `permissions` (jsonb) - Optional permissions/metadata
+      - `created_at` (timestamp) - Creation timestamp
+      - `updated_at` (timestamp) - Last update timestamp
+      
   2. Security
-    - Enable RLS on `roles` table
-    - Add policy for public access
-    - Add trigger for updated_at timestamp
+    - Enable RLS on roles table
+    - Add policy for public access to roles
+    
+  3. Triggers
+    - Add updated_at timestamp trigger
 */
 
 -- Create roles table
