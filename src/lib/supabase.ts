@@ -121,6 +121,9 @@ export const saveProject = async (project: any): Promise<any> => {
   }
 };
 
+// Export saveProject as updateProject for backward compatibility
+export const updateProject = saveProject;
+
 export const deleteProject = async (id: string): Promise<void> => {
   try {
     const { error } = await supabase
