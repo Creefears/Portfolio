@@ -54,6 +54,7 @@ function ProjectCard({
     trackMouse: false
   });
 
+  // ✅ Remplace ce useEffect
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const projectIndex = searchParams.get('project');
@@ -62,15 +63,6 @@ function ProjectCard({
       if (!isNaN(index) && index >= 0 && index < allProjects.length) {
         setCurrentIndex(index);
         setIsExpanded(true);
-        {isExpanded && (
-  <button
-    onClick={() => setIsExpanded(false)}
-    className="absolute top-4 right-4 z-50 p-2 bg-black bg-opacity-50 text-white rounded-full md:hidden"
-    aria-label="Fermer"
-  >
-    ✕
-  </button>
-)}
       }
     }
   }, [location, allProjects.length]);
@@ -78,19 +70,19 @@ function ProjectCard({
   useEffect(() => {
     if (isExpanded) {
       document.body.style.overflow = 'hidden';
-      window.dispatchEvent(new CustomEvent('modalStateChange', { 
-        detail: { isOpen: true } 
+      window.dispatchEvent(new CustomEvent('modalStateChange', {
+        detail: { isOpen: true }
       }));
     } else {
       document.body.style.overflow = 'unset';
-      window.dispatchEvent(new CustomEvent('modalStateChange', { 
-        detail: { isOpen: false } 
+      window.dispatchEvent(new CustomEvent('modalStateChange', {
+        detail: { isOpen: false }
       }));
     }
     return () => {
       document.body.style.overflow = 'unset';
-      window.dispatchEvent(new CustomEvent('modalStateChange', { 
-        detail: { isOpen: false } 
+      window.dispatchEvent(new CustomEvent('modalStateChange', {
+        detail: { isOpen: false }
       }));
     };
   }, [isExpanded]);
@@ -131,7 +123,7 @@ function ProjectCard({
     setCurrentImageIndex(0);
     setCurrentVideoIndex(0);
     setCurrentIndex(index);
-    
+
     const url = new URL(window.location.href);
     url.searchParams.delete('project');
     window.history.replaceState({}, '', url.toString());
@@ -173,6 +165,17 @@ function ProjectCard({
           }`}
           {...(isExpanded ? handlers : {})}
         >
+          {/* ✅ Ajout du bouton de fermeture mobile */}
+          {isExpanded && (
+            <button
+              onClick={handleClose}
+              className="absolute top-4 right-4 z-50 p-2 bg-black bg-opacity-50 text-white rounded-full md:hidden"
+              aria-label="Fermer"
+            >
+              ✕
+            </button>
+          )}
+
           {!isExpanded ? (
             <CompactView
               title={title}
@@ -240,7 +243,7 @@ function ProjectCard({
 
       {isExpanded && (
         <>
-          <div 
+          <div
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
             onClick={handleClose}
           />
