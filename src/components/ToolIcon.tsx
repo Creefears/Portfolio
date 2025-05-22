@@ -23,30 +23,34 @@ const ToolIcon = React.memo(function ToolIcon({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout>();
-  const { tools } = useToolStore();
+  const { tools, fetchTools } = useToolStore();
+
+  useEffect(() => {
+    fetchTools();
+  }, [fetchTools]);
 
   useEffect(() => {
     setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
     return () => clearTimeout(timeoutRef.current);
   }, []);
 
-  // Find tool by id first, then by name if id not found
   const tool = id 
     ? tools.find(t => t.id === id)
     : name 
       ? tools.find(t => t.name === name)
       : null;
 
+  let IconComponent: React.ElementType = Box;
+
   if (!tool) {
     console.warn(`Tool not found: ${id || name}`);
-    return null;
+  } else if (tool.icon && tool.icon in Icons) {
+    IconComponent = Icons[tool.icon as keyof typeof Icons];
+  } else {
+    console.warn(`Invalid icon "${tool?.icon}" for tool "${tool?.name}"`);
   }
 
-  const IconComponent = tool.icon && Icons[tool.icon as keyof typeof Icons] 
-    ? Icons[tool.icon as keyof typeof Icons] 
-    : Box;
-
-  const shortName = tool.short_name || tool.name;
+  const shortName = tool?.short_name || tool?.name || "Tool";
 
   const closeIcon = () => setIsExpanded(false);
 
@@ -66,6 +70,8 @@ const ToolIcon = React.memo(function ToolIcon({
     document.addEventListener('closeToolIcon', handleCloseEvent);
     return () => document.removeEventListener('closeToolIcon', handleCloseEvent);
   }, []);
+
+  if (!tool) return null;
 
   return (
     <Tooltip.Provider>
