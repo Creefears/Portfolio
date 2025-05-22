@@ -6,13 +6,15 @@ import * as Icons from 'lucide-react';
 import { useToolStore } from '../store/toolStore';
 
 interface ToolIconProps {
-  id: string;
+  name?: string;
+  id?: string;
   className?: string;
   size?: number;
   showLabel?: boolean;
 }
 
 const ToolIcon = React.memo(function ToolIcon({
+  name,
   id,
   className,
   size = 20,
@@ -32,11 +34,16 @@ const ToolIcon = React.memo(function ToolIcon({
     return () => clearTimeout(timeoutRef.current);
   }, []);
 
-  const tool = tools.find(t => t.id === id);
+  const tool = id 
+    ? tools.find(t => t.id === id)
+    : name 
+      ? tools.find(t => t.name === name)
+      : null;
+
   let IconComponent: React.ElementType = Box;
 
   if (!tool) {
-    console.warn(`Tool not found with id "${id}"`);
+    console.warn(`Tool not found: ${id || name}`);
   } else if (tool.icon && tool.icon in Icons) {
     IconComponent = Icons[tool.icon as keyof typeof Icons];
   } else {

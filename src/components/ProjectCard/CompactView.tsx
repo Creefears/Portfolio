@@ -4,7 +4,6 @@ import { Play } from 'lucide-react';
 import RoleBadges from './RoleBadges';
 import ToolIcon from '../ToolIcon';
 import { ProjectCardProps } from '../../types/project';
-import { useToolStore } from '../../store/toolStore';
 
 type CompactViewProps = Pick<ProjectCardProps, 'title' | 'shortDescription' | 'image' | 'video' | 'videos' | 'role' | 'tools' | 'year'> & {
   onImageLoad?: () => void;
@@ -42,12 +41,6 @@ export function CompactView({
   year,
   onImageLoad
 }: CompactViewProps) {
-  const { tools: allTools } = useToolStore();
-
-  const projectTools = (tools || []).map(t =>
-    allTools.find(tool => typeof t === 'string' ? tool.id === t : tool.id === t.id)
-  ).filter(Boolean);
-
   return (
     <motion.div 
       className="h-full flex flex-col"
@@ -117,12 +110,13 @@ export function CompactView({
           >
             <RoleBadges role={role} />
             <div className="flex justify-center gap-2">
-              {projectTools.map((tool) => (
+              {tools.map((tool, idx) => (
                 <motion.div
-                  key={tool.id}
+                  key={idx}
                   variants={itemVariants}
+                  custom={idx}
                 >
-                  <ToolIcon id={tool.id} size={16} />
+                  <ToolIcon name={typeof tool === 'string' ? tool : tool.name} size={16} />
                 </motion.div>
               ))}
             </div>
