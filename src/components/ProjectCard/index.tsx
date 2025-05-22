@@ -101,7 +101,7 @@ useEffect(() => {
         detail: { isOpen: false }
       }));
     }
-    const projectTools = (currentProject.tools || []).map(t =>
+    const projectTools = (Project.tools || []).map(t =>
   allTools.find(tool =>
     typeof t === 'string'
       ? tool.name === t || tool.short_name === t
@@ -252,7 +252,7 @@ const generateShareUrl = useCallback(() => {
                 <ProjectInfo
                   year={currentProject.year}
                   role={currentProject.role}
-                  tools={Project.tools}
+                  tools={projectTools}
                 />
 
                 <p className="text-gray-600 dark:text-gray-400 text-base md:text-lg leading-relaxed mb-8">
