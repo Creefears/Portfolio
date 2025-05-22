@@ -10,49 +10,12 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables');
 }
 
-// Check if we're in a browser environment and verify network connectivity
-const checkNetworkConnectivity = () => {
-  if (typeof window !== 'undefined' && !navigator.onLine) {
-    throw new Error('No internet connection. Please check your network and try again.');
-  }
-};
-
-// Initialize Supabase client with error handling
-let supabaseInstance: ReturnType<typeof createClient>;
-
-try {
-  checkNetworkConnectivity();
-  supabaseInstance = createClient(supabaseUrl, supabaseAnonKey, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true
-    }
-  });
-} catch (error) {
-  console.error('Failed to initialize Supabase client:', error);
-  throw new Error('Unable to connect to the database. Please try again later.');
-}
-
-export const supabase = supabaseInstance;
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const handleSupabaseError = (error: unknown, operation: string) => {
-  checkNetworkConnectivity();
-  
   if (error instanceof TypeError && error.message === 'Failed to fetch') {
     throw new Error(`Network error: Unable to connect to Supabase. Please check your internet connection and try again.`);
   }
-  
-  if (error instanceof Error) {
-    // Handle specific Supabase error cases
-    if (error.message.includes('JWT')) {
-      throw new Error('Authentication error. Please sign in again.');
-    }
-    if (error.message.includes('timeout')) {
-      throw new Error('Request timed out. Please try again.');
-    }
-  }
-  
   console.error(`Supabase ${operation} error:`, error);
   throw error;
 };
@@ -60,7 +23,6 @@ const handleSupabaseError = (error: unknown, operation: string) => {
 // Tool operations
 export const getTools = async (): Promise<Tool[]> => {
   try {
-    checkNetworkConnectivity();
     const { data, error } = await supabase
       .from('tools')
       .select('*')
@@ -76,7 +38,6 @@ export const getTools = async (): Promise<Tool[]> => {
 
 export const saveTool = async (tool: Omit<Tool, 'id'>): Promise<Tool> => {
   try {
-    checkNetworkConnectivity();
     const { data, error } = await supabase
       .from('tools')
       .insert([tool])
@@ -94,7 +55,6 @@ export const saveTool = async (tool: Omit<Tool, 'id'>): Promise<Tool> => {
 
 export const deleteTool = async (id: string): Promise<void> => {
   try {
-    checkNetworkConnectivity();
     const { error } = await supabase
       .from('tools')
       .delete()
@@ -110,7 +70,6 @@ export const deleteTool = async (id: string): Promise<void> => {
 // Project operations
 export const getProjects = async (type?: 'CGI' | 'REAL'): Promise<Project[]> => {
   try {
-    checkNetworkConnectivity();
     let query = supabase
       .from('projects')
       .select('*')
@@ -132,7 +91,6 @@ export const getProjects = async (type?: 'CGI' | 'REAL'): Promise<Project[]> => 
 
 export const saveProject = async (project: Project): Promise<Project> => {
   try {
-    checkNetworkConnectivity();
     const { data, error } = await supabase
       .from('projects')
       .insert([{
@@ -154,7 +112,6 @@ export const saveProject = async (project: Project): Promise<Project> => {
 
 export const updateProject = async (project: Project, id: string): Promise<void> => {
   try {
-    checkNetworkConnectivity();
     const { error } = await supabase
       .from('projects')
       .update({
@@ -172,7 +129,6 @@ export const updateProject = async (project: Project, id: string): Promise<void>
 
 export const deleteProject = async (id: string): Promise<void> => {
   try {
-    checkNetworkConnectivity();
     const { error } = await supabase
       .from('projects')
       .delete()
@@ -188,7 +144,6 @@ export const deleteProject = async (id: string): Promise<void> => {
 // Experience operations
 export const getExperiences = async (): Promise<Experience[]> => {
   try {
-    checkNetworkConnectivity();
     const { data, error } = await supabase
       .from('experiences')
       .select('*')
@@ -204,7 +159,6 @@ export const getExperiences = async (): Promise<Experience[]> => {
 
 export const saveExperience = async (experience: Experience): Promise<Experience> => {
   try {
-    checkNetworkConnectivity();
     const { data, error } = await supabase
       .from('experiences')
       .insert([{
@@ -226,7 +180,6 @@ export const saveExperience = async (experience: Experience): Promise<Experience
 
 export const updateExperience = async (experience: Experience, id: string): Promise<void> => {
   try {
-    checkNetworkConnectivity();
     const { error } = await supabase
       .from('experiences')
       .update({
@@ -244,7 +197,6 @@ export const updateExperience = async (experience: Experience, id: string): Prom
 
 export const deleteExperience = async (id: string): Promise<void> => {
   try {
-    checkNetworkConnectivity();
     const { error } = await supabase
       .from('experiences')
       .delete()
