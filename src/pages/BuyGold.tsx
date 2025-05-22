@@ -12,7 +12,7 @@ import { ExperienceForm } from '../components/BuyGold/ExperienceForm';
 import { ExperienceList } from '../components/BuyGold/ExperienceList';
 import { Toast } from '../components/ui/Toast';
 
-function BuyGold() {
+export default function BuyGold() {
   const { userCGIProjects, userRealProjects, addProject, updateProject, deleteProject, isLoading: projectsLoading, error: projectsError } = useProjectStore();
   const { experiences, addExperience, updateExperience, deleteExperience, isLoading: experiencesLoading, error: experiencesError } = useCareerStore();
   const [activeTab, setActiveTab] = useState<'projects' | 'experiences'>('projects');
@@ -341,5 +341,3 @@ function BuyGold() {
     </motion.div>
   );
 }
-
-export default BuyGold;
