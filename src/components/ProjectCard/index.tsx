@@ -11,6 +11,8 @@ import { ProjectOverlay } from './ProjectOverlay';
 import VideoSelector from './VideoSelector';
 import Carousel from './Carousel';
 import ShareDialog from '../ShareDialog';
+import { useToolStore } from '../../store/toolStore';
+
 
 function ProjectCard({
   title,
