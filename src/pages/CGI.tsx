@@ -5,11 +5,13 @@ import ProjectCard from '../components/ProjectCard';
 import CGIHeader from '../components/CGIHeader';
 import ToolIcon from '../components/ToolIcon';
 import { useProjectStore } from '../store/projectStore';
+import { useToolStore } from '../store/toolStore';
 
 function CGI() {
   const { userCGIProjects } = useProjectStore();
+  const { tools } = useToolStore();
   
-  const allTools = [
+  const toolIds = [
     "Blender",
     "Unity",
     "Unreal Engine 5",
@@ -19,7 +21,7 @@ function CGI() {
     "Adobe Animate",
     "Autodesk Maya",
     "Substance Painter"
-  ];
+  ].map(name => tools.find(t => t.name === name)?.id).filter(Boolean) as string[];
 
   const projects = [...userCGIProjects].sort((a, b) => {
     const getLatestYear = (year: string) => {
@@ -55,9 +57,9 @@ function CGI() {
               "p-3 md:p-6",
               "bg-white/50 dark:bg-gray-800/50 rounded-xl"
             )}>
-              {allTools.map((tool, index) => (
+              {toolIds.map((id, index) => (
                 <motion.div
-                  key={tool}
+                  key={id}
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ 
@@ -69,7 +71,7 @@ function CGI() {
                   }}
                 >
                   <ToolIcon 
-                    name={tool} 
+                    id={id}
                     size={24}
                     showLabel={true}
                   />
