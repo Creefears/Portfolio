@@ -9,9 +9,13 @@ import { useToolStore } from '../store/toolStore';
 
 function RealFootage() {
   const { userRealProjects } = useProjectStore();
-  const { tools } = useToolStore();
+  const { tools, fetchTools } = useToolStore();
   
-  const toolIds = [
+  React.useEffect(() => {
+    fetchTools();
+  }, [fetchTools]);
+
+  const toolNames = [
     "Adobe Premiere",
     "Adobe After Effects",
     "Adobe Photoshop",
@@ -19,7 +23,11 @@ function RealFootage() {
     "Movie Magic Scheduling",
     "Sony Vegas",
     "DaVinci Resolve"
-  ].map(name => tools.find(t => t.name === name)?.id).filter(Boolean) as string[];
+  ];
+
+  const toolIds = toolNames
+    .map(name => tools.find(t => t.name === name)?.id)
+    .filter(Boolean) as string[];
 
   const projects = [...userRealProjects].sort((a, b) => {
     const getLatestYear = (year: string) => {
@@ -69,7 +77,7 @@ function RealFootage() {
                   }}
                 >
                   <ToolIcon 
-                    id={id} 
+                    id={id}
                     size={24}
                     showLabel={true}
                   />

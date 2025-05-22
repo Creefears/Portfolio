@@ -9,9 +9,13 @@ import { useToolStore } from '../store/toolStore';
 
 function CGI() {
   const { userCGIProjects } = useProjectStore();
-  const { tools } = useToolStore();
+  const { tools, fetchTools } = useToolStore();
   
-  const toolIds = [
+  React.useEffect(() => {
+    fetchTools();
+  }, [fetchTools]);
+
+  const toolNames = [
     "Blender",
     "Unity",
     "Unreal Engine 5",
@@ -21,7 +25,11 @@ function CGI() {
     "Adobe Animate",
     "Autodesk Maya",
     "Substance Painter"
-  ].map(name => tools.find(t => t.name === name)?.id).filter(Boolean) as string[];
+  ];
+
+  const toolIds = toolNames
+    .map(name => tools.find(t => t.name === name)?.id)
+    .filter(Boolean) as string[];
 
   const projects = [...userCGIProjects].sort((a, b) => {
     const getLatestYear = (year: string) => {

@@ -21,7 +21,11 @@ const ToolIcon = React.memo(function ToolIcon({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout>();
-  const { tools } = useToolStore();
+  const { tools, fetchTools } = useToolStore();
+
+  useEffect(() => {
+    fetchTools();
+  }, [fetchTools]);
 
   useEffect(() => {
     setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
@@ -32,14 +36,14 @@ const ToolIcon = React.memo(function ToolIcon({
   let IconComponent: React.ElementType = Box;
 
   if (!tool) {
-    console.warn(`❌ Aucun outil trouvé avec l'id "${id}"`);
+    console.warn(`Tool not found with id "${id}"`);
   } else if (tool.icon && tool.icon in Icons) {
     IconComponent = Icons[tool.icon as keyof typeof Icons];
   } else {
-    console.warn(`❌ Icône invalide "${tool?.icon}" pour "${tool?.name}"`);
+    console.warn(`Invalid icon "${tool?.icon}" for tool "${tool?.name}"`);
   }
 
-  const shortName = tool?.short_name || tool?.name || "Outil";
+  const shortName = tool?.short_name || tool?.name || "Tool";
 
   const closeIcon = () => setIsExpanded(false);
 
@@ -60,6 +64,8 @@ const ToolIcon = React.memo(function ToolIcon({
     return () => document.removeEventListener('closeToolIcon', handleCloseEvent);
   }, []);
 
+  if (!tool) return null;
+
   return (
     <Tooltip.Provider>
       <Tooltip.Root>
@@ -77,7 +83,7 @@ const ToolIcon = React.memo(function ToolIcon({
                 "hover:shadow-lg dark:hover:shadow-black/30",
                 className
               )}
-              style={{ backgroundColor: tool?.color || '#6366f1' }}
+              style={{ backgroundColor: tool.color }}
             >
               <div className="flex items-center">
                 <IconComponent 
@@ -102,7 +108,7 @@ const ToolIcon = React.memo(function ToolIcon({
             </div>
             {showLabel && (
               <span className="text-xs md:text-sm text-gray-600 dark:text-gray-400 text-center">
-                {shortName}
+                {tool.name}
               </span>
             )}
           </div>
@@ -112,7 +118,7 @@ const ToolIcon = React.memo(function ToolIcon({
             className="bg-gray-900 text-white px-2 py-1 rounded text-xs md:text-sm"
             sideOffset={5}
           >
-            {!showLabel && shortName}
+            {!showLabel && tool.name}
             <Tooltip.Arrow className="fill-gray-900" />
           </Tooltip.Content>
         </Tooltip.Portal>
