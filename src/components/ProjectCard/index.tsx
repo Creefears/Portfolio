@@ -39,6 +39,15 @@ function ProjectCard({
   const currentProject = allProjects[currentIndex];
   const location = useLocation();
 
+const slugify = (text: string) =>
+  text
+    .toLowerCase()
+    .normalize('NFD') // enleve accents
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-') // remplace tout sauf lettres/chiffres par tiret
+    .replace(/^-+|-+$/g, ''); // trim les tirets
+
+  
   const handlers = useSwipeable({
     onSwipedLeft: () => {
       if (currentIndex < totalProjects - 1 && !isTransitioning) {
@@ -129,15 +138,16 @@ function ProjectCard({
     window.history.replaceState({}, '', url.toString());
   }, [index]);
 
-  const handleCardClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!isExpanded) {
-      setIsExpanded(true);
-      const url = new URL(window.location.href);
-      url.searchParams.set('project', currentIndex.toString());
-      window.history.replaceState({}, '', url.toString());
-    }
-  }, [isExpanded, currentIndex]);
+const handleCardClick = useCallback((e: React.MouseEvent) => {
+  e.stopPropagation();
+  if (!isExpanded) {
+    setIsExpanded(true);
+    const slug = slugify(title);
+    const url = new URL(window.location.href);
+    url.searchParams.set('project', slug);
+    window.history.replaceState({}, '', url.toString());
+  }
+}, [isExpanded, title]);
 
   const generateShareUrl = useCallback(() => {
     const baseUrl = window.location.origin;
