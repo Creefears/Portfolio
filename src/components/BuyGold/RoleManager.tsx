@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Search, Trash2, Edit2 } from 'lucide-react';
 import { Input } from '../ui/Input';
@@ -11,7 +11,7 @@ interface RoleManagerProps {
 }
 
 export function RoleManager({ onClose }: RoleManagerProps) {
-  const { roles, addRole, updateRole, deleteRole } = useRoleStore();
+  const { roles, addRole, updateRole, deleteRole, fetchRoles } = useRoleStore();
   const [formData, setFormData] = useState<Role>({
     name: '',
     color: '#4F46E5'
@@ -23,6 +23,10 @@ export function RoleManager({ onClose }: RoleManagerProps) {
     type: 'success',
     visible: false
   });
+
+  useEffect(() => {
+    fetchRoles();
+  }, [fetchRoles]);
 
   const showToast = (message: string, type: 'success' | 'error') => {
     setToast({ message, type, visible: true });
@@ -47,6 +51,7 @@ export function RoleManager({ onClose }: RoleManagerProps) {
       }
 
       resetForm();
+      fetchRoles(); // Refresh roles after adding/updating
     } catch (error) {
       console.error('Error saving role:', error);
       showToast(editingId ? 'Échec de la mise à jour' : 'Échec de l\'ajout du rôle', 'error');
@@ -70,6 +75,7 @@ export function RoleManager({ onClose }: RoleManagerProps) {
         if (editingId === id) {
           resetForm();
         }
+        fetchRoles(); // Refresh roles after deleting
       } catch (error) {
         console.error('Error deleting role:', error);
         showToast('Échec de la suppression', 'error');
