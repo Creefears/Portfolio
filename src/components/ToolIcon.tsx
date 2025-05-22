@@ -33,7 +33,18 @@ const ToolIcon = React.memo(function ToolIcon({
     };
   }, []);
 
-  const tool = tools.find(t => t.id === id);
+  interface ToolIconProps {
+  tool: {
+    name: string;
+    icon: string;
+    color?: string;
+    short_name?: string;
+  };
+  size?: number;
+  showLabel?: boolean;
+  className?: string;
+}
+
 
 let IconComponent: React.ElementType = Box;
 
