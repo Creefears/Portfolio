@@ -39,12 +39,16 @@ function ProjectCard({
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const currentProject = allProjects[currentIndex];
   const location = useLocation();
-  const { tools: allTools } = useToolStore();
+  const { tools: allTools, fetchTools } = useToolStore();
+
+  useEffect(() => {
+    fetchTools();
+  }, [fetchTools]);
 
   const slugify = (text: string) =>
     text.toLowerCase()
       .normalize('NFD')
-      .replace(/[̀-ͯ]/g, '')
+      .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '');
 
@@ -88,9 +92,18 @@ function ProjectCard({
     };
   }, [isExpanded]);
 
-  const projectTools = (currentProject.tools || []).map(t =>
-    allTools.find(tool => typeof t === 'string' ? tool.id === t : tool.id === t.id)
-  ).filter(Boolean);
+  // Convert tool references to actual tool objects
+  const getProjectTools = (projectTools: any[]) => {
+    return projectTools.map(tool => {
+      if (typeof tool === 'string') {
+        return allTools.find(t => t.id === tool || t.name === tool);
+      }
+      return allTools.find(t => t.id === tool.id || t.name === tool.name);
+    }).filter(Boolean);
+  };
+
+  const currentTools = getProjectTools(currentProject.tools || []);
+  const compactTools = getProjectTools(tools || []);
 
   const handleNext = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -190,7 +203,7 @@ function ProjectCard({
               video={video}
               videos={videos}
               role={role}
-              tools={projectTools}
+              tools={compactTools}
               year={year}
               onImageLoad={() => setIsImageLoaded(true)}
             />
@@ -225,7 +238,7 @@ function ProjectCard({
                 <ProjectInfo
                   year={currentProject.year}
                   role={currentProject.role}
-                  tools={projectTools}
+                  tools={currentTools}
                 />
 
                 <p className="text-gray-600 dark:text-gray-400 text-base md:text-lg leading-relaxed mb-8">
