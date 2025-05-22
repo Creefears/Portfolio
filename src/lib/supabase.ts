@@ -37,20 +37,14 @@ export const getTools = async (): Promise<Tool[]> => {
 };
 
 export const saveTool = async (tool: Omit<Tool, 'id'>): Promise<Tool> => {
-  try {
-    const { data, error } = await supabase
-      .from('tools')
-      .insert([tool])
-      .select()
-      .single();
+  const { data, error } = await supabase
+    .from('tools')
+    .insert([tool])
+    .select()
+    .single();
 
-    if (error) throw error;
-    if (!data) throw new Error('No data returned from Supabase after insert');
-    return data;
-  } catch (error) {
-    handleSupabaseError(error, 'tool save');
-    throw error;
-  }
+  if (error) throw new Error(error.message);
+  return data;
 };
 
 export const deleteTool = async (id: string): Promise<void> => {
