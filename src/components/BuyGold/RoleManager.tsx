@@ -4,27 +4,14 @@ import { Plus, Search, Trash2 } from 'lucide-react';
 import { Input } from '../ui/Input';
 import { Toast } from '../ui/Toast';
 import { Role } from '../../types/role';
+import { useRoleStore } from '../../store/roleStore';
 
 interface RoleManagerProps {
   onClose: () => void;
 }
 
-const defaultRoles = [
-  { name: 'Réalisateur', colors: { bg: 'bg-purple-100', text: 'text-purple-800' } },
-  { name: 'Assistant Réalisateur', colors: { bg: 'bg-blue-100', text: 'text-blue-800' } },
-  { name: '1er Assistant Réalisateur', colors: { bg: 'bg-blue-100', text: 'text-blue-800' } },
-  { name: '2ème Assistant Réalisateur', colors: { bg: 'bg-blue-100', text: 'text-blue-800' } },
-  { name: 'Monteur Vidéo', colors: { bg: 'bg-green-100', text: 'text-green-800' } },
-  { name: '1er Monteur Vidéo', colors: { bg: 'bg-green-100', text: 'text-green-800' } },
-  { name: 'Chargé de Production', colors: { bg: 'bg-yellow-100', text: 'text-yellow-800' } },
-  { name: 'Concepteur 3D', colors: { bg: 'bg-red-100', text: 'text-red-800' } },
-  { name: 'Modeleur', colors: { bg: 'bg-red-100', text: 'text-red-800' } },
-  { name: 'Animateur', colors: { bg: 'bg-red-100', text: 'text-red-800' } },
-  { name: 'Intégrale', colors: { bg: 'bg-blue-100', text: 'text-blue-800' } }
-];
-
 export function RoleManager({ onClose }: RoleManagerProps) {
-  const [roles, setRoles] = useState<Role[]>(defaultRoles);
+  const { roles, addRole, deleteRole } = useRoleStore();
   const [formData, setFormData] = useState<Role>({
     name: '',
     colors: { bg: 'bg-blue-100', text: 'text-blue-800' }
@@ -43,7 +30,7 @@ export function RoleManager({ onClose }: RoleManagerProps) {
     }, 3000);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.name?.trim()) {
@@ -56,15 +43,23 @@ export function RoleManager({ onClose }: RoleManagerProps) {
       return;
     }
 
-    setRoles(prev => [...prev, formData]);
-    showToast('Rôle ajouté avec succès', 'success');
-    setFormData({ name: '', colors: { bg: 'bg-blue-100', text: 'text-blue-800' } });
+    try {
+      await addRole(formData);
+      showToast('Rôle ajouté avec succès', 'success');
+      setFormData({ name: '', colors: { bg: 'bg-blue-100', text: 'text-blue-800' } });
+    } catch (error) {
+      showToast('Erreur lors de l\'ajout du rôle', 'error');
+    }
   };
 
-  const handleDelete = (name: string) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer ce rôle ?')) {
-      setRoles(prev => prev.filter(role => role.name !== name));
-      showToast('Rôle supprimé avec succès', 'success');
+      try {
+        await deleteRole(id);
+        showToast('Rôle supprimé avec succès', 'success');
+      } catch (error) {
+        showToast('Erreur lors de la suppression du rôle', 'error');
+      }
     }
   };
 
@@ -173,7 +168,7 @@ export function RoleManager({ onClose }: RoleManagerProps) {
           <div className="space-y-2 max-h-64 overflow-y-auto pr-2">
             {filteredRoles.map((role) => (
               <div
-                key={role.name}
+                key={role.id || role.name}
                 className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg group hover:bg-gray-100 dark:hover:bg-gray-600"
               >
                 <span className={`px-3 py-1 rounded-full ${role.colors.bg} ${role.colors.text}`}>
@@ -181,7 +176,7 @@ export function RoleManager({ onClose }: RoleManagerProps) {
                 </span>
                 <motion.button
                   type="button"
-                  onClick={() => handleDelete(role.name)}
+                  onClick={() => role.id && handleDelete(role.id)}
                   className="p-1 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}

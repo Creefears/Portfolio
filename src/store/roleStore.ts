@@ -1,7 +1,21 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Role } from '../types/role';
-import { getRoles, saveRole, deleteRole } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
+
+const defaultRoles = [
+  { name: 'Réalisateur', colors: { bg: 'bg-purple-100', text: 'text-purple-800' } },
+  { name: 'Assistant Réalisateur', colors: { bg: 'bg-blue-100', text: 'text-blue-800' } },
+  { name: '1er Assistant Réalisateur', colors: { bg: 'bg-blue-100', text: 'text-blue-800' } },
+  { name: '2ème Assistant Réalisateur', colors: { bg: 'bg-blue-100', text: 'text-blue-800' } },
+  { name: 'Monteur Vidéo', colors: { bg: 'bg-green-100', text: 'text-green-800' } },
+  { name: '1er Monteur Vidéo', colors: { bg: 'bg-green-100', text: 'text-green-800' } },
+  { name: 'Chargé de Production', colors: { bg: 'bg-yellow-100', text: 'text-yellow-800' } },
+  { name: 'Concepteur 3D', colors: { bg: 'bg-red-100', text: 'text-red-800' } },
+  { name: 'Modeleur', colors: { bg: 'bg-red-100', text: 'text-red-800' } },
+  { name: 'Animateur', colors: { bg: 'bg-red-100', text: 'text-red-800' } },
+  { name: 'Intégrale', colors: { bg: 'bg-blue-100', text: 'text-blue-800' } }
+];
 
 interface RoleStore {
   roles: Role[];
@@ -17,7 +31,7 @@ interface RoleStore {
 export const useRoleStore = create<RoleStore>()(
   persist(
     (set, get) => ({
-      roles: [],
+      roles: defaultRoles,
       isLoading: false,
       error: null,
       initialized: false,
@@ -25,21 +39,22 @@ export const useRoleStore = create<RoleStore>()(
       addRole: async (role: Role) => {
         set({ isLoading: true, error: null });
         try {
-          const savedRole = await saveRole(role);
+          const { data, error } = await supabase
+            .from('roles')
+            .insert([role])
+            .select()
+            .single();
+
+          if (error) throw error;
+
           set(state => ({
-            roles: [...state.roles, savedRole],
+            roles: [...state.roles, data],
             isLoading: false,
             error: null
           }));
         } catch (error) {
-          const timestamp = new Date().toISOString();
-          console.error(`[${timestamp}] Role store addRole error:`, {
-            error,
-            role,
-            context: 'roleStore.addRole'
-          });
-          const errorMessage = error instanceof Error ? error.message : 'Failed to add role';
-          set({ isLoading: false, error: errorMessage });
+          console.error('Error adding role:', error);
+          set({ isLoading: false, error: 'Failed to add role' });
           throw error;
         }
       },
@@ -47,21 +62,23 @@ export const useRoleStore = create<RoleStore>()(
       updateRole: async (role: Role) => {
         set({ isLoading: true, error: null });
         try {
-          const updatedRole = await saveRole(role);
+          const { data, error } = await supabase
+            .from('roles')
+            .update(role)
+            .eq('id', role.id)
+            .select()
+            .single();
+
+          if (error) throw error;
+
           set(state => ({
-            roles: state.roles.map(r => r.id === role.id ? updatedRole : r),
+            roles: state.roles.map(r => r.id === role.id ? data : r),
             isLoading: false,
             error: null
           }));
         } catch (error) {
-          const timestamp = new Date().toISOString();
-          console.error(`[${timestamp}] Role store updateRole error:`, {
-            error,
-            role,
-            context: 'roleStore.updateRole'
-          });
-          const errorMessage = error instanceof Error ? error.message : 'Failed to update role';
-          set({ isLoading: false, error: errorMessage });
+          console.error('Error updating role:', error);
+          set({ isLoading: false, error: 'Failed to update role' });
           throw error;
         }
       },
@@ -69,21 +86,21 @@ export const useRoleStore = create<RoleStore>()(
       deleteRole: async (id: string) => {
         set({ isLoading: true, error: null });
         try {
-          await deleteRole(id);
+          const { error } = await supabase
+            .from('roles')
+            .delete()
+            .eq('id', id);
+
+          if (error) throw error;
+
           set(state => ({
             roles: state.roles.filter(role => role.id !== id),
             isLoading: false,
             error: null
           }));
         } catch (error) {
-          const timestamp = new Date().toISOString();
-          console.error(`[${timestamp}] Role store deleteRole error:`, {
-            error,
-            roleId: id,
-            context: 'roleStore.deleteRole'
-          });
-          const errorMessage = error instanceof Error ? error.message : 'Failed to delete role';
-          set({ isLoading: false, error: errorMessage });
+          console.error('Error deleting role:', error);
+          set({ isLoading: false, error: 'Failed to delete role' });
           throw error;
         }
       },
@@ -91,7 +108,16 @@ export const useRoleStore = create<RoleStore>()(
       fetchRoles: async () => {
         set({ isLoading: true, error: null });
         try {
-          const roles = await getRoles();
+          const { data, error } = await supabase
+            .from('roles')
+            .select('*')
+            .order('name');
+
+          if (error) throw error;
+
+          // If no roles in database, use default roles
+          const roles = data.length > 0 ? data : defaultRoles;
+
           set({
             roles,
             isLoading: false,
@@ -99,16 +125,12 @@ export const useRoleStore = create<RoleStore>()(
             error: null
           });
         } catch (error) {
-          const timestamp = new Date().toISOString();
-          console.error(`[${timestamp}] Role store fetchRoles error:`, {
-            error,
-            context: 'roleStore.fetchRoles'
-          });
-          const errorMessage = error instanceof Error ? error.message : 'Failed to fetch roles';
+          console.error('Error fetching roles:', error);
           set({ 
             isLoading: false, 
-            error: errorMessage,
-            initialized: true
+            error: 'Failed to fetch roles',
+            initialized: true,
+            roles: defaultRoles // Fallback to default roles
           });
         }
       }
