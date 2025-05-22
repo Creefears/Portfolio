@@ -69,8 +69,8 @@ const ToolManager: React.FC<ToolManagerProps> = ({ tools, onClose }) => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+    e.preventDefault(); // Prevent form submission and page reload
+    
     if (validateForm()) {
       try {
         await addTool({
@@ -89,6 +89,7 @@ const ToolManager: React.FC<ToolManagerProps> = ({ tools, onClose }) => {
           color: '#4F46E5',
           category: '3D'
         });
+        setErrors({});
       } catch (error) {
         console.error('Error saving tool:', error);
         showToast('Échec de l\'ajout du logiciel', 'error');
