@@ -24,10 +24,11 @@ export function ProjectInfo({ year, role, tools }: ProjectInfoProps) {
       </div>
       <div className="text-center">
         <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Outils</h3>
-        <div className="flex flex-wrap justify-center gap-2">
-          {tools.map((tool, idx) => (
-           <ToolIcon key={tool.id} id={tool.id} size={20} />
-          ))}
+<div className="flex flex-wrap gap-2">
+  {tools.map((tool) => (
+    <ToolIcon key={tool.id} id={tool.id} size={20} />
+  ))}
+</div>
         </div>
       </div>
     </div>
