@@ -68,7 +68,7 @@ const ToolManager: React.FC<ToolManagerProps> = ({ tools, onClose }) => {
   };
 
   const handleSubmit = async (e: React.MouseEvent | React.KeyboardEvent) => {
-    e.preventDefault(); // Prevent any default behavior
+    e.preventDefault();
     
     if (validateForm()) {
       try {
