@@ -182,18 +182,7 @@ export default defineConfig({
       'Cache-Control': 'public, max-age=31536000',
       'X-Content-Type-Options': 'nosniff',
       'X-Frame-Options': 'DENY',
-      'X-XSS-Protection': '1; mode=block',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With'
-    },
-    proxy: {
-      '/api': {
-        target: process.env.VITE_SUPABASE_URL,
-        changeOrigin: true,
-        secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      }
+      'X-XSS-Protection': '1; mode=block'
     }
   },
   preview: {
@@ -201,10 +190,7 @@ export default defineConfig({
       'Cache-Control': 'public, max-age=31536000',
       'X-Content-Type-Options': 'nosniff',
       'X-Frame-Options': 'DENY',
-      'X-XSS-Protection': '1; mode=block',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With'
+      'X-XSS-Protection': '1; mode=block'
     }
   }
 });
