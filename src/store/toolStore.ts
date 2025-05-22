@@ -9,6 +9,7 @@ interface ToolStore {
   error: string | null;
   initialized: boolean;
   addTool: (tool: Tool) => Promise<void>;
+  updateTool: (tool: Tool) => Promise<void>;
   deleteTool: (id: string) => Promise<void>;
   fetchTools: () => Promise<void>;
 }
@@ -38,6 +39,28 @@ export const useToolStore = create<ToolStore>()(
             context: 'toolStore.addTool'
           });
           const errorMessage = error instanceof Error ? error.message : 'Failed to add tool';
+          set({ isLoading: false, error: errorMessage });
+          throw error;
+        }
+      },
+
+      updateTool: async (tool: Tool) => {
+        set({ isLoading: true, error: null });
+        try {
+          const updatedTool = await saveTool(tool);
+          set(state => ({
+            tools: state.tools.map(t => t.id === tool.id ? updatedTool : t),
+            isLoading: false,
+            error: null
+          }));
+        } catch (error) {
+          const timestamp = new Date().toISOString();
+          console.error(`[${timestamp}] Tool store updateTool error:`, {
+            error,
+            tool,
+            context: 'toolStore.updateTool'
+          });
+          const errorMessage = error instanceof Error ? error.message : 'Failed to update tool';
           set({ isLoading: false, error: errorMessage });
           throw error;
         }
