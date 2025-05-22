@@ -40,13 +40,7 @@ export const saveTool = async (tool: Omit<Tool, 'id'>): Promise<Tool> => {
   try {
     const { data, error } = await supabase
       .from('tools')
-      .insert([{
-        name: tool.name,
-        short_name: tool.short_name,
-        icon: tool.icon,
-        color: tool.color,
-        category: tool.category
-      }])
+      .insert([tool])
       .select()
       .single();
 
