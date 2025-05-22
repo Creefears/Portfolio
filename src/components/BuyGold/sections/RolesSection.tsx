@@ -18,7 +18,7 @@ export function RolesSection({ selectedRoles, error, onRoleToggle }: RolesSectio
 
   useEffect(() => {
     fetchRoles();
-  }, [fetchRoles]);
+  }, [fetchRoles, showRoleManager]); // Add showRoleManager as dependency to refresh when modal closes
 
   const formattedRoles = formatRoles(selectedRoles.join(', '));
 

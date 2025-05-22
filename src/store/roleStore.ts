@@ -31,6 +31,7 @@ export const useRoleStore = create<RoleStore>()(
             isLoading: false,
             error: null
           }));
+          await get().fetchRoles(); // Fetch updated roles after adding
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Failed to add role';
           set({ isLoading: false, error: errorMessage });
@@ -47,6 +48,7 @@ export const useRoleStore = create<RoleStore>()(
             isLoading: false,
             error: null
           }));
+          await get().fetchRoles(); // Fetch updated roles after updating
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Failed to update role';
           set({ isLoading: false, error: errorMessage });
@@ -63,6 +65,7 @@ export const useRoleStore = create<RoleStore>()(
             isLoading: false,
             error: null
           }));
+          await get().fetchRoles(); // Fetch updated roles after deleting
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Failed to delete role';
           set({ isLoading: false, error: errorMessage });
