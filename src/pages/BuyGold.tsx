@@ -5,19 +5,25 @@ import { Project } from '../types/project';
 import { Experience } from '../types/experience';
 import { useProjectStore } from '../store/projectStore';
 import { useCareerStore } from '../store/careerStore';
+import { useRoleStore } from '../store/roleStore';
 import { FormData, FormErrors, Video } from '../components/BuyGold/types';
 import { ProjectForm } from '../components/BuyGold/ProjectForm';
 import { ProjectList } from '../components/BuyGold/ProjectList';
 import { ExperienceForm } from '../components/BuyGold/ExperienceForm';
 import { ExperienceList } from '../components/BuyGold/ExperienceList';
+import { RoleManager } from '../components/BuyGold/RoleManager';
+import ToolManager from '../components/BuyGold/ToolManager';
 import { Toast } from '../components/ui/Toast';
 
 export default function BuyGold() {
   const { userCGIProjects, userRealProjects, addProject, updateProject, deleteProject, isLoading: projectsLoading, error: projectsError } = useProjectStore();
   const { experiences, addExperience, updateExperience, deleteExperience, isLoading: experiencesLoading, error: experiencesError } = useCareerStore();
+  const { roles, fetchRoles } = useRoleStore();
   const [activeTab, setActiveTab] = useState<'projects' | 'experiences'>('projects');
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingType, setEditingType] = useState<'cgi' | 'real'>('cgi');
+  const [showToolManager, setShowToolManager] = useState(false);
+  const [showRoleManager, setShowRoleManager] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     type: 'cgi',
     title: '',
@@ -49,6 +55,10 @@ export default function BuyGold() {
     type: 'success',
     visible: false
   });
+
+  useEffect(() => {
+    fetchRoles();
+  }, [fetchRoles]);
 
   const resetForm = () => {
     if (activeTab === 'projects') {
@@ -256,6 +266,25 @@ export default function BuyGold() {
           </p>
         </motion.div>
 
+        <div className="flex justify-end gap-4 mb-8">
+          <motion.button
+            onClick={() => setShowToolManager(true)}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Gérer les logiciels
+          </motion.button>
+          <motion.button
+            onClick={() => setShowRoleManager(true)}
+            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Gérer les rôles
+          </motion.button>
+        </div>
+
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'projects' | 'experiences')}>
           <TabsList className="mb-8">
             <TabsTrigger value="projects">Projets</TabsTrigger>
@@ -330,9 +359,33 @@ export default function BuyGold() {
             )}
           </AnimatePresence>
         </Tabs>
+
+        <AnimatePresence>
+          {showToolManager && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+            >
+              <ToolManager tools={[]} onClose={() => setShowToolManager(false)} />
+            </motion.div>
+          )}
+
+          {showRoleManager && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+            >
+              <RoleManager onClose={() => setShowRoleManager(false)} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
-      <Toast 
+      <Toast
         message={toast.message}
         type={toast.type}
         isVisible={toast.visible}
