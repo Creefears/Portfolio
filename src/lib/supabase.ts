@@ -16,6 +16,47 @@ const handleSupabaseError = (error: unknown, operation: string) => {
   throw error;
 };
 
+// Project operations
+export const getProjects = async (type?: string): Promise<any[]> => {
+  try {
+    let query = supabase
+      .from('projects')
+      .select(`
+        *,
+        tools:project_tools(
+          tool:tools(*)
+        )
+      `)
+      .order('created_at', { ascending: false });
+
+    if (type) {
+      query = query.eq('type', type);
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    handleSupabaseError(error, 'projects fetch');
+    return [];
+  }
+};
+
+export const deleteProject = async (id: string): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('projects')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  } catch (error) {
+    handleSupabaseError(error, 'project delete');
+    throw error;
+  }
+};
+
 // Role operations
 export const getRoles = async (): Promise<Role[]> => {
   try {
@@ -83,21 +124,6 @@ export const deleteRole = async (id: string): Promise<void> => {
     if (error) throw error;
   } catch (error) {
     handleSupabaseError(error, 'role delete');
-    throw error;
-  }
-};
-
-// Project operations
-export const deleteProject = async (id: string): Promise<void> => {
-  try {
-    const { error } = await supabase
-      .from('projects')
-      .delete()
-      .eq('id', id);
-
-    if (error) throw error;
-  } catch (error) {
-    handleSupabaseError(error, 'project delete');
     throw error;
   }
 };
