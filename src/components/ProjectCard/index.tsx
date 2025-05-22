@@ -40,6 +40,7 @@ function ProjectCard({
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const currentProject = allProjects[currentIndex];
   const location = useLocation();
+  const allTools = useToolStore(state => state.tools);
 
 const slugify = (text: string) =>
   text
@@ -100,6 +101,10 @@ useEffect(() => {
         detail: { isOpen: false }
       }));
     }
+    const projectTools = currentProject.tools.map(toolName =>
+  allTools.find(tool => tool.name === toolName || tool.short_name === toolName)
+).filter(Boolean);
+
     return () => {
       document.body.style.overflow = 'unset';
       window.dispatchEvent(new CustomEvent('modalStateChange', {
@@ -242,7 +247,7 @@ const generateShareUrl = useCallback(() => {
                 <ProjectInfo
                   year={currentProject.year}
                   role={currentProject.role}
-                  tools={currentProject.tools}
+                  tools={Project.tools}
                 />
 
                 <p className="text-gray-600 dark:text-gray-400 text-base md:text-lg leading-relaxed mb-8">
