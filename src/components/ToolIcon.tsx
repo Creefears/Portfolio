@@ -28,7 +28,7 @@ const ToolIcon = React.memo(function ToolIcon({ name, className, size = 20, show
     };
   }, []);
 
-  const tool = tools.find(t => t.name.toLowerCase().includes(name.toLowerCase()));
+  const tool = tools.find(t => t.id === id);
 
 let IconComponent: React.ElementType = Box;
 
