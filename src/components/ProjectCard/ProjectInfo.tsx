@@ -16,19 +16,20 @@ export function ProjectInfo({ year, role, tools }: ProjectInfoProps) {
         <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Année</h3>
         <p className="text-gray-600 dark:text-gray-400">{year}</p>
       </div>
+
       <div className="text-center">
         <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Rôle</h3>
         <div className="flex justify-center">
           <RoleBadges role={role} />
         </div>
       </div>
+
       <div className="text-center">
         <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Outils</h3>
-<div className="flex flex-wrap gap-2">
-  {tools.map((tool) => (
-    <ToolIcon key={tool.id} id={tool.id} size={20} />
-  ))}
-</div>
+        <div className="flex flex-wrap gap-2">
+          {tools.map((tool) => (
+            <ToolIcon key={tool.id} id={tool.id} size={20} />
+          ))}
         </div>
       </div>
     </div>
