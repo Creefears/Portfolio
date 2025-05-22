@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Briefcase, Plus } from 'lucide-react';
 import { Badge } from '../../ui/Badge';
@@ -17,11 +17,8 @@ export function RolesSection({ selectedRoles, error, onRoleToggle }: RolesSectio
   const { roles, fetchRoles } = useRoleStore();
 
   useEffect(() => {
-    const initializeRoles = async () => {
-      await fetchRoles();
-    };
-    initializeRoles();
-  }, [fetchRoles, showRoleManager]);
+    fetchRoles();
+  }, [fetchRoles, showRoleManager]); // Add showRoleManager as dependency to refresh when modal closes
 
   const formattedRoles = formatRoles(selectedRoles.join(', '));
 
@@ -67,8 +64,7 @@ export function RolesSection({ selectedRoles, error, onRoleToggle }: RolesSectio
                 variant="role"
                 style={{
                   backgroundColor: selectedRoles.includes(role.name) ? role.color : undefined,
-                  color: selectedRoles.includes(role.name) ? 'white' : undefined,
-                  opacity: selectedRoles.includes(role.name) ? 1 : 0.5
+                  color: selectedRoles.includes(role.name) ? 'white' : undefined
                 }}
               >
                 {role.name}
