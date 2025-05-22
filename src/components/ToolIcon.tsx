@@ -6,11 +6,10 @@ import * as Icons from 'lucide-react';
 import { useToolStore } from '../store/toolStore';
 
 interface ToolIconProps {
-  name: string;
-  className?: string;
+  id: string;
   size?: number;
-  showLabel?: boolean;
 }
+
 
 const ToolIcon = React.memo(function ToolIcon({ name, className, size = 20, showLabel = false }: ToolIconProps) {
   const [isExpanded, setIsExpanded] = useState(false);
