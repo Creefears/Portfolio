@@ -6,6 +6,7 @@ import { Input } from '../ui/Input';
 import { Tool } from '../../types/project';
 import { IconPicker } from '../ui/IconPicker';
 import { useToolStore } from '../../store/toolStore';
+import { Toast } from '../ui/Toast';
 
 interface ToolManagerProps {
   tools: Tool[];
@@ -17,6 +18,7 @@ interface ToolFormData {
   short_name: string;
   icon: string;
   color: string;
+  category: string;
 }
 
 const ToolManager: React.FC<ToolManagerProps> = ({ tools, onClose }) => {
@@ -25,10 +27,23 @@ const ToolManager: React.FC<ToolManagerProps> = ({ tools, onClose }) => {
     name: '',
     short_name: '',
     icon: 'Box',
-    color: '#4F46E5'
+    color: '#4F46E5',
+    category: '3D'
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [searchTerm, setSearchTerm] = useState('');
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error'; visible: boolean }>({
+    message: '',
+    type: 'success',
+    visible: false
+  });
+
+  const showToast = (message: string, type: 'success' | 'error') => {
+    setToast({ message, type, visible: true });
+    setTimeout(() => {
+      setToast(prev => ({ ...prev, visible: false }));
+    }, 3000);
+  };
 
   const validateForm = (): boolean => {
     const newErrors: { [key: string]: string } = {};
@@ -62,21 +77,21 @@ const ToolManager: React.FC<ToolManagerProps> = ({ tools, onClose }) => {
           name: formData.name,
           short_name: formData.short_name,
           icon: formData.icon,
-          color: formData.color
+          color: formData.color,
+          category: formData.category
         });
 
+        showToast('Logiciel ajouté avec succès', 'success');
         setFormData({
           name: '',
           short_name: '',
           icon: 'Box',
-          color: '#4F46E5'
+          color: '#4F46E5',
+          category: '3D'
         });
       } catch (error) {
         console.error('Error saving tool:', error);
-        setErrors(prev => ({
-          ...prev,
-          submit: 'Échec de l’enregistrement du logiciel.'
-        }));
+        showToast('Échec de l\'ajout du logiciel', 'error');
       }
     }
   };
@@ -85,8 +100,10 @@ const ToolManager: React.FC<ToolManagerProps> = ({ tools, onClose }) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer ce logiciel ?')) {
       try {
         await deleteTool(id);
+        showToast('Logiciel supprimé avec succès', 'success');
       } catch (error) {
         console.error('Error deleting tool:', error);
+        showToast('Échec de la suppression', 'error');
       }
     }
   };
@@ -119,6 +136,23 @@ const ToolManager: React.FC<ToolManagerProps> = ({ tools, onClose }) => {
           maxLength={10}
           required
         />
+
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Catégorie
+          </label>
+          <select
+            value={formData.category}
+            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+            className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
+          >
+            <option value="3D">3D</option>
+            <option value="Video">Vidéo</option>
+            <option value="Design">Design</option>
+            <option value="Business">Business</option>
+            <option value="Other">Autre</option>
+          </select>
+        </div>
 
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Icône</label>
@@ -222,6 +256,13 @@ const ToolManager: React.FC<ToolManagerProps> = ({ tools, onClose }) => {
           </div>
         </div>
       )}
+
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.visible}
+        onClose={() => setToast(prev => ({ ...prev, visible: false }))}
+      />
     </div>
   );
 };
