@@ -116,7 +116,11 @@ export function CompactView({
                   variants={itemVariants}
                   custom={idx}
                 >
-                  <ToolIcon name={typeof tool === 'string' ? tool : tool.name} size={16} />
+                  <ToolIcon 
+                    id={tool.id}
+                    name={tool.name}
+                    size={16} 
+                  />
                 </motion.div>
               ))}
             </div>
