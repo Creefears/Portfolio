@@ -1,17 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as Tooltip from '@radix-ui/react-tooltip';
-import { Box, Gamepad2, Film, Wand2, Image, Palette, Brush, FileSpreadsheet, Calendar, Play } from 'lucide-react';
+import { Box } from 'lucide-react';
 import { clsx } from 'clsx';
 import * as Icons from 'lucide-react';
 import { useToolStore } from '../store/toolStore';
 
 interface ToolIconProps {
   id: string;
+  className?: string;
   size?: number;
+  showLabel?: boolean;
 }
-const { id, size = 24 } = props;
 
-const ToolIcon = React.memo(function ToolIcon({ name, className, size = 20, showLabel = false }: ToolIconProps) {
+const ToolIcon = React.memo(function ToolIcon({
+  id,
+  className,
+  size = 20,
+  showLabel = false
+}: ToolIconProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout>();
