@@ -59,13 +59,13 @@ function App() {
   }, [fetchProjects, fetchExperiences]);
 
   return (
-    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'dark' : ''}`}>
-      <div className="bg-white dark:bg-gray-900 flex-grow">
-        <TitleUpdater />
-        <Navbar />
-        <main>
-          <Suspense fallback={<LoadingSpinner />}>
-            <LazyMotion features={domAnimation}>
+    <LazyMotion features={domAnimation}>
+      <div className={`min-h-screen flex flex-col ${isDarkMode ? 'dark' : ''}`}>
+        <div className="bg-white dark:bg-gray-900 flex-grow">
+          <TitleUpdater />
+          <Navbar />
+          <main>
+            <Suspense fallback={<LoadingSpinner />}>
               <AnimatePresence mode="wait">
                 <Routes location={location} key={location.pathname}>
                   <Route path="/" element={<Home />} />
@@ -76,13 +76,13 @@ function App() {
                   <Route path="/buy-gold" element={<BuyGold />} />
                 </Routes>
               </AnimatePresence>
-            </LazyMotion>
-          </Suspense>
-        </main>
-        <ThemeToggle />
-        <Footer />
+            </Suspense>
+          </main>
+          <ThemeToggle />
+          <Footer />
+        </div>
       </div>
-    </div>
+    </LazyMotion>
   );
 }
 
