@@ -47,9 +47,9 @@ function TitleUpdater() {
 }
 
 function App() {
-  const { isDarkMode } = useThemeStore();
-  const { fetchProjects } = useProjectStore();
-  const { fetchExperiences } = useCareerStore();
+  const isDarkMode = useThemeStore(state => state.isDarkMode);
+  const fetchProjects = useProjectStore(state => state.fetchProjects);
+  const fetchExperiences = useCareerStore(state => state.fetchExperiences);
   const location = useLocation();
 
   useEffect(() => {
