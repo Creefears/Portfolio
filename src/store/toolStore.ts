@@ -27,11 +27,17 @@ export const useToolStore = create<ToolStore>()(
           const savedTool = await saveTool(tool);
           set(state => ({
             tools: [...state.tools, savedTool],
-            isLoading: false
+            isLoading: false,
+            error: null
           }));
         } catch (error) {
+          const timestamp = new Date().toISOString();
+          console.error(`[${timestamp}] Tool store addTool error:`, {
+            error,
+            tool,
+            context: 'toolStore.addTool'
+          });
           const errorMessage = error instanceof Error ? error.message : 'Failed to add tool';
-          console.error('Error adding tool:', error);
           set({ isLoading: false, error: errorMessage });
           throw error;
         }
@@ -43,11 +49,17 @@ export const useToolStore = create<ToolStore>()(
           await deleteTool(id);
           set(state => ({
             tools: state.tools.filter(tool => tool.id !== id),
-            isLoading: false
+            isLoading: false,
+            error: null
           }));
         } catch (error) {
+          const timestamp = new Date().toISOString();
+          console.error(`[${timestamp}] Tool store deleteTool error:`, {
+            error,
+            toolId: id,
+            context: 'toolStore.deleteTool'
+          });
           const errorMessage = error instanceof Error ? error.message : 'Failed to delete tool';
-          console.error('Error deleting tool:', error);
           set({ isLoading: false, error: errorMessage });
           throw error;
         }
@@ -64,8 +76,12 @@ export const useToolStore = create<ToolStore>()(
             error: null
           });
         } catch (error) {
+          const timestamp = new Date().toISOString();
+          console.error(`[${timestamp}] Tool store fetchTools error:`, {
+            error,
+            context: 'toolStore.fetchTools'
+          });
           const errorMessage = error instanceof Error ? error.message : 'Failed to fetch tools';
-          console.error('Error fetching tools:', error);
           set({ 
             isLoading: false, 
             error: errorMessage,

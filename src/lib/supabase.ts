@@ -13,11 +13,40 @@ if (!supabaseUrl || !supabaseAnonKey) {
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const handleSupabaseError = (error: unknown, operation: string) => {
+  const timestamp = new Date().toISOString();
+  const errorDetails = error instanceof Error 
+    ? {
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
+        cause: error.cause,
+        context: { operation, timestamp }
+      }
+    : {
+        raw: error,
+        context: { operation, timestamp }
+      };
+    
+  // Network error check
   if (error instanceof TypeError && error.message === 'Failed to fetch') {
+    console.error(`[${timestamp}] Supabase network error:`, {
+      ...errorDetails,
+      type: 'NetworkError',
+      operation
+    });
     throw new Error(`Network error: Unable to connect to Supabase. Please check your internet connection and try again.`);
   }
-  console.error(`Supabase ${operation} error:`, error);
-  throw error;
+
+  // Detailed error logging
+  console.error(`[${timestamp}] Supabase ${operation} error:`, errorDetails);
+  
+  // Return structured error info
+  return {
+    message: error instanceof Error ? error.message : 'An unknown error occurred',
+    timestamp,
+    operation,
+    details: errorDetails
+  };
 };
 
 // Tool operations
@@ -37,14 +66,27 @@ export const getTools = async (): Promise<Tool[]> => {
 };
 
 export const saveTool = async (tool: Omit<Tool, 'id'>): Promise<Tool> => {
-  const { data, error } = await supabase
-    .from('tools')
-    .insert([tool])
-    .select()
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from('tools')
+      .insert([tool])
+      .select()
+      .single();
 
-  if (error) throw new Error(error.message);
-  return data;
+    if (error) {
+      const errorInfo = handleSupabaseError(error, 'tool save');
+      throw new Error(errorInfo.message);
+    }
+
+    if (!data) {
+      throw new Error('No data returned from Supabase after tool insert');
+    }
+
+    return data;
+  } catch (error) {
+    const errorInfo = handleSupabaseError(error, 'tool save');
+    throw new Error(errorInfo.message);
+  }
 };
 
 export const deleteTool = async (id: string): Promise<void> => {
@@ -54,10 +96,13 @@ export const deleteTool = async (id: string): Promise<void> => {
       .delete()
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      const errorInfo = handleSupabaseError(error, 'tool delete');
+      throw new Error(errorInfo.message);
+    }
   } catch (error) {
-    handleSupabaseError(error, 'tool delete');
-    throw error;
+    const errorInfo = handleSupabaseError(error, 'tool delete');
+    throw new Error(errorInfo.message);
   }
 };
 
@@ -95,12 +140,19 @@ export const saveProject = async (project: Project): Promise<Project> => {
       .select()
       .single();
 
-    if (error) throw error;
-    if (!data) throw new Error('No data returned from Supabase after insert');
+    if (error) {
+      const errorInfo = handleSupabaseError(error, 'project save');
+      throw new Error(errorInfo.message);
+    }
+
+    if (!data) {
+      throw new Error('No data returned from Supabase after project insert');
+    }
+
     return data;
   } catch (error) {
-    handleSupabaseError(error, 'project save');
-    throw error;
+    const errorInfo = handleSupabaseError(error, 'project save');
+    throw new Error(errorInfo.message);
   }
 };
 
@@ -114,10 +166,13 @@ export const updateProject = async (project: Project, id: string): Promise<void>
       })
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      const errorInfo = handleSupabaseError(error, 'project update');
+      throw new Error(errorInfo.message);
+    }
   } catch (error) {
-    handleSupabaseError(error, 'project update');
-    throw error;
+    const errorInfo = handleSupabaseError(error, 'project update');
+    throw new Error(errorInfo.message);
   }
 };
 
@@ -128,10 +183,13 @@ export const deleteProject = async (id: string): Promise<void> => {
       .delete()
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      const errorInfo = handleSupabaseError(error, 'project delete');
+      throw new Error(errorInfo.message);
+    }
   } catch (error) {
-    handleSupabaseError(error, 'project delete');
-    throw error;
+    const errorInfo = handleSupabaseError(error, 'project delete');
+    throw new Error(errorInfo.message);
   }
 };
 
@@ -163,12 +221,19 @@ export const saveExperience = async (experience: Experience): Promise<Experience
       .select()
       .single();
 
-    if (error) throw error;
-    if (!data) throw new Error('No data returned from Supabase after insert');
+    if (error) {
+      const errorInfo = handleSupabaseError(error, 'experience save');
+      throw new Error(errorInfo.message);
+    }
+
+    if (!data) {
+      throw new Error('No data returned from Supabase after experience insert');
+    }
+
     return data;
   } catch (error) {
-    handleSupabaseError(error, 'experience save');
-    throw error;
+    const errorInfo = handleSupabaseError(error, 'experience save');
+    throw new Error(errorInfo.message);
   }
 };
 
@@ -182,10 +247,13 @@ export const updateExperience = async (experience: Experience, id: string): Prom
       })
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      const errorInfo = handleSupabaseError(error, 'experience update');
+      throw new Error(errorInfo.message);
+    }
   } catch (error) {
-    handleSupabaseError(error, 'experience update');
-    throw error;
+    const errorInfo = handleSupabaseError(error, 'experience update');
+    throw new Error(errorInfo.message);
   }
 };
 
@@ -196,9 +264,12 @@ export const deleteExperience = async (id: string): Promise<void> => {
       .delete()
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      const errorInfo = handleSupabaseError(error, 'experience delete');
+      throw new Error(errorInfo.message);
+    }
   } catch (error) {
-    handleSupabaseError(error, 'experience delete');
-    throw error;
+    const errorInfo = handleSupabaseError(error, 'experience delete');
+    throw new Error(errorInfo.message);
   }
 };
