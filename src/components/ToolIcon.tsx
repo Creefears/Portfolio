@@ -31,10 +31,16 @@ const ToolIcon = React.memo(function ToolIcon({ name, className, size = 20, show
   const tool = tools.find(t => t.name === name);
   let IconComponent: React.ElementType = Box;
 
-if (tool?.icon && tool.icon in Icons) {
-  IconComponent = Icons[tool.icon as keyof typeof Icons];
+if (tool?.icon) {
+  const iconKey = tool.icon as keyof typeof Icons;
+
+  if (iconKey in Icons) {
+    IconComponent = Icons[iconKey];
+  } else {
+    console.warn(`❌ Icône "${tool.icon}" non trouvée dans lucide-react`);
+  }
 } else {
-  console.warn(`Icône "${tool?.icon}" pour "${tool?.name}" introuvable dans lucide-react.`);
+  console.warn(`❌ Aucun champ icon pour "${tool?.name}"`);
 }
 
   const shortName = tool?.short_name || name;
