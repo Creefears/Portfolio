@@ -64,17 +64,27 @@ const slugify = (text: string) =>
   });
 
   // ✅ Remplace ce useEffect
- useEffect(() => {
+useEffect(() => {
   const searchParams = new URLSearchParams(location.search);
-  const projectIndex = searchParams.get('project');
+  const projectSlug = searchParams.get('project');
 
-  // ✅ N'ouvre la card que si l'index dans l'URL correspond à CETTE carte
-  if (projectIndex !== null && parseInt(projectIndex) === index) {
+  const slugify = (text: string) =>
+    text
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+  const currentSlug = slugify(title);
+
+  // ✅ Ouvre uniquement si l’URL correspond au slug de CE projet
+  if (projectSlug === currentSlug) {
     setIsExpanded(true);
   } else {
-    setIsExpanded(false); // ferme les autres cards
+    setIsExpanded(false);
   }
-}, [location.search, index]);
+}, [location.search, title]);
 
   useEffect(() => {
     if (isExpanded) {
