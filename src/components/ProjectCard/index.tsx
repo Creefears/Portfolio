@@ -89,11 +89,7 @@ function ProjectCard({
   }, [isExpanded]);
 
   const projectTools = (currentProject.tools || []).map(t =>
-    allTools.find(tool =>
-      typeof t === 'string'
-        ? tool.name === t || tool.short_name === t
-        : tool.name === t.name || tool.short_name === t.name
-    )
+    allTools.find(tool => typeof t === 'string' ? tool.id === t : tool.id === t.id)
   ).filter(Boolean);
 
   const handleNext = useCallback((e: React.MouseEvent) => {
@@ -194,7 +190,7 @@ function ProjectCard({
               video={video}
               videos={videos}
               role={role}
-              tools={tools}
+              tools={projectTools}
               year={year}
               onImageLoad={() => setIsImageLoaded(true)}
             />
