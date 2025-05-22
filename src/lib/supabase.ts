@@ -43,6 +43,84 @@ export const getProjects = async (type?: string): Promise<any[]> => {
   }
 };
 
+export const saveProject = async (project: any): Promise<any> => {
+  try {
+    let query;
+    const now = new Date().toISOString();
+    
+    // Prepare project data
+    const projectData = {
+      title: project.title,
+      shortdescription: project.shortdescription,
+      fulldescription: project.fulldescription,
+      image: project.image,
+      video: project.video,
+      videos: project.videos,
+      images: project.images,
+      year: project.year,
+      role: project.role,
+      customroles: project.customroles,
+      tools: project.tools,
+      type: project.type,
+      status: project.status || 'draft',
+      updated_at: now
+    };
+
+    if (project.id) {
+      // Update existing project
+      query = supabase
+        .from('projects')
+        .update(projectData)
+        .eq('id', project.id)
+        .select();
+    } else {
+      // Insert new project
+      query = supabase
+        .from('projects')
+        .insert([{
+          ...projectData,
+          created_at: now
+        }])
+        .select();
+    }
+
+    const { data, error } = await query.single();
+
+    if (error) throw error;
+    if (!data) throw new Error('No data returned from Supabase');
+
+    // If project has tools, update project_tools junction table
+    if (project.tools && Array.isArray(project.tools)) {
+      // First, delete existing tool associations if updating
+      if (project.id) {
+        await supabase
+          .from('project_tools')
+          .delete()
+          .eq('project_id', project.id);
+      }
+
+      // Insert new tool associations
+      const projectTools = project.tools.map((toolId: string) => ({
+        project_id: data.id,
+        tool_id: toolId
+      }));
+
+      if (projectTools.length > 0) {
+        const { error: toolsError } = await supabase
+          .from('project_tools')
+          .insert(projectTools);
+
+        if (toolsError) throw toolsError;
+      }
+    }
+
+    return data;
+  } catch (error) {
+    handleSupabaseError(error, 'project save');
+    throw error;
+  }
+};
+
 export const deleteProject = async (id: string): Promise<void> => {
   try {
     const { error } = await supabase
