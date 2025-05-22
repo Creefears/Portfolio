@@ -13,7 +13,6 @@ import Carousel from './Carousel';
 import ShareDialog from '../ShareDialog';
 import { useToolStore } from '../../store/toolStore';
 
-
 function ProjectCard({
   title,
   shortdescription,
@@ -42,15 +41,13 @@ function ProjectCard({
   const location = useLocation();
   const { tools: allTools } = useToolStore();
 
-const slugify = (text: string) =>
-  text
-    .toLowerCase()
-    .normalize('NFD') // enleve accents
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-') // remplace tout sauf lettres/chiffres par tiret
-    .replace(/^-+|-+$/g, ''); // trim les tirets
+  const slugify = (text: string) =>
+    text.toLowerCase()
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
 
-  
   const handlers = useSwipeable({
     onSwipedLeft: () => {
       if (currentIndex < totalProjects - 1 && !isTransitioning) {
@@ -66,57 +63,38 @@ const slugify = (text: string) =>
     trackMouse: false
   });
 
-  // ✅ Remplace ce useEffect
-useEffect(() => {
-  const searchParams = new URLSearchParams(location.search);
-  const projectSlug = searchParams.get('project');
-
-  const slugify = (text: string) =>
-    text
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '');
-
-  const currentSlug = slugify(title);
-
-  // ✅ Ouvre uniquement si l’URL correspond au slug de CE projet
-  if (projectSlug === currentSlug) {
-    setIsExpanded(true);
-  } else {
-    setIsExpanded(false);
-  }
-}, [location.search, title]);
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const projectSlug = searchParams.get('project');
+    const currentSlug = slugify(title);
+    if (projectSlug === currentSlug) {
+      setIsExpanded(true);
+    } else {
+      setIsExpanded(false);
+    }
+  }, [location.search, title]);
 
   useEffect(() => {
     if (isExpanded) {
       document.body.style.overflow = 'hidden';
-      window.dispatchEvent(new CustomEvent('modalStateChange', {
-        detail: { isOpen: true }
-      }));
+      window.dispatchEvent(new CustomEvent('modalStateChange', { detail: { isOpen: true } }));
     } else {
       document.body.style.overflow = 'unset';
-      window.dispatchEvent(new CustomEvent('modalStateChange', {
-        detail: { isOpen: false }
-      }));
+      window.dispatchEvent(new CustomEvent('modalStateChange', { detail: { isOpen: false } }));
     }
-    const projectTools = (Project.tools || []).map(t =>
-  allTools.find(tool =>
-    typeof t === 'string'
-      ? tool.name === t || tool.short_name === t
-      : tool.name === t.name || tool.short_name === t.name
-  )
-).filter(Boolean);
-
-
     return () => {
       document.body.style.overflow = 'unset';
-      window.dispatchEvent(new CustomEvent('modalStateChange', {
-        detail: { isOpen: false }
-      }));
+      window.dispatchEvent(new CustomEvent('modalStateChange', { detail: { isOpen: false } }));
     };
   }, [isExpanded]);
+
+  const projectTools = (currentProject.tools || []).map(t =>
+    allTools.find(tool =>
+      typeof t === 'string'
+        ? tool.name === t || tool.short_name === t
+        : tool.name === t.name || tool.short_name === t.name
+    )
+  ).filter(Boolean);
 
   const handleNext = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -160,23 +138,23 @@ useEffect(() => {
     window.history.replaceState({}, '', url.toString());
   }, [index]);
 
-const handleCardClick = useCallback((e: React.MouseEvent) => {
-  e.stopPropagation();
-  if (!isExpanded) {
-    setIsExpanded(true);
-    const slug = slugify(title);
-    const url = new URL(window.location.href);
-    url.searchParams.set('project', slug);
-    window.history.replaceState({}, '', url.toString());
-  }
-}, [isExpanded, title]);
+  const handleCardClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!isExpanded) {
+      setIsExpanded(true);
+      const slug = slugify(title);
+      const url = new URL(window.location.href);
+      url.searchParams.set('project', slug);
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, [isExpanded, title]);
 
-const generateShareUrl = useCallback(() => {
-  const baseUrl = window.location.origin;
-  const path = location.pathname;
-  const slug = slugify(title);
-  return `${baseUrl}${path}?project=${slug}`;
-}, [location.pathname, title]);
+  const generateShareUrl = useCallback(() => {
+    const baseUrl = window.location.origin;
+    const path = location.pathname;
+    const slug = slugify(title);
+    return `${baseUrl}${path}?project=${slug}`;
+  }, [location.pathname, title]);
 
   const handleShare = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -198,7 +176,6 @@ const generateShareUrl = useCallback(() => {
           }`}
           {...(isExpanded ? handlers : {})}
         >
-          {/* ✅ Ajout du bouton de fermeture mobile */}
           {isExpanded && (
             <button
               onClick={handleClose}
