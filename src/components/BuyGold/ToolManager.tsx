@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { Plus, Search, Trash2 } from 'lucide-react';
 import * as Icons from 'lucide-react';
 import { Input } from '../ui/Input';
-import { Tool } from '../../types/project';
 import { IconPicker } from '../ui/IconPicker';
 import { useToolStore } from '../../store/toolStore';
 import { Toast } from '../ui/Toast';
@@ -68,8 +67,8 @@ const ToolManager: React.FC<ToolManagerProps> = ({ tools, onClose }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent form submission and page reload
+  const handleSubmit = async (e: React.MouseEvent | React.KeyboardEvent) => {
+    e.preventDefault(); // Prevent any default behavior
     
     if (validateForm()) {
       try {
@@ -115,7 +114,7 @@ const ToolManager: React.FC<ToolManagerProps> = ({ tools, onClose }) => {
         Gestionnaire de Logiciels
       </h3>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="space-y-4" onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit(e); }}>
         <Input
           label="Nom du logiciel"
           value={formData.name}
@@ -180,7 +179,8 @@ const ToolManager: React.FC<ToolManagerProps> = ({ tools, onClose }) => {
 
         <div className="flex gap-4">
           <motion.button
-            type="submit"
+            type="button"
+            onClick={handleSubmit}
             className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -199,7 +199,7 @@ const ToolManager: React.FC<ToolManagerProps> = ({ tools, onClose }) => {
             Annuler
           </motion.button>
         </div>
-      </form>
+      </div>
 
       {tools.length > 0 && (
         <div className="space-y-4">
