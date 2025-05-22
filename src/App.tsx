@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { useThemeStore } from './store/themeStore';
 import { useProjectStore } from './store/projectStore';
 import { useCareerStore } from './store/careerStore';
-import { AnimatePresence, LazyMotion, domAnimation } from 'framer-motion';
+import { AnimatePresence, LazyMotion, domAnimation, m } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ThemeToggle from './components/ThemeToggle';
@@ -46,7 +46,8 @@ function TitleUpdater() {
   return null;
 }
 
-function App() {
+// Main App component that requires router context
+function AppContent() {
   const isDarkMode = useThemeStore(state => state.isDarkMode);
   const fetchProjects = useProjectStore(state => state.fetchProjects);
   const fetchExperiences = useCareerStore(state => state.fetchExperiences);
@@ -59,39 +60,40 @@ function App() {
   }, [fetchProjects, fetchExperiences]);
 
   return (
-    <LazyMotion features={domAnimation}>
-      <div className={`min-h-screen flex flex-col ${isDarkMode ? 'dark' : ''}`}>
-        <div className="bg-white dark:bg-gray-900 flex-grow">
-          <TitleUpdater />
-          <Navbar />
-          <main>
-            <Suspense fallback={<LoadingSpinner />}>
-              <AnimatePresence mode="wait">
-                <Routes location={location} key={location.pathname}>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/portfolio" element={<Portfolio />} />
-                  <Route path="/a-propos" element={<About />} />
-                  <Route path="/cgi" element={<CGI />} />
-                  <Route path="/prise-de-vue-reel" element={<RealFootage />} />
-                  <Route path="/buy-gold" element={<BuyGold />} />
-                </Routes>
-              </AnimatePresence>
-            </Suspense>
-          </main>
-          <ThemeToggle />
-          <Footer />
-        </div>
+    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'dark' : ''}`}>
+      <div className="bg-white dark:bg-gray-900 flex-grow">
+        <TitleUpdater />
+        <Navbar />
+        <main>
+          <Suspense fallback={<LoadingSpinner />}>
+            <AnimatePresence mode="wait">
+              <Routes location={location} key={location.pathname}>
+                <Route path="/" element={<Home />} />
+                <Route path="/portfolio" element={<Portfolio />} />
+                <Route path="/a-propos" element={<About />} />
+                <Route path="/cgi" element={<CGI />} />
+                <Route path="/prise-de-vue-reel" element={<RealFootage />} />
+                <Route path="/buy-gold" element={<BuyGold />} />
+              </Routes>
+            </AnimatePresence>
+          </Suspense>
+        </main>
+        <ThemeToggle />
+        <Footer />
       </div>
-    </LazyMotion>
+    </div>
   );
 }
 
-function AppWrapper() {
+// Root component that provides all necessary context
+function App() {
   return (
     <Router>
-      <App />
+      <LazyMotion features={domAnimation} strict>
+        <AppContent />
+      </LazyMotion>
     </Router>
   );
 }
 
-export default AppWrapper;
+export default App;
