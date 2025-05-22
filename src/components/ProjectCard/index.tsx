@@ -62,6 +62,15 @@ function ProjectCard({
       if (!isNaN(index) && index >= 0 && index < allProjects.length) {
         setCurrentIndex(index);
         setIsExpanded(true);
+        {isExpanded && (
+  <button
+    onClick={() => setIsExpanded(false)}
+    className="absolute top-4 right-4 z-50 p-2 bg-black bg-opacity-50 text-white rounded-full md:hidden"
+    aria-label="Fermer"
+  >
+    ✕
+  </button>
+)}
       }
     }
   }, [location, allProjects.length]);
