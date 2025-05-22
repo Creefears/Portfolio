@@ -28,8 +28,7 @@ export function ProjectInfo({ year, role, tools }: ProjectInfoProps) {
           {tools.map((tool, idx) => (
             <ToolIcon 
               key={idx} 
-              id={tool.id}
-              name={tool.name}
+              name={typeof tool === 'string' ? tool : tool.name} 
               size={20} 
             />
           ))}
