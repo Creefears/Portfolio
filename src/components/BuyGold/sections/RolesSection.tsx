@@ -4,6 +4,7 @@ import { Briefcase, Plus } from 'lucide-react';
 import { Badge } from '../../ui/Badge';
 import { formatRoles } from '../../../utils/projectUtils';
 import { RoleManager } from './RoleManager';
+import { useRoleStore } from '../../../store/roleStore';
 
 interface RolesSectionProps {
   selectedRoles: string[];
@@ -11,60 +12,19 @@ interface RolesSectionProps {
   onRoleToggle: (role: string) => void;
 }
 
-const CUSTOM_ROLES_KEY = 'custom-roles-storage';
-
 export function RolesSection({ selectedRoles, error, onRoleToggle }: RolesSectionProps) {
   const [showRoleManager, setShowRoleManager] = useState(false);
-  const [customRoles, setCustomRoles] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem(CUSTOM_ROLES_KEY);
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
+  const { roles, fetchRoles } = useRoleStore();
 
-  // Default roles
-  const defaultRoles = [
-    'Réalisateur',
-    'Assistant Réalisateur',
-    '1er Assistant Réalisateur',
-    '2ème Assistant Réalisateur',
-    'Monteur Vidéo',
-    '1er Monteur Vidéo',
-    'Chargé de Production',
-    'Concepteur 3D',
-    'Modeleur',
-    'Animateur',
-    'Intégrale'
-  ];
-
-  // Combine default and custom roles
-  const availableRoles = [...defaultRoles, ...customRoles];
-
-  // Persist custom roles to localStorage
   useEffect(() => {
-    localStorage.setItem(CUSTOM_ROLES_KEY, JSON.stringify(customRoles));
-  }, [customRoles]);
+    fetchRoles();
+  }, [fetchRoles]);
 
   const formattedRoles = formatRoles(selectedRoles.join(', '));
 
   const handleRoleClick = (e: React.MouseEvent, role: string) => {
     e.preventDefault();
     onRoleToggle(role);
-  };
-
-  const handleAddRole = (role: string) => {
-    if (!customRoles.includes(role)) {
-      setCustomRoles(prev => [...prev, role]);
-    }
-  };
-
-  const handleRemoveRole = (roleToRemove: string) => {
-    setCustomRoles(prev => prev.filter(role => role !== roleToRemove));
-    if (selectedRoles.includes(roleToRemove)) {
-      onRoleToggle(roleToRemove);
-    }
   };
 
   return (
@@ -91,22 +51,23 @@ export function RolesSection({ selectedRoles, error, onRoleToggle }: RolesSectio
 
       {showRoleManager ? (
         <RoleManager
-          roles={customRoles}
-          onAddRole={handleAddRole}
-          onRemoveRole={handleRemoveRole}
           onClose={() => setShowRoleManager(false)}
         />
       ) : (
         <>
           <div className="flex flex-wrap gap-2">
-            {availableRoles.map((role) => (
+            {roles.map((role) => (
               <Badge
-                key={role}
-                isSelected={selectedRoles.includes(role)}
-                onClick={(e) => handleRoleClick(e, role)}
+                key={role.id}
+                isSelected={selectedRoles.includes(role.name)}
+                onClick={(e) => handleRoleClick(e, role.name)}
                 variant="role"
+                style={{
+                  backgroundColor: selectedRoles.includes(role.name) ? role.color : undefined,
+                  color: selectedRoles.includes(role.name) ? 'white' : undefined
+                }}
               >
-                {role}
+                {role.name}
               </Badge>
             ))}
           </div>
