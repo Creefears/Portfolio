@@ -149,11 +149,12 @@ const handleCardClick = useCallback((e: React.MouseEvent) => {
   }
 }, [isExpanded, title]);
 
-  const generateShareUrl = useCallback(() => {
-    const baseUrl = window.location.origin;
-    const path = location.pathname;
-    return `${baseUrl}${path}?project=${currentIndex}`;
-  }, [location.pathname, currentIndex]);
+const generateShareUrl = useCallback(() => {
+  const baseUrl = window.location.origin;
+  const path = location.pathname;
+  const slug = slugify(title);
+  return `${baseUrl}${path}?project=${slug}`;
+}, [location.pathname, title]);
 
   const handleShare = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
