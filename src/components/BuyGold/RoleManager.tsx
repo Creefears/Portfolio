@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Search, Trash2 } from 'lucide-react';
 import { Input } from '../ui/Input';
-import { useRoleStore } from '../../store/roleStore';
 import { Toast } from '../ui/Toast';
 import { Role } from '../../types/role';
 
@@ -10,11 +9,25 @@ interface RoleManagerProps {
   onClose: () => void;
 }
 
+const defaultRoles = [
+  { name: 'Réalisateur', colors: { bg: 'bg-purple-100', text: 'text-purple-800' } },
+  { name: 'Assistant Réalisateur', colors: { bg: 'bg-blue-100', text: 'text-blue-800' } },
+  { name: '1er Assistant Réalisateur', colors: { bg: 'bg-blue-100', text: 'text-blue-800' } },
+  { name: '2ème Assistant Réalisateur', colors: { bg: 'bg-blue-100', text: 'text-blue-800' } },
+  { name: 'Monteur Vidéo', colors: { bg: 'bg-green-100', text: 'text-green-800' } },
+  { name: '1er Monteur Vidéo', colors: { bg: 'bg-green-100', text: 'text-green-800' } },
+  { name: 'Chargé de Production', colors: { bg: 'bg-yellow-100', text: 'text-yellow-800' } },
+  { name: 'Concepteur 3D', colors: { bg: 'bg-red-100', text: 'text-red-800' } },
+  { name: 'Modeleur', colors: { bg: 'bg-red-100', text: 'text-red-800' } },
+  { name: 'Animateur', colors: { bg: 'bg-red-100', text: 'text-red-800' } },
+  { name: 'Intégrale', colors: { bg: 'bg-blue-100', text: 'text-blue-800' } }
+];
+
 export function RoleManager({ onClose }: RoleManagerProps) {
-  const { roles, addRole, deleteRole } = useRoleStore();
-  const [formData, setFormData] = useState<Partial<Role>>({
+  const [roles, setRoles] = useState<Role[]>(defaultRoles);
+  const [formData, setFormData] = useState<Role>({
     name: '',
-    color: '#4F46E5'
+    colors: { bg: 'bg-blue-100', text: 'text-blue-800' }
   });
   const [searchTerm, setSearchTerm] = useState('');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error'; visible: boolean }>({
@@ -30,7 +43,7 @@ export function RoleManager({ onClose }: RoleManagerProps) {
     }, 3000);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.name?.trim()) {
@@ -38,26 +51,43 @@ export function RoleManager({ onClose }: RoleManagerProps) {
       return;
     }
 
-    try {
-      await addRole(formData as Role);
-      showToast('Rôle ajouté avec succès', 'success');
-      setFormData({ name: '', color: '#4F46E5' });
-    } catch (error) {
-      console.error('Error adding role:', error);
-      showToast('Échec de l\'ajout du rôle', 'error');
+    if (roles.some(role => role.name.toLowerCase() === formData.name.toLowerCase())) {
+      showToast('Ce rôle existe déjà', 'error');
+      return;
+    }
+
+    setRoles(prev => [...prev, formData]);
+    showToast('Rôle ajouté avec succès', 'success');
+    setFormData({ name: '', colors: { bg: 'bg-blue-100', text: 'text-blue-800' } });
+  };
+
+  const handleDelete = (name: string) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce rôle ?')) {
+      setRoles(prev => prev.filter(role => role.name !== name));
+      showToast('Rôle supprimé avec succès', 'success');
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce rôle ?')) {
-      try {
-        await deleteRole(id);
-        showToast('Rôle supprimé avec succès', 'success');
-      } catch (error) {
-        console.error('Error deleting role:', error);
-        showToast('Échec de la suppression', 'error');
+  const handleColorChange = (type: 'bg' | 'text') => {
+    const colors = {
+      blue: { bg: 'bg-blue-100', text: 'text-blue-800' },
+      purple: { bg: 'bg-purple-100', text: 'text-purple-800' },
+      green: { bg: 'bg-green-100', text: 'text-green-800' },
+      yellow: { bg: 'bg-yellow-100', text: 'text-yellow-800' },
+      red: { bg: 'bg-red-100', text: 'text-red-800' }
+    };
+
+    const nextColor = Object.values(colors)[
+      (Object.values(colors).findIndex(c => c[type] === formData.colors[type]) + 1) % Object.keys(colors).length
+    ];
+
+    setFormData(prev => ({
+      ...prev,
+      colors: {
+        ...prev.colors,
+        [type]: nextColor[type]
       }
-    }
+    }));
   };
 
   const filteredRoles = roles.filter(role => 
@@ -81,22 +111,26 @@ export function RoleManager({ onClose }: RoleManagerProps) {
 
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Couleur du badge
+            Couleurs du badge
           </label>
-          <div className="flex gap-2">
-            <input
-              type="color"
-              value={formData.color}
-              onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-              className="w-12 h-12 rounded-lg cursor-pointer"
-            />
-            <Input
-              type="text"
-              value={formData.color}
-              onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-              placeholder="#000000"
-              className="flex-1"
-            />
+          <div className="flex gap-4">
+            <button
+              type="button"
+              onClick={() => handleColorChange('bg')}
+              className={`px-4 py-2 rounded-lg ${formData.colors.bg} ${formData.colors.text} transition-colors`}
+            >
+              Changer la couleur de fond
+            </button>
+            <button
+              type="button"
+              onClick={() => handleColorChange('text')}
+              className={`px-4 py-2 rounded-lg ${formData.colors.bg} ${formData.colors.text} transition-colors`}
+            >
+              Changer la couleur du texte
+            </button>
+          </div>
+          <div className={`p-3 rounded-lg ${formData.colors.bg} ${formData.colors.text}`}>
+            Aperçu du badge
           </div>
         </div>
 
@@ -139,21 +173,15 @@ export function RoleManager({ onClose }: RoleManagerProps) {
           <div className="space-y-2 max-h-64 overflow-y-auto pr-2">
             {filteredRoles.map((role) => (
               <div
-                key={role.id}
+                key={role.name}
                 className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg group hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-4 h-4 rounded-full"
-                    style={{ backgroundColor: role.color }}
-                  />
-                  <span className="font-medium text-gray-900 dark:text-gray-100">
-                    {role.name}
-                  </span>
-                </div>
+                <span className={`px-3 py-1 rounded-full ${role.colors.bg} ${role.colors.text}`}>
+                  {role.name}
+                </span>
                 <motion.button
                   type="button"
-                  onClick={() => handleDelete(role.id!)}
+                  onClick={() => handleDelete(role.name)}
                   className="p-1 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}

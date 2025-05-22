@@ -4,7 +4,6 @@ import { Briefcase, Plus } from 'lucide-react';
 import { Badge } from '../../ui/Badge';
 import { formatRoles } from '../../../utils/projectUtils';
 import { RoleManager } from '../RoleManager';
-import { useRoleStore } from '../../../store/roleStore';
 
 interface RolesSectionProps {
   selectedRoles: string[];
@@ -14,7 +13,6 @@ interface RolesSectionProps {
 
 export function RolesSection({ selectedRoles, error, onRoleToggle }: RolesSectionProps) {
   const [showRoleManager, setShowRoleManager] = useState(false);
-  const { roles } = useRoleStore();
 
   const formattedRoles = formatRoles(selectedRoles.join(', '));
 
@@ -32,7 +30,7 @@ export function RolesSection({ selectedRoles, error, onRoleToggle }: RolesSectio
           whileTap={{ scale: 0.95 }}
         >
           <Plus className="w-4 h-4" />
-          <span>Nouveau rôle</span>
+          <span>Gérer les rôles</span>
         </motion.button>
       </div>
 
@@ -45,15 +43,15 @@ export function RolesSection({ selectedRoles, error, onRoleToggle }: RolesSectio
       ) : (
         <>
           <div className="flex flex-wrap gap-2">
-            {roles.map((role) => (
+            {formattedRoles.map((role, index) => (
               <Badge
-                key={role.id}
-                isSelected={selectedRoles.includes(role.name)}
-                onClick={() => onRoleToggle(role.name)}
+                key={index}
+                isSelected={selectedRoles.includes(role.role)}
+                onClick={() => onRoleToggle(role.role)}
                 variant="role"
-                style={{ backgroundColor: selectedRoles.includes(role.name) ? role.color : undefined }}
+                className={`${role.colors.bg} ${role.colors.text}`}
               >
-                {role.name}
+                {role.role}
               </Badge>
             ))}
           </div>
