@@ -25,81 +25,39 @@ const ToolIcon = React.memo(function ToolIcon({
 
   useEffect(() => {
     setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
-    
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
+    return () => clearTimeout(timeoutRef.current);
   }, []);
 
-  interface ToolIconProps {
-  tool: {
-    name: string;
-    icon: string;
-    color?: string;
-    short_name?: string;
-  };
-  size?: number;
-  showLabel?: boolean;
-  className?: string;
-}
+  const tool = tools.find(t => t.id === id);
+  let IconComponent: React.ElementType = Box;
 
-
-let IconComponent: React.ElementType = Box;
-
-if (!tool) {
-  console.warn(`❌ Aucun tool trouvé avec le nom "${name}"`);
-} else if (tool.icon && tool.icon in Icons) {
-  IconComponent = Icons[tool.icon as keyof typeof Icons];
-} else {
-  console.warn(`❌ Icône invalide "${tool.icon}" pour "${tool.name}"`);
-}
-
-if (tool?.icon) {
-  const iconKey = tool.icon as keyof typeof Icons;
-
-  if (iconKey in Icons) {
-    IconComponent = Icons[iconKey];
+  if (!tool) {
+    console.warn(`❌ Aucun outil trouvé avec l'id "${id}"`);
+  } else if (tool.icon && tool.icon in Icons) {
+    IconComponent = Icons[tool.icon as keyof typeof Icons];
   } else {
-    console.warn(`❌ Icône "${tool.icon}" non trouvée dans lucide-react`);
+    console.warn(`❌ Icône invalide "${tool?.icon}" pour "${tool?.name}"`);
   }
-} else {
-  console.warn(`❌ Aucun champ icon pour "${tool?.name}"`);
-}
 
-  const shortName = tool?.short_name || name;
+  const shortName = tool?.short_name || tool?.name || "Outil";
 
-  const closeIcon = () => {
-    setIsExpanded(false);
-  };
+  const closeIcon = () => setIsExpanded(false);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     e.preventDefault();
     if (isMobile) {
       setIsExpanded(!isExpanded);
-      
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
+      clearTimeout(timeoutRef.current);
       if (!isExpanded) {
-        timeoutRef.current = setTimeout(() => {
-          closeIcon();
-        }, 3000);
+        timeoutRef.current = setTimeout(closeIcon, 3000);
       }
     }
   };
 
   useEffect(() => {
-    const handleCloseEvent = () => {
-      closeIcon();
-    };
-
+    const handleCloseEvent = () => closeIcon();
     document.addEventListener('closeToolIcon', handleCloseEvent);
-    return () => {
-      document.removeEventListener('closeToolIcon', handleCloseEvent);
-    };
+    return () => document.removeEventListener('closeToolIcon', handleCloseEvent);
   }, []);
 
   return (
@@ -144,7 +102,7 @@ if (tool?.icon) {
             </div>
             {showLabel && (
               <span className="text-xs md:text-sm text-gray-600 dark:text-gray-400 text-center">
-                {name}
+                {shortName}
               </span>
             )}
           </div>
@@ -154,7 +112,7 @@ if (tool?.icon) {
             className="bg-gray-900 text-white px-2 py-1 rounded text-xs md:text-sm"
             sideOffset={5}
           >
-            {!showLabel && name}
+            {!showLabel && shortName}
             <Tooltip.Arrow className="fill-gray-900" />
           </Tooltip.Content>
         </Tooltip.Portal>
