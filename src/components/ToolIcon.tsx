@@ -9,7 +9,7 @@ interface ToolIconProps {
   id: string;
   size?: number;
 }
-
+const { id, size = 24 } = props;
 
 const ToolIcon = React.memo(function ToolIcon({ name, className, size = 20, showLabel = false }: ToolIconProps) {
   const [isExpanded, setIsExpanded] = useState(false);
