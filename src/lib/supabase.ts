@@ -65,13 +65,37 @@ export const getTools = async (): Promise<Tool[]> => {
   }
 };
 
-export const saveTool = async (tool: Omit<Tool, 'id'>): Promise<Tool> => {
+export const saveTool = async (tool: Partial<Tool>): Promise<Tool> => {
   try {
-    const { data, error } = await supabase
-      .from('tools')
-      .insert([tool])
-      .select()
-      .single();
+    let query;
+    
+    if (tool.id) {
+      // Update existing tool
+      query = supabase
+        .from('tools')
+        .update({
+          name: tool.name,
+          short_name: tool.short_name,
+          icon: tool.icon,
+          color: tool.color,
+          category: tool.category,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', tool.id)
+        .select();
+    } else {
+      // Insert new tool
+      query = supabase
+        .from('tools')
+        .insert([{
+          ...tool,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }])
+        .select();
+    }
+
+    const { data, error } = await query.single();
 
     if (error) {
       const errorInfo = handleSupabaseError(error, 'tool save');
@@ -79,7 +103,7 @@ export const saveTool = async (tool: Omit<Tool, 'id'>): Promise<Tool> => {
     }
 
     if (!data) {
-      throw new Error('No data returned from Supabase after tool insert');
+      throw new Error('No data returned from Supabase after tool operation');
     }
 
     return data;
