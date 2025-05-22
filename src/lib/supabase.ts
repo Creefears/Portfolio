@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import type { Experience } from '../types/experience';
 import type { Project } from '../types/project';
 import type { Tool } from '../types/project';
+import type { Role } from '../types/role';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -14,39 +15,91 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const handleSupabaseError = (error: unknown, operation: string) => {
   const timestamp = new Date().toISOString();
-  const errorDetails = error instanceof Error 
-    ? {
-        message: error.message,
-        stack: error.stack,
-        name: error.name,
-        cause: error.cause,
-        context: { operation, timestamp }
-      }
-    : {
-        raw: error,
-        context: { operation, timestamp }
-      };
-    
-  // Network error check
-  if (error instanceof TypeError && error.message === 'Failed to fetch') {
-    console.error(`[${timestamp}] Supabase network error:`, {
-      ...errorDetails,
-      type: 'NetworkError',
-      operation
-    });
-    throw new Error(`Network error: Unable to connect to Supabase. Please check your internet connection and try again.`);
-  }
-
-  // Detailed error logging
-  console.error(`[${timestamp}] Supabase ${operation} error:`, errorDetails);
-  
-  // Return structured error info
+  console.error(`[${timestamp}] Supabase ${operation} error:`, error);
   return {
     message: error instanceof Error ? error.message : 'An unknown error occurred',
     timestamp,
-    operation,
-    details: errorDetails
+    operation
   };
+};
+
+// Role operations
+export const getRoles = async (): Promise<Role[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('roles')
+      .select('*')
+      .order('name');
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    handleSupabaseError(error, 'roles fetch');
+    return [];
+  }
+};
+
+export const saveRole = async (role: Partial<Role>): Promise<Role> => {
+  try {
+    let query;
+    
+    if (role.id) {
+      // Update existing role
+      query = supabase
+        .from('roles')
+        .update({
+          name: role.name,
+          color: role.color,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', role.id)
+        .select();
+    } else {
+      // Insert new role
+      query = supabase
+        .from('roles')
+        .insert([{
+          name: role.name,
+          color: role.color,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }])
+        .select();
+    }
+
+    const { data, error } = await query.single();
+
+    if (error) {
+      const errorInfo = handleSupabaseError(error, 'role save');
+      throw new Error(errorInfo.message);
+    }
+
+    if (!data) {
+      throw new Error('No data returned from Supabase after role operation');
+    }
+
+    return data;
+  } catch (error) {
+    const errorInfo = handleSupabaseError(error, 'role save');
+    throw new Error(errorInfo.message);
+  }
+};
+
+export const deleteRole = async (id: string): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('roles')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      const errorInfo = handleSupabaseError(error, 'role delete');
+      throw new Error(errorInfo.message);
+    }
+  } catch (error) {
+    const errorInfo = handleSupabaseError(error, 'role delete');
+    throw new Error(errorInfo.message);
+  }
 };
 
 // Tool operations

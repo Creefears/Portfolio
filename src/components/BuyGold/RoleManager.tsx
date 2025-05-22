@@ -1,0 +1,234 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Plus, Search, Trash2, Edit2 } from 'lucide-react';
+import { Input } from '../ui/Input';
+import { useRoleStore } from '../../store/roleStore';
+import { Toast } from '../ui/Toast';
+import { Role } from '../../types/role';
+
+interface RoleManagerProps {
+  onClose: () => void;
+}
+
+export function RoleManager({ onClose }: RoleManagerProps) {
+  const { roles, addRole, updateRole, deleteRole } = useRoleStore();
+  const [formData, setFormData] = useState<Role>({
+    name: '',
+    color: '#4F46E5'
+  });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error'; visible: boolean }>({
+    message: '',
+    type: 'success',
+    visible: false
+  });
+
+  const showToast = (message: string, type: 'success' | 'error') => {
+    setToast({ message, type, visible: true });
+    setTimeout(() => {
+      setToast(prev => ({ ...prev, visible: false }));
+    }, 3000);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      if (editingId) {
+        await updateRole({
+          ...formData,
+          id: editingId
+        });
+        showToast('Rôle mis à jour avec succès', 'success');
+      } else {
+        await addRole(formData);
+        showToast('Rôle ajouté avec succès', 'success');
+      }
+
+      resetForm();
+    } catch (error) {
+      console.error('Error saving role:', error);
+      showToast(editingId ? 'Échec de la mise à jour' : 'Échec de l\'ajout du rôle', 'error');
+    }
+  };
+
+  const handleEdit = (role: Role) => {
+    setEditingId(role.id);
+    setFormData({
+      id: role.id,
+      name: role.name,
+      color: role.color
+    });
+  };
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce rôle ?')) {
+      try {
+        await deleteRole(id);
+        showToast('Rôle supprimé avec succès', 'success');
+        if (editingId === id) {
+          resetForm();
+        }
+      } catch (error) {
+        console.error('Error deleting role:', error);
+        showToast('Échec de la suppression', 'error');
+      }
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      color: '#4F46E5'
+    });
+    setEditingId(null);
+  };
+
+  return (
+    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg space-y-6">
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        Gestionnaire de Rôles
+      </h3>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <Input
+          label="Nom du rôle"
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          required
+        />
+
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Couleur du badge
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="color"
+              value={formData.color}
+              onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+              className="w-12 h-12 rounded-lg cursor-pointer"
+            />
+            <Input
+              type="text"
+              value={formData.color}
+              onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+              placeholder="#000000"
+              className="flex-1"
+            />
+          </div>
+        </div>
+
+        <div className="flex gap-4">
+          <motion.button
+            type="submit"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Plus className="w-5 h-5" />
+            <span>{editingId ? 'Mettre à jour' : 'Ajouter'} le rôle</span>
+          </motion.button>
+
+          {editingId ? (
+            <motion.button
+              type="button"
+              onClick={resetForm}
+              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              Annuler
+            </motion.button>
+          ) : (
+            <motion.button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              Fermer
+            </motion.button>
+          )}
+        </div>
+      </form>
+
+      {roles.length > 0 && (
+        <div className="space-y-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Rechercher un rôle..."
+              className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg"
+            />
+          </div>
+
+          <div className="space-y-2 max-h-64 overflow-y-auto pr-2">
+            {roles
+              .filter(role => role.name.toLowerCase().includes(searchTerm.toLowerCase()))
+              .map((role) => {
+                const isEditing = editingId === role.id;
+                
+                return (
+                  <div
+                    key={role.id}
+                    className={`flex items-center gap-3 p-3 rounded-lg group transition-colors ${
+                      isEditing 
+                        ? 'bg-indigo-50 dark:bg-indigo-900/30' 
+                        : 'bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    <div
+                      className="w-6 h-6 rounded-full"
+                      style={{ backgroundColor: role.color }}
+                    />
+                    <div className="flex-1">
+                      <span className="font-medium text-gray-900 dark:text-gray-100">
+                        {role.name}
+                      </span>
+                    </div>
+                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <motion.button
+                        type="button"
+                        onClick={() => handleEdit(role)}
+                        className={`p-1 ${
+                          isEditing 
+                            ? 'text-indigo-600 dark:text-indigo-400' 
+                            : 'text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400'
+                        }`}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </motion.button>
+                      <motion.button
+                        type="button"
+                        onClick={() => handleDelete(role.id!)}
+                        className="p-1 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </motion.button>
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
+        </div>
+      )}
+
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.visible}
+        onClose={() => setToast(prev => ({ ...prev, visible: false }))}
+      />
+    </div>
+  );
+}
