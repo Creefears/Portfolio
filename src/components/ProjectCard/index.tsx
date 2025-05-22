@@ -55,17 +55,17 @@ function ProjectCard({
   });
 
   // ✅ Remplace ce useEffect
-  useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const projectIndex = searchParams.get('project');
-    if (projectIndex !== null) {
-      const index = parseInt(projectIndex);
-      if (!isNaN(index) && index >= 0 && index < allProjects.length) {
-        setCurrentIndex(index);
-        setIsExpanded(true);
-      }
-    }
-  }, [location, allProjects.length]);
+ useEffect(() => {
+  const searchParams = new URLSearchParams(location.search);
+  const projectIndex = searchParams.get('project');
+
+  // ✅ N'ouvre la card que si l'index dans l'URL correspond à CETTE carte
+  if (projectIndex !== null && parseInt(projectIndex) === index) {
+    setIsExpanded(true);
+  } else {
+    setIsExpanded(false); // ferme les autres cards
+  }
+}, [location.search, index]);
 
   useEffect(() => {
     if (isExpanded) {
