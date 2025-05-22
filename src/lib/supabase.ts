@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Role } from '../types/role';
+import type { Experience } from '../types/experience';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -96,6 +97,80 @@ export const deleteRole = async (id: string): Promise<void> => {
     rolesCache.data = null;
   } catch (error) {
     console.error('Error deleting role:', error);
+    throw error;
+  }
+};
+
+// Experience operations
+export const getExperiences = async (): Promise<Experience[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('experiences')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching experiences:', error);
+    throw error;
+  }
+};
+
+export const saveExperience = async (experience: Partial<Experience>): Promise<Experience> => {
+  try {
+    const { data, error } = await supabase
+      .from('experiences')
+      .insert([{
+        ...experience,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }])
+      .select()
+      .single();
+
+    if (error) throw error;
+    if (!data) throw new Error('No data returned');
+
+    return data;
+  } catch (error) {
+    console.error('Error saving experience:', error);
+    throw error;
+  }
+};
+
+export const updateExperience = async (experience: Partial<Experience>, id: string): Promise<Experience> => {
+  try {
+    const { data, error } = await supabase
+      .from('experiences')
+      .update({
+        ...experience,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    if (!data) throw new Error('No data returned');
+
+    return data;
+  } catch (error) {
+    console.error('Error updating experience:', error);
+    throw error;
+  }
+};
+
+export const deleteExperience = async (id: string): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('experiences')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error deleting experience:', error);
     throw error;
   }
 };
