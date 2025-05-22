@@ -109,10 +109,6 @@ const ToolManager: React.FC<ToolManagerProps> = ({ tools, onClose }) => {
     }
   };
 
-  const filteredTools = tools.filter(tool =>
-    tool.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg space-y-6">
       <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
@@ -219,41 +215,43 @@ const ToolManager: React.FC<ToolManagerProps> = ({ tools, onClose }) => {
           </div>
 
           <div className="space-y-2 max-h-64 overflow-y-auto pr-2">
-            {filteredTools.map((tool) => {
-              const IconComponent = Icons[tool.icon as keyof typeof Icons];
-              return (
-                <div
-                  key={tool.id}
-                  className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg group"
-                >
+            {tools
+              .filter(tool => tool.name.toLowerCase().includes(searchTerm.toLowerCase()))
+              .map((tool) => {
+                const IconComponent = Icons[tool.icon as keyof typeof Icons];
+                return (
                   <div
-                    className="p-2 rounded-lg"
-                    style={{ backgroundColor: tool.color }}
+                    key={tool.id}
+                    className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg group"
                   >
-                    {IconComponent && <IconComponent className="w-5 h-5 text-white" />}
-                  </div>
-                  <div className="flex-1">
-                    <span className="font-medium text-gray-900 dark:text-gray-100">
-                      {tool.name}
-                    </span>
-                    <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
-                      ({tool.short_name})
-                    </span>
-                  </div>
-                  {tool.id && (
-                    <motion.button
-                      type="button"
-                      onClick={() => handleDelete(tool.id!)}
-                      className="p-1 text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
+                    <div
+                      className="p-2 rounded-lg"
+                      style={{ backgroundColor: tool.color }}
                     >
-                      <Trash2 className="w-4 h-4" />
-                    </motion.button>
-                  )}
-                </div>
-              );
-            })}
+                      {IconComponent && <IconComponent className="w-5 h-5 text-white" />}
+                    </div>
+                    <div className="flex-1">
+                      <span className="font-medium text-gray-900 dark:text-gray-100">
+                        {tool.name}
+                      </span>
+                      <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
+                        ({tool.short_name})
+                      </span>
+                    </div>
+                    {tool.id && (
+                      <motion.button
+                        type="button"
+                        onClick={() => handleDelete(tool.id!)}
+                        className="p-1 text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </motion.button>
+                    )}
+                  </div>
+                );
+              })}
           </div>
         </div>
       )}
