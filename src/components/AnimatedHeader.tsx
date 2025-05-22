@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef } from 'react';
+import { motion, useScroll, useTransform, useSpring, useAnimationFrame } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 
 const projects = [
@@ -61,78 +61,107 @@ const projects = [
   }
 ];
 
+// Double the projects array for seamless scrolling
+const allProjects = [...projects, ...projects];
+
 function AnimatedHeader() {
   const navigate = useNavigate();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [scrollProgress, setScrollProgress] = React.useState(0);
 
   const handleProjectClick = (path: string, index: number) => {
     navigate(`${path}?project=${index}`);
   };
 
+  useAnimationFrame(() => {
+    if (scrollRef.current) {
+      setScrollProgress(prev => {
+        const newProgress = (prev + 0.5) % 100;
+        scrollRef.current!.style.transform = `translateX(-${newProgress}%)`;
+        return newProgress;
+      });
+    }
+  });
+
   return (
     <div className="absolute inset-0 overflow-hidden bg-gray-900">
-      {/* Background grid of images */}
-      <div className="absolute inset-0 grid grid-cols-1 md:grid-cols-4 gap-1 transform -rotate-12 scale-[1.4] translate-y-[-5%] z-10">
-        {projects.map((project, i) => (
-          <div
-            key={i}
-            onClick={() => handleProjectClick(project.path, project.index)}
-            className="relative h-full overflow-hidden group cursor-pointer"
-          >
-            <motion.div
-              initial={{ opacity: 0.6 }}
-              animate={{ opacity: 0.6 }}
-              whileHover={{ 
-                scale: 1.1,
-                opacity: 1,
-                zIndex: 30,
-                transition: { duration: 0.3 }
-              }}
-              className="h-full"
+      <div 
+        ref={containerRef} 
+        className="absolute inset-0 overflow-hidden"
+      >
+        {/* Background grid of images */}
+        <div 
+          ref={scrollRef}
+          className="absolute inset-0 flex transform -rotate-12 scale-[1.4] translate-y-[-5%] z-10"
+          style={{
+            width: '200%', // Double width for seamless scrolling
+            willChange: 'transform'
+          }}
+        >
+          {allProjects.map((project, i) => (
+            <div
+              key={i}
+              onClick={() => handleProjectClick(project.path, project.index)}
+              className="relative h-full overflow-hidden group cursor-pointer"
+              style={{ width: `${100 / allProjects.length}%` }}
             >
-              {/* Image */}
-              <motion.div 
-                className="absolute inset-0 transition-all duration-300"
-                whileHover={{ scale: 1.15 }}
+              <motion.div
+                initial={{ opacity: 0.6 }}
+                animate={{ opacity: 0.6 }}
+                whileHover={{ 
+                  scale: 1.1,
+                  opacity: 1,
+                  zIndex: 30,
+                  transition: { duration: 0.3 }
+                }}
+                className="h-full"
               >
-                <img
-                  src={project.image}
-                  alt={`Portfolio ${i + 1}`}
-                  className="w-full h-full object-cover brightness-[0.7]"
+                {/* Image */}
+                <motion.div 
+                  className="absolute inset-0 transition-all duration-300"
+                  whileHover={{ scale: 1.15 }}
+                >
+                  <img
+                    src={project.image}
+                    alt={`Portfolio ${i + 1}`}
+                    className="w-full h-full object-cover brightness-[0.7]"
+                  />
+                </motion.div>
+                
+                {/* Dark overlay */}
+                <motion.div 
+                  className="absolute inset-0 bg-black opacity-50 transition-opacity duration-300 group-hover:opacity-70"
                 />
-              </motion.div>
-              
-              {/* Dark overlay */}
-              <motion.div 
-                className="absolute inset-0 bg-black opacity-50 transition-opacity duration-300 group-hover:opacity-70"
-              />
 
-              {/* Project info */}
-              <motion.div
-                className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center opacity-0 transition-all duration-300 group-hover:opacity-100"
-              >
-                <motion.h3
-                  className="text-white font-bold text-2xl mb-3 drop-shadow-lg transform translate-y-4 transition-all duration-300 group-hover:translate-y-0"
-                >
-                  {project.company}
-                </motion.h3>
-                <motion.p
-                  className="text-white text-sm px-4 py-2 rounded-full bg-black/60 backdrop-blur-sm transform translate-y-4 transition-all duration-300 group-hover:translate-y-0"
-                >
-                  {project.role}
-                </motion.p>
-              </motion.div>
+                {/* Shine effect */}
+                <motion.div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-30 bg-gradient-to-r from-transparent via-white to-transparent -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-700"
+                />
 
-              {/* Shine effect */}
-              <motion.div
-                className="absolute inset-0 opacity-0 group-hover:opacity-30 bg-gradient-to-r from-transparent via-white to-transparent -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-700"
-              />
-            </motion.div>
-          </div>
-        ))}
+                {/* Project info */}
+                <motion.div
+                  className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center opacity-0 transition-all duration-300 group-hover:opacity-100"
+                >
+                  <motion.h3
+                    className="text-white font-bold text-2xl mb-3 drop-shadow-lg transform translate-y-4 transition-all duration-300 group-hover:translate-y-0"
+                  >
+                    {project.company}
+                  </motion.h3>
+                  <motion.p
+                    className="text-white text-sm px-4 py-2 rounded-full bg-black/60 backdrop-blur-sm transform translate-y-4 transition-all duration-300 group-hover:translate-y-0"
+                  >
+                    {project.role}
+                  </motion.p>
+                </motion.div>
+              </motion.div>
+            </div>
+          ))}
+        </div>
+
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/80 to-black/60 pointer-events-none z-15" />
       </div>
-
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/80 to-black/60 pointer-events-none z-15" />
     </div>
   );
 }
