@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Play, X } from 'lucide-react';
-import { formatVideoUrl } from '../../utils/projectUtils';
+import { createIframeElement } from '../../utils/videoUtils';
 
 interface MediaPreviewProps {
   type: 'image' | 'video';
@@ -54,12 +54,8 @@ export function MediaPreview({ type, url, onClose }: MediaPreviewProps) {
       return (
         <div className="relative w-full aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
           <div 
-            dangerouslySetInnerHTML={{ 
-              __html: url.replace(
-                '<iframe',
-                '<iframe style="width:100%; height:100%; object-fit:contain;"'
-              )
-            }} 
+            dangerouslySetInnerHTML={{ __html: url }}
+            className="w-full h-full"
           />
           {onClose && (
             <motion.button
@@ -110,12 +106,8 @@ export function MediaPreview({ type, url, onClose }: MediaPreviewProps) {
       return (
         <div className="relative w-full aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
           <div 
-            dangerouslySetInnerHTML={{ 
-              __html: url.replace(
-                '<iframe',
-                '<iframe style="width:100%; height:100%; object-fit:contain;"'
-              )
-            }} 
+            dangerouslySetInnerHTML={{ __html: url }}
+            className="w-full h-full"
           />
           {onClose && (
             <motion.button
@@ -132,8 +124,6 @@ export function MediaPreview({ type, url, onClose }: MediaPreviewProps) {
       );
     }
 
-    const formattedUrl = formatVideoUrl(url);
-    
     if (!isPlaying) {
       return (
         <div className="relative w-full aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
@@ -165,11 +155,9 @@ export function MediaPreview({ type, url, onClose }: MediaPreviewProps) {
 
     return (
       <div className="relative w-full aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
-        <iframe
-          src={formattedUrl}
+        <div 
+          dangerouslySetInnerHTML={{ __html: createIframeElement(url) }}
           className="w-full h-full"
-          allow="autoplay; fullscreen"
-          allowFullScreen
         />
         {onClose && (
           <motion.button
