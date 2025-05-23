@@ -121,50 +121,26 @@ export function useVideoPlayer() {
   };
 
   const validateVideoUrl = (url: string): boolean => {
-    if (!url) return false;
     try {
       new URL(url);
-      // Check for common video file extensions
-      const validExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.m4v'];
-      return validExtensions.some(ext => url.toLowerCase().endsWith(ext)) || 
-             url.includes('blob:') || // Handle blob URLs
-             /^https?:\/\/[^/]+\/(api|stream|video)/i.test(url); // Handle API endpoints
+      return true;
     } catch {
       return false;
     }
   };
 
   const handleError = (error: any) => {
-    // Early return if no video element is present
-    if (!videoRef.current) {
-      setError({
-        message: 'Video player not initialized properly.',
-        retryable: false
-      });
-      return;
-    }
-
-    // Get detailed video element state
-    const videoState = {
-      src: videoRef.current.src,
-      readyState: videoRef.current.readyState,
-      networkState: videoRef.current.networkState,
-      error: videoRef.current.error,
-      paused: videoRef.current.paused,
-      currentTime: videoRef.current.currentTime,
-      duration: videoRef.current.duration,
-      ended: videoRef.current.ended,
-      seeking: videoRef.current.seeking,
-      stalled: videoRef.current.stalled,
-    };
-
     console.error('Video player error:', {
       error,
-      videoState,
-      browserInfo: {
-        userAgent: navigator.userAgent,
-        vendor: navigator.vendor,
-        platform: navigator.platform,
+      type: error?.type,
+      code: error?.code,
+      message: error?.message,
+      name: error?.name,
+      target: {
+        error: error?.target?.error,
+        src: videoRef.current?.src,
+        readyState: videoRef.current?.readyState,
+        networkState: videoRef.current?.networkState
       }
     });
     
@@ -177,72 +153,52 @@ export function useVideoPlayer() {
     let errorMessage = 'Error loading video. Please try again later.';
     let isRetryable = true;
 
-    // Source validation
-    if (!videoRef.current.src) {
-      errorMessage = 'No video source provided.';
+    // Check if the video source is valid
+    if (videoRef.current?.src && !validateVideoUrl(videoRef.current.src)) {
+      errorMessage = 'Invalid video URL provided.';
       isRetryable = false;
     }
-    else if (!validateVideoUrl(videoRef.current.src)) {
-      errorMessage = 'Invalid video URL or unsupported format.';
+    // Check for specific error types
+    else if (error?.type === 'missing_api_key' || error?.message?.includes('API key')) {
+      errorMessage = 'Unable to play video: Missing or invalid API key.';
       isRetryable = false;
     }
-    // Network errors
-    else if (videoState.networkState === 3) { // NETWORK_NO_SOURCE
-      errorMessage = 'Video source not found or access denied.';
-      isRetryable = true;
-    }
-    else if (videoState.networkState === 2) { // NETWORK_LOADING
-      errorMessage = 'Network error while loading video.';
-      isRetryable = true;
-    }
-    // Media errors
-    else if (videoState.error) {
-      switch (videoState.error.code) {
-        case 1: // MEDIA_ERR_ABORTED
-          errorMessage = 'Video loading was aborted.';
-          isRetryable = true;
-          break;
-        case 2: // MEDIA_ERR_NETWORK
-          errorMessage = 'Network error occurred. Check your connection.';
-          isRetryable = true;
-          break;
-        case 3: // MEDIA_ERR_DECODE
-          errorMessage = 'Video format not supported or file is corrupted.';
-          isRetryable = false;
-          break;
-        case 4: // MEDIA_ERR_SRC_NOT_SUPPORTED
-          errorMessage = 'Video format not supported by your browser.';
-          isRetryable = false;
-          break;
-        default:
-          errorMessage = `Video error: ${videoState.error.message}`;
-          isRetryable = true;
-      }
-    }
-    // CORS errors
-    else if (error?.message?.includes('CORS') || error?.name === 'SecurityError') {
-      errorMessage = 'Access to video blocked by CORS policy.';
+    else if (error?.code === 'MEDIA_ERR_SRC_NOT_SUPPORTED' || error?.target?.error?.code === 3) {
+      errorMessage = 'Video format not supported by your browser.';
       isRetryable = false;
     }
-    // Stalled playback
-    else if (videoState.stalled) {
-      errorMessage = 'Video playback stalled. Check your connection.';
+    else if (error?.code === 'MEDIA_ERR_NETWORK' || error?.target?.error?.code === 2) {
+      errorMessage = 'Network error occurred while loading the video. Check your internet connection.';
+      isRetryable = true;
+      retryLoad();
+    }
+    else if (error?.code === 'MEDIA_ERR_DECODE' || error?.target?.error?.code === 3) {
+      errorMessage = 'Error occurred while decoding the video. The file might be corrupted.';
       isRetryable = true;
     }
-    // Timeout
-    else if (error?.name === 'TimeoutError' || error?.message?.includes('timeout')) {
-      errorMessage = 'Video loading timed out. Try again.';
+    else if (error?.code === 'MEDIA_ERR_ABORTED' || error?.target?.error?.code === 1) {
+      errorMessage = 'Video loading was aborted.';
       isRetryable = true;
+    }
+    else if (error?.target?.error?.code === 4) {
+      errorMessage = 'Video not found or access denied. Please check the video URL and permissions.';
+      isRetryable = false;
+    }
+    // Handle Google Drive specific errors
+    else if (error?.message?.includes('drive') || videoRef.current?.src?.includes('drive.google.com')) {
+      errorMessage = 'Error loading Google Drive video. Please check the sharing permissions.';
+      isRetryable = false;
+    }
+    // Handle CORS errors
+    else if (error?.message?.includes('CORS') || error?.message?.includes('cross-origin')) {
+      errorMessage = 'Cross-origin error: Unable to load video from this source.';
+      isRetryable = false;
     }
 
     setError({
       message: errorMessage,
       retryable: isRetryable && retryCount < maxRetries
     });
-
-    if (isRetryable && retryCount < maxRetries) {
-      retryLoad();
-    }
   };
 
   const handleRetry = () => {
