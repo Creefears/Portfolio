@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { VideoControls } from './VideoControls';
 import { VideoError } from './VideoError';
@@ -50,7 +50,6 @@ export function VideoPlayer({ url, title, setIsPlaying }: VideoPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const formattedUrl = url ? formatVideoUrl(url) : '';
   const isYouTube = url?.includes('youtube.com') || url?.includes('youtu.be');
-  const isIframe = url?.startsWith('<iframe');
 
   useEffect(() => {
     if (videoRef.current) {
@@ -59,7 +58,7 @@ export function VideoPlayer({ url, title, setIsPlaying }: VideoPlayerProps) {
   }, [url]);
 
   useEffect(() => {
-    if (!isYouTube && !isIframe && videoRef.current) {
+    if (!isYouTube && videoRef.current) {
       try {
         if (isPlaying) {
           const playPromise = videoRef.current.play();
@@ -79,7 +78,7 @@ export function VideoPlayer({ url, title, setIsPlaying }: VideoPlayerProps) {
         setIsPlaying(false);
       }
     }
-  }, [isPlaying, isYouTube, isIframe, setIsPlaying]);
+  }, [isPlaying, isYouTube, setIsPlaying]);
 
   const handleMouseMove = () => {
     setShowControls(true);
@@ -96,22 +95,6 @@ export function VideoPlayer({ url, title, setIsPlaying }: VideoPlayerProps) {
     );
   }
 
-  if (isIframe) {
-    return (
-      <div className="relative w-full h-full bg-black">
-        <div 
-          dangerouslySetInnerHTML={{ 
-            __html: url.replace(
-              '<iframe',
-              '<iframe style="width:100%; height:100%; border:0; object-fit:contain;"'
-            )
-          }} 
-          className="absolute inset-0"
-        />
-      </div>
-    );
-  }
-
   return (
     <div 
       ref={containerRef}
@@ -122,11 +105,11 @@ export function VideoPlayer({ url, title, setIsPlaying }: VideoPlayerProps) {
       <div className="absolute inset-0 flex items-center justify-center">
         {isYouTube ? (
           <iframe
-            src={`${formattedUrl}?autoplay=1&controls=1&modestbranding=1&rel=0&showinfo=0`}
+            src={`https://www.youtube.com/embed/${formattedUrl}?autoplay=1&controls=1&modestbranding=1&rel=0&showinfo=0`}
             className="absolute inset-0 w-full h-full"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
-            style={{ border: 0 }}
+            crossOrigin="anonymous"
           />
         ) : (
           <>
@@ -149,7 +132,7 @@ export function VideoPlayer({ url, title, setIsPlaying }: VideoPlayerProps) {
               onWaiting={() => setIsBuffering(true)}
               onCanPlay={() => setIsBuffering(false)}
               playsInline
-              style={{ backgroundColor: 'black' }}
+              crossOrigin="anonymous"
             />
 
             <VideoLoading isBuffering={isBuffering} isReady={isReady} error={error} />
