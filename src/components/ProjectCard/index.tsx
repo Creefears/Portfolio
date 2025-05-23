@@ -212,7 +212,7 @@ function ProjectCard({
             />
           ) : (
             <div className="h-full flex flex-col">
-              <div className="w-full h-[30vh] md:h-[50vh] relative">
+              <div className="w-full h-[30vh] md:h-[40vh] relative">
                 <ProjectMedia
                   project={currentProject}
                   isVideoPlaying={isVideoPlaying}
