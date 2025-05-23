@@ -21,7 +21,7 @@ export function HeroSection() {
           >
             <div className="flex items-center justify-center lg:justify-start gap-4 mb-4">
               <img 
-                src="/home/project/src/VJ Icon.ico"
+                src="/VJ Icon.ico"
                 alt="VJ Logo"
                 className="w-12 h-12"
               />
