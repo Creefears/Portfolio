@@ -43,7 +43,7 @@ export function CompactView({
 }: CompactViewProps) {
   return (
     <motion.div 
-      className="flex flex-col h-full"
+      className="flex flex-col"
       variants={contentVariants}
       initial="hidden"
       animate="visible"
@@ -81,7 +81,7 @@ export function CompactView({
         </div>
       </div>
       <motion.div 
-        className="flex flex-col flex-grow p-6"
+        className="flex flex-col p-6"
         variants={contentVariants}
       >
         <motion.h3 
@@ -95,39 +95,34 @@ export function CompactView({
           variants={itemVariants}
         />
         <motion.p 
-          className="text-gray-600 dark:text-gray-400 mb-4 text-center flex-grow"
+          className="text-gray-600 dark:text-gray-400 mb-4 text-center"
           variants={itemVariants}
         >
           {shortDescription}
         </motion.p>
         <motion.div 
-          className="mt-auto space-y-4"
-          variants={contentVariants}
+          className="flex flex-col items-center gap-4"
+          variants={itemVariants}
         >
-          <motion.div 
-            className="flex flex-col items-center gap-4"
-            variants={itemVariants}
-          >
-            <RoleBadges role={role} />
-            <div className="flex justify-center gap-2">
-              {tools.map((tool, idx) => (
-                <motion.div
-                  key={idx}
-                  variants={itemVariants}
-                  custom={idx}
-                >
-                  <ToolIcon name={typeof tool === 'string' ? tool : tool.name} size={16} />
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-          <motion.p 
-            className="text-sm text-indigo-600 dark:text-indigo-400 text-center"
-            variants={itemVariants}
-          >
-            Cliquer pour plus de détails →
-          </motion.p>
+          <RoleBadges role={role} />
+          <div className="flex justify-center gap-2">
+            {tools.map((tool, idx) => (
+              <motion.div
+                key={idx}
+                variants={itemVariants}
+                custom={idx}
+              >
+                <ToolIcon name={typeof tool === 'string' ? tool : tool.name} size={16} />
+              </motion.div>
+            ))}
+          </div>
         </motion.div>
+        <motion.p 
+          className="text-sm text-indigo-600 dark:text-indigo-400 text-center mt-4"
+          variants={itemVariants}
+        >
+          Cliquer pour plus de détails →
+        </motion.p>
       </motion.div>
     </motion.div>
   );
