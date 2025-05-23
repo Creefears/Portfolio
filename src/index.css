@@ -46,6 +46,42 @@ body {
     sans-serif;
 }
 
+/* Custom scrollbar styles */
+.project-content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99, 102, 241, 0.5) transparent;
+}
+
+.project-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.project-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.project-content::-webkit-scrollbar-thumb {
+  background-color: rgba(99, 102, 241, 0.5);
+  border-radius: 20px;
+  border: transparent;
+}
+
+.project-content::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(99, 102, 241, 0.8);
+}
+
+.dark .project-content {
+  scrollbar-color: rgba(99, 102, 241, 0.3) transparent;
+}
+
+.dark .project-content::-webkit-scrollbar-thumb {
+  background-color: rgba(99, 102, 241, 0.3);
+}
+
+.dark .project-content::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(99, 102, 241, 0.5);
+}
+
 .prose {
   max-width: none;
 }
