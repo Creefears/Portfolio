@@ -3,15 +3,17 @@ import { Link } from 'react-router-dom';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 
 function Portfolio() {
+  // Move all hook calls to the top of the component
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isGyroAvailable, setIsGyroAvailable] = useState(false);
   const [isTouchActive, setIsTouchActive] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const springConfig = { stiffness: 300, damping: 30 };
   
+  // Framer Motion hooks
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-
+  
+  const springConfig = { stiffness: 300, damping: 30 };
   const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [25, -25]), springConfig);
   const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-25, 25]), springConfig);
 
@@ -20,25 +22,6 @@ function Portfolio() {
       setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
     };
     checkMobile();
-
-    const requestGyroPermission = async () => {
-      if (isMobile && typeof DeviceOrientationEvent !== 'undefined') {
-        try {
-          if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-            const permission = await DeviceOrientationEvent.requestPermission();
-            if (permission === 'granted') {
-              setIsGyroAvailable(true);
-              setupGyroscope();
-            }
-          } else {
-            setIsGyroAvailable(true);
-            setupGyroscope();
-          }
-        } catch (error) {
-          console.error('Erreur lors de la demande de permission du gyroscope:', error);
-        }
-      }
-    };
 
     const setupGyroscope = () => {
       const handleOrientation = (event: DeviceOrientationEvent) => {
@@ -58,8 +41,27 @@ function Portfolio() {
       return () => window.removeEventListener('deviceorientation', handleOrientation);
     };
 
+    const requestGyroPermission = async () => {
+      if (isMobile && typeof DeviceOrientationEvent !== 'undefined') {
+        try {
+          if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
+            const permission = await (DeviceOrientationEvent as any).requestPermission();
+            if (permission === 'granted') {
+              setIsGyroAvailable(true);
+              setupGyroscope();
+            }
+          } else {
+            setIsGyroAvailable(true);
+            setupGyroscope();
+          }
+        } catch (error) {
+          console.error('Error requesting gyroscope permission:', error);
+        }
+      }
+    };
+
     requestGyroPermission();
-  }, [isMobile]);
+  }, [isMobile, x, y]);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
     if (!isMobile) {
@@ -78,14 +80,14 @@ function Portfolio() {
     if (isMobile && !isGyroAvailable) {
       const requestPermission = async () => {
         try {
-          if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-            const permission = await DeviceOrientationEvent.requestPermission();
+          if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
+            const permission = await (DeviceOrientationEvent as any).requestPermission();
             if (permission === 'granted') {
               setIsGyroAvailable(true);
             }
           }
         } catch (error) {
-          console.error('Erreur lors de la demande de permission:', error);
+          console.error('Error requesting permission:', error);
         }
       };
       requestPermission();
