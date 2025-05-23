@@ -6,12 +6,6 @@ export interface Video {
   thumbnail?: string;
 }
 
-export interface CustomRole {
-  title: string;
-  color: string;
-  icon: string;
-}
-
 export interface Project {
   id?: string;
   title: string;
@@ -43,4 +37,10 @@ export interface ProjectCardProps {
   index: number;
   totalProjects: number;
   allProjects: Project[];
+}
+
+export interface CustomRole {
+  title: string;
+  color: string;
+  icon: string;
 }
