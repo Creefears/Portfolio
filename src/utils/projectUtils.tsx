@@ -94,7 +94,7 @@ export const formatVideoUrl = (url: string): string => {
     }
   } catch (error) {
     console.error('Error formatting video URL:', error);
-    throw error;
+    return url;
   }
 
   return url;
@@ -130,13 +130,13 @@ export const renderMedia = (
 
   if (project.video && !isVideoPlaying) {
     return (
-      <motion.div
+      <motion.div 
         className={containerClasses}
         onClick={handleVideoClick}
         whileHover="hover"
       >
-        <motion.img
-          src={project.image}
+        <motion.img 
+          src={project.image} 
           alt={project.title}
           loading="lazy"
           className={mediaClasses}
@@ -145,7 +145,7 @@ export const renderMedia = (
           }}
           transition={{ duration: 0.3 }}
         />
-        <motion.div
+        <motion.div 
           className="absolute inset-0 flex items-center justify-center bg-black/40"
           variants={{
             hover: { backgroundColor: 'rgba(0, 0, 0, 0.5)' }
@@ -176,8 +176,8 @@ export const renderMedia = (
   }
 
   return (
-    <img
-      src={project.image}
+    <img 
+      src={project.image} 
       alt={project.title}
       loading="lazy"
       className={mediaClasses}
