@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Play, X } from 'lucide-react';
-import { createIframeElement } from '../../utils/videoUtils';
+import { formatVideoUrl, createIframeElement } from '../../utils/videoUtils';
 
 interface MediaPreviewProps {
   type: 'image' | 'video';
