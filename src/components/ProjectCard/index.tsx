@@ -37,6 +37,7 @@ function ProjectCard({
   const [showCopied, setShowCopied] = useState(false);
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const currentProject = allProjects[currentIndex];
   const location = useLocation();
   const { tools: allTools, fetchTools } = useToolStore();
@@ -54,12 +55,12 @@ function ProjectCard({
 
   const handlers = useSwipeable({
     onSwipedLeft: () => {
-      if (currentIndex < totalProjects - 1 && !isTransitioning) {
+      if (!isLightboxOpen && currentIndex < totalProjects - 1 && !isTransitioning) {
         handleNext(new MouseEvent('click') as React.MouseEvent);
       }
     },
     onSwipedRight: () => {
-      if (currentIndex > 0 && !isTransitioning) {
+      if (!isLightboxOpen && currentIndex > 0 && !isTransitioning) {
         handlePrevious(new MouseEvent('click') as React.MouseEvent);
       }
     },
@@ -106,7 +107,7 @@ function ProjectCard({
 
   const handleNext = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    if (currentIndex < totalProjects - 1 && !isTransitioning) {
+    if (!isLightboxOpen && currentIndex < totalProjects - 1 && !isTransitioning) {
       setIsTransitioning(true);
       setIsVideoPlaying(false);
       setCurrentImageIndex(0);
@@ -114,11 +115,11 @@ function ProjectCard({
       setCurrentIndex(prev => prev + 1);
       setTimeout(() => setIsTransitioning(false), 100);
     }
-  }, [currentIndex, totalProjects, isTransitioning]);
+  }, [currentIndex, totalProjects, isTransitioning, isLightboxOpen]);
 
   const handlePrevious = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    if (currentIndex > 0 && !isTransitioning) {
+    if (!isLightboxOpen && currentIndex > 0 && !isTransitioning) {
       setIsTransitioning(true);
       setIsVideoPlaying(false);
       setCurrentImageIndex(0);
@@ -126,7 +127,7 @@ function ProjectCard({
       setCurrentIndex(prev => prev - 1);
       setTimeout(() => setIsTransitioning(false), 100);
     }
-  }, [currentIndex, isTransitioning]);
+  }, [currentIndex, isTransitioning, isLightboxOpen]);
 
   const handleVideoClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -251,6 +252,7 @@ function ProjectCard({
                     onNext={handleNext}
                     onSelect={setCurrentImageIndex}
                     images={currentProject.images}
+                    setIsLightboxOpen={setIsLightboxOpen}
                   />
                 )}
               </div>
@@ -265,12 +267,14 @@ function ProjectCard({
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
             onClick={handleClose}
           />
-          <ProjectNavigation
-            currentIndex={currentIndex}
-            totalProjects={totalProjects}
-            handlePrevious={handlePrevious}
-            handleNext={handleNext}
-          />
+          {!isLightboxOpen && (
+            <ProjectNavigation
+              currentIndex={currentIndex}
+              totalProjects={totalProjects}
+              handlePrevious={handlePrevious}
+              handleNext={handleNext}
+            />
+          )}
         </>
       )}
 

@@ -9,6 +9,7 @@ interface CarouselProps {
   onNext: (e: React.MouseEvent) => void;
   onSelect: (index: number) => void;
   images: string[];
+  setIsLightboxOpen: (isOpen: boolean) => void;
 }
 
 const Carousel = React.memo(function Carousel({
@@ -16,9 +17,10 @@ const Carousel = React.memo(function Carousel({
   onPrevious,
   onNext,
   onSelect,
-  images
+  images,
+  setIsLightboxOpen
 }: CarouselProps) {
-  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [isLightboxOpen, setIsLightboxLocalOpen] = useState(false);
 
   if (!images || images.length === 0) return null;
 
@@ -34,6 +36,16 @@ const Carousel = React.memo(function Carousel({
     if (currentImageIndex < images.length - 1) {
       onSelect(currentImageIndex + 1);
     }
+  };
+
+  const handleLightboxOpen = () => {
+    setIsLightboxLocalOpen(true);
+    setIsLightboxOpen(true);
+  };
+
+  const handleLightboxClose = () => {
+    setIsLightboxLocalOpen(false);
+    setIsLightboxOpen(false);
   };
 
   return (
@@ -55,7 +67,7 @@ const Carousel = React.memo(function Carousel({
         >
           <div 
             className="absolute inset-0 flex items-center justify-center cursor-pointer"
-            onClick={() => setIsLightboxOpen(true)}
+            onClick={handleLightboxOpen}
           >
             <div className="w-full h-full flex items-center justify-center bg-black">
               {images[currentImageIndex].startsWith('<iframe') ? (
@@ -123,7 +135,7 @@ const Carousel = React.memo(function Carousel({
         images={images}
         currentIndex={currentImageIndex}
         isOpen={isLightboxOpen}
-        onClose={() => setIsLightboxOpen(false)}
+        onClose={handleLightboxClose}
         onNext={() => {
           if (currentImageIndex < images.length - 1) {
             onSelect(currentImageIndex + 1);
