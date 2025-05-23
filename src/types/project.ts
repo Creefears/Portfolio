@@ -1,9 +1,16 @@
-import { Tool } from './tool';
+export interface Tool {
+  id?: string;
+  name: string;
+  short_name: string;
+  icon: string;
+  color: string;
+  category: string;
+}
 
-export interface Video {
+export interface CustomRole {
   title: string;
-  url: string;
-  thumbnail?: string;
+  color: string;
+  icon: string;
 }
 
 export interface Project {
@@ -13,7 +20,7 @@ export interface Project {
   fulldescription: string;
   image: string;
   video?: string;
-  videos?: Video[];
+  videos?: Array<{ title: string; url: string; }>;
   images?: string[];
   year: string;
   role: string;
@@ -28,7 +35,7 @@ export interface ProjectCardProps {
   fulldescription: string;
   image: string;
   video?: string;
-  videos?: Video[];
+  videos?: Array<{ title: string; url: string; }>;
   images?: string[];
   year: string;
   role: string;
@@ -37,10 +44,4 @@ export interface ProjectCardProps {
   index: number;
   totalProjects: number;
   allProjects: Project[];
-}
-
-export interface CustomRole {
-  title: string;
-  color: string;
-  icon: string;
 }
