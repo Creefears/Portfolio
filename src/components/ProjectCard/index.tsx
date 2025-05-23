@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useSwipeable } from 'react-swipeable';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ProjectCardProps } from '../../types/project';
 import { CompactView } from './CompactView';
 import { ProjectMedia } from './ProjectMedia';
@@ -184,16 +185,6 @@ function ProjectCard({
           }`}
           {...(isExpanded ? handlers : {})}
         >
-          {isExpanded && (
-            <button
-              onClick={handleClose}
-              className="absolute top-4 right-4 z-50 p-2 bg-black bg-opacity-50 text-white rounded-full md:hidden"
-              aria-label="Fermer"
-            >
-              ✕
-            </button>
-          )}
-
           {!isExpanded ? (
             <CompactView
               title={title}
