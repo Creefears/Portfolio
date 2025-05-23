@@ -63,7 +63,7 @@ function ProjectCard({
         handlePrevious(new MouseEvent('click') as React.MouseEvent);
       }
     },
-    preventDefaultTouchmoveEvent: true,
+    preventDefaultTouchmoveEvent: false,
     trackMouse: false
   });
 
@@ -92,7 +92,6 @@ function ProjectCard({
     };
   }, [isExpanded]);
 
-  // Convert tool references to actual tool objects
   const getProjectTools = (projectTools: any[]) => {
     return projectTools.map(tool => {
       if (typeof tool === 'string') {
@@ -209,7 +208,7 @@ function ProjectCard({
             />
           ) : (
             <div className="h-full flex flex-col">
-              <div className="w-full h-[40vh] md:h-[50vh] relative">
+              <div className="w-full h-[30vh] md:h-[50vh] relative">
                 <ProjectMedia
                   project={currentProject}
                   isVideoPlaying={isVideoPlaying}
@@ -220,7 +219,7 @@ function ProjectCard({
                 />
               </div>
 
-              <div className="flex-1 p-6 md:p-8 overflow-y-auto">
+              <div className="flex-1 p-6 md:p-8 overflow-y-auto project-content">
                 <ProjectHeader
                   title={currentProject.title}
                   handleShare={handleShare}
@@ -241,7 +240,7 @@ function ProjectCard({
                   tools={currentTools}
                 />
 
-                <p className="text-gray-600 dark:text-gray-400 text-base md:text-lg leading-relaxed mb-8">
+                <p className="text-gray-600 dark:text-gray-400 text-base md:text-lg leading-relaxed mb-8 whitespace-pre-wrap">
                   {currentProject.fulldescription}
                 </p>
 

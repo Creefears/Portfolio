@@ -50,6 +50,10 @@ body {
 .project-content {
   scrollbar-width: thin;
   scrollbar-color: rgba(99, 102, 241, 0.3) rgba(0, 0, 0, 0.1);
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  overflow-y: auto;
+  max-height: calc(100vh - 16rem);
 }
 
 .project-content::-webkit-scrollbar {
