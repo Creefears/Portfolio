@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useSwipeable } from 'react-swipeable';
-import { motion, AnimatePresence } from 'framer-motion';
 import { ProjectCardProps } from '../../types/project';
 import { CompactView } from './CompactView';
 import { ProjectMedia } from './ProjectMedia';
@@ -14,7 +12,6 @@ import VideoSelector from './VideoSelector';
 import Carousel from './Carousel';
 import ShareDialog from '../ShareDialog';
 import { useToolStore } from '../../store/toolStore';
-import { Tabs, TabsList, TabsTrigger } from '../ui/Tabs';
 
 function ProjectCard({
   title,
@@ -41,7 +38,6 @@ function ProjectCard({
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'description' | 'gallery'>('description');
   const currentProject = allProjects[currentIndex];
   const location = useLocation();
   const { tools: allTools, fetchTools } = useToolStore();
@@ -145,7 +141,6 @@ function ProjectCard({
     setCurrentImageIndex(0);
     setCurrentVideoIndex(0);
     setCurrentIndex(index);
-    setActiveTab('description');
 
     const url = new URL(window.location.href);
     url.searchParams.delete('project');
@@ -214,7 +209,7 @@ function ProjectCard({
             />
           ) : (
             <div className="h-full flex flex-col">
-              <div className="w-full h-[30vh] md:h-[40vh] relative">
+              <div className="w-full h-[30vh] md:h-[50vh] relative">
                 <ProjectMedia
                   project={currentProject}
                   isVideoPlaying={isVideoPlaying}
@@ -225,58 +220,41 @@ function ProjectCard({
                 />
               </div>
 
-              <div className="flex-1 flex flex-col">
-                <div className="p-6 md:p-8">
-                  <ProjectHeader
-                    title={currentProject.title}
-                    handleShare={handleShare}
-                    showCopied={showCopied}
+              <div className="flex-1 p-6 md:p-8 overflow-y-auto project-content">
+                <ProjectHeader
+                  title={currentProject.title}
+                  handleShare={handleShare}
+                  showCopied={showCopied}
+                />
+
+                {currentProject.videos && (
+                  <VideoSelector
+                    videos={currentProject.videos}
+                    currentIndex={currentVideoIndex}
+                    onSelect={setCurrentVideoIndex}
                   />
+                )}
 
-                  {currentProject.videos && (
-                    <VideoSelector
-                      videos={currentProject.videos}
-                      currentIndex={currentVideoIndex}
-                      onSelect={setCurrentVideoIndex}
-                    />
-                  )}
+                <ProjectInfo
+                  year={currentProject.year}
+                  role={currentProject.role}
+                  tools={currentTools}
+                />
 
-                  <ProjectInfo
-                    year={currentProject.year}
-                    role={currentProject.role}
-                    tools={currentTools}
+                <p className="text-gray-600 dark:text-gray-400 text-base md:text-lg leading-relaxed mb-8 whitespace-pre-wrap">
+                  {currentProject.fulldescription}
+                </p>
+
+                {currentProject.images && currentProject.images.length > 0 && (
+                  <Carousel
+                    currentImageIndex={currentImageIndex}
+                    onPrevious={handlePrevious}
+                    onNext={handleNext}
+                    onSelect={setCurrentImageIndex}
+                    images={currentProject.images}
+                    setIsLightboxOpen={setIsLightboxOpen}
                   />
-                </div>
-
-                <div className="px-6 md:px-8">
-                  <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'description' | 'gallery')}>
-                    <TabsList>
-                      <TabsTrigger value="description">Description</TabsTrigger>
-                      {currentProject.images && currentProject.images.length > 0 && (
-                        <TabsTrigger value="gallery">Galerie</TabsTrigger>
-                      )}
-                    </TabsList>
-                  </Tabs>
-                </div>
-
-                <div className="flex-1 p-6 md:p-8 overflow-y-auto project-content">
-                  {activeTab === 'description' ? (
-                    <p className="text-gray-600 dark:text-gray-400 text-base md:text-lg leading-relaxed whitespace-pre-wrap">
-                      {currentProject.fulldescription}
-                    </p>
-                  ) : (
-                    currentProject.images && (
-                      <Carousel
-                        currentImageIndex={currentImageIndex}
-                        onPrevious={handlePrevious}
-                        onNext={handleNext}
-                        onSelect={setCurrentImageIndex}
-                        images={currentProject.images}
-                        setIsLightboxOpen={setIsLightboxOpen}
-                      />
-                    )
-                  )}
-                </div>
+                )}
               </div>
             </div>
           )}
