@@ -92,16 +92,18 @@ export function TabContent({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="p-6 md:p-8 max-w-3xl mx-auto"
+              className="p-4 md:p-6"
             >
-              <Carousel
-                currentImageIndex={currentImageIndex}
-                onPrevious={handlePrevious}
-                onNext={handleNext}
-                onSelect={handleImageSelect}
-                images={project.images || []}
-                setIsLightboxOpen={setIsLightboxOpen}
-              />
+              <div className="max-w-2xl mx-auto">
+                <Carousel
+                  currentImageIndex={currentImageIndex}
+                  onPrevious={handlePrevious}
+                  onNext={handleNext}
+                  onSelect={handleImageSelect}
+                  images={project.images || []}
+                  setIsLightboxOpen={setIsLightboxOpen}
+                />
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

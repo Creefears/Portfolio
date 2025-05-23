@@ -10,7 +10,7 @@ interface ProjectHeaderProps {
 
 export function ProjectHeader({ title, handleShare, showCopied }: ProjectHeaderProps) {
   return (
-    <div className="relative flex items-center justify-center mb-6">
+    <div className="relative flex items-center justify-center mt-8 mb-6 px-6 md:px-8">
       <div className="flex flex-col items-center">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 text-center">
           {title}
@@ -19,7 +19,7 @@ export function ProjectHeader({ title, handleShare, showCopied }: ProjectHeaderP
       </div>
       <motion.button
         onClick={handleShare}
-        className="absolute right-0 p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 transition-colors group"
+        className="absolute right-6 md:right-8 p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 transition-colors group"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
