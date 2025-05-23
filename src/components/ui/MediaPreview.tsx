@@ -53,7 +53,14 @@ export function MediaPreview({ type, url, onClose }: MediaPreviewProps) {
     if (url.startsWith('<iframe')) {
       return (
         <div className="relative w-full aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
-          <div dangerouslySetInnerHTML={{ __html: url }} />
+          <div 
+            dangerouslySetInnerHTML={{ 
+              __html: url.replace(
+                '<iframe',
+                '<iframe style="width:100%; height:100%; object-fit:contain;"'
+              )
+            }} 
+          />
           {onClose && (
             <motion.button
               type="button"
@@ -102,7 +109,14 @@ export function MediaPreview({ type, url, onClose }: MediaPreviewProps) {
     if (url.startsWith('<iframe')) {
       return (
         <div className="relative w-full aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
-          <div dangerouslySetInnerHTML={{ __html: url }} />
+          <div 
+            dangerouslySetInnerHTML={{ 
+              __html: url.replace(
+                '<iframe',
+                '<iframe style="width:100%; height:100%; object-fit:contain;"'
+              )
+            }} 
+          />
           {onClose && (
             <motion.button
               type="button"

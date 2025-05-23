@@ -88,7 +88,7 @@ export const formatVideoUrl = (url: string): string => {
     }
   } catch (error) {
     console.error('Error formatting video URL:', error);
-    throw error; // Re-throw to be handled by error boundary
+    throw error;
   }
 
   return url;
@@ -111,6 +111,21 @@ export const renderMedia = (
 
   if (project.videos) {
     const currentVideo = project.videos[currentVideoIndex];
+    if (currentVideo.url.startsWith('<iframe')) {
+      return (
+        <div className={containerClasses}>
+          <div 
+            dangerouslySetInnerHTML={{ 
+              __html: currentVideo.url.replace(
+                '<iframe',
+                '<iframe style="width:100%; height:100%; object-fit:contain;"'
+              )
+            }} 
+            className={mediaClasses}
+          />
+        </div>
+      );
+    }
     return (
       <div className={containerClasses}>
         <iframe
@@ -126,14 +141,33 @@ export const renderMedia = (
   }
 
   if (project.video && !isVideoPlaying) {
+    if (project.video.startsWith('<iframe')) {
+      return (
+        <motion.div
+          className={containerClasses}
+          onClick={handleVideoClick}
+          whileHover="hover"
+        >
+          <div 
+            dangerouslySetInnerHTML={{ 
+              __html: project.video.replace(
+                '<iframe',
+                '<iframe style="width:100%; height:100%; object-fit:contain;"'
+              )
+            }} 
+            className={mediaClasses}
+          />
+        </motion.div>
+      );
+    }
     return (
-      <motion.div 
+      <motion.div
         className={containerClasses}
         onClick={handleVideoClick}
         whileHover="hover"
       >
-        <motion.img 
-          src={project.image} 
+        <motion.img
+          src={project.image}
           alt={project.title}
           loading="lazy"
           className={mediaClasses}
@@ -142,7 +176,7 @@ export const renderMedia = (
           }}
           transition={{ duration: 0.3 }}
         />
-        <motion.div 
+        <motion.div
           className="absolute inset-0 flex items-center justify-center bg-black/40"
           variants={{
             hover: { backgroundColor: 'rgba(0, 0, 0, 0.5)' }
@@ -161,6 +195,21 @@ export const renderMedia = (
   }
 
   if (project.video) {
+    if (project.video.startsWith('<iframe')) {
+      return (
+        <div className={containerClasses}>
+          <div 
+            dangerouslySetInnerHTML={{ 
+              __html: project.video.replace(
+                '<iframe',
+                '<iframe style="width:100%; height:100%; object-fit:contain;"'
+              )
+            }} 
+            className={mediaClasses}
+          />
+        </div>
+      );
+    }
     return (
       <div className={containerClasses}>
         <iframe
@@ -176,8 +225,8 @@ export const renderMedia = (
   }
 
   return (
-    <img 
-      src={project.image} 
+    <img
+      src={project.image}
       alt={project.title}
       loading="lazy"
       className={mediaClasses}
