@@ -4,7 +4,7 @@ import { VideoControls } from './VideoControls';
 import { VideoError } from './VideoError';
 import { VideoLoading } from './VideoLoading';
 import { useVideoPlayer } from './hooks/useVideoPlayer';
-import { formatVideoUrl } from '../../utils/projectUtils';
+import { formatVideoUrl } from '../../utils/videoUtils';
 
 interface VideoPlayerProps {
   url: string;

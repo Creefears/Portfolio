@@ -5,7 +5,7 @@ import { Input } from './Input';
 import { TextArea } from './TextArea';
 import { Badge } from './Badge';
 import { MediaPreview } from './MediaPreview';
-import { formatVideoUrl } from '../../utils/projectUtils';
+import { formatVideoUrl } from '../../utils/videoUtils';
 
 interface VideoInputProps {
   value: string;

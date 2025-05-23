@@ -271,5 +271,3 @@ function ProjectCard({
     </div>
   );
 }
-
-export default ProjectCard;
