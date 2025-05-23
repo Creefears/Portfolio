@@ -8,7 +8,7 @@ interface VideoSelectorProps {
   onSelect: (index: number) => void;
 }
 
-const VideoSelector = React.memo(function VideoSelector({ 
+export default React.memo(function VideoSelector({ 
   videos, 
   currentIndex, 
   onSelect 
@@ -39,5 +39,3 @@ const VideoSelector = React.memo(function VideoSelector({
     </div>
   );
 });
-
-export default VideoSelector;
