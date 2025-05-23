@@ -172,10 +172,10 @@ function ProjectCard({
   }, [generateShareUrl]);
 
   return (
-    <div className="relative h-full">
+    <div className="relative min-h-[400px] flex flex-col">
       <div
         onClick={handleCardClick}
-        className={`cursor-pointer h-full ${isExpanded ? 'z-[100]' : ''}`}
+        className={`cursor-pointer flex-1 flex flex-col ${isExpanded ? 'z-[100]' : ''}`}
         style={{ position: isExpanded ? 'relative' : 'static' }}
       >
         <div
