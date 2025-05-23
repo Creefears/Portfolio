@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
 import { Project } from '../types/project';
+import { VideoPlayer } from '../components/VideoPlayer';
 
 interface FormattedRole {
   role: string;
@@ -48,6 +49,11 @@ export const formatVideoUrl = (url: string): string => {
   if (!url) return '';
 
   try {
+    // Handle iframes
+    if (url.startsWith('<iframe')) {
+      return url;
+    }
+
     // Handle YouTube playlist
     if (url.includes('videoseries')) {
       return url;
@@ -111,55 +117,18 @@ export const renderMedia = (
 
   if (project.videos) {
     const currentVideo = project.videos[currentVideoIndex];
-    if (currentVideo.url.startsWith('<iframe')) {
-      return (
-        <div className={containerClasses}>
-          <div 
-            dangerouslySetInnerHTML={{ 
-              __html: currentVideo.url.replace(
-                '<iframe',
-                '<iframe style="width:100%; height:100%; object-fit:contain;"'
-              )
-            }} 
-            className={mediaClasses}
-          />
-        </div>
-      );
-    }
     return (
       <div className={containerClasses}>
-        <iframe
-          src={formatVideoUrl(currentVideo.url)}
+        <VideoPlayer
+          url={currentVideo.url}
           title={currentVideo.title}
-          className={mediaClasses}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          onLoad={() => setIsPlaying && setIsPlaying(true)}
+          setIsPlaying={setIsPlaying || (() => {})}
         />
       </div>
     );
   }
 
   if (project.video && !isVideoPlaying) {
-    if (project.video.startsWith('<iframe')) {
-      return (
-        <motion.div
-          className={containerClasses}
-          onClick={handleVideoClick}
-          whileHover="hover"
-        >
-          <div 
-            dangerouslySetInnerHTML={{ 
-              __html: project.video.replace(
-                '<iframe',
-                '<iframe style="width:100%; height:100%; object-fit:contain;"'
-              )
-            }} 
-            className={mediaClasses}
-          />
-        </motion.div>
-      );
-    }
     return (
       <motion.div
         className={containerClasses}
@@ -195,30 +164,12 @@ export const renderMedia = (
   }
 
   if (project.video) {
-    if (project.video.startsWith('<iframe')) {
-      return (
-        <div className={containerClasses}>
-          <div 
-            dangerouslySetInnerHTML={{ 
-              __html: project.video.replace(
-                '<iframe',
-                '<iframe style="width:100%; height:100%; object-fit:contain;"'
-              )
-            }} 
-            className={mediaClasses}
-          />
-        </div>
-      );
-    }
     return (
       <div className={containerClasses}>
-        <iframe
-          src={formatVideoUrl(project.video)}
+        <VideoPlayer
+          url={project.video}
           title={project.title}
-          className={mediaClasses}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          onLoad={() => setIsPlaying && setIsPlaying(true)}
+          setIsPlaying={setIsPlaying || (() => {})}
         />
       </div>
     );

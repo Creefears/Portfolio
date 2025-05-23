@@ -50,6 +50,7 @@ export function VideoPlayer({ url, title, setIsPlaying }: VideoPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const formattedUrl = url ? formatVideoUrl(url) : '';
   const isYouTube = url?.includes('youtube.com') || url?.includes('youtu.be');
+  const isIframe = url?.startsWith('<iframe');
 
   useEffect(() => {
     if (videoRef.current) {
@@ -58,7 +59,7 @@ export function VideoPlayer({ url, title, setIsPlaying }: VideoPlayerProps) {
   }, [url]);
 
   useEffect(() => {
-    if (!isYouTube && videoRef.current) {
+    if (!isYouTube && !isIframe && videoRef.current) {
       try {
         if (isPlaying) {
           const playPromise = videoRef.current.play();
@@ -78,7 +79,7 @@ export function VideoPlayer({ url, title, setIsPlaying }: VideoPlayerProps) {
         setIsPlaying(false);
       }
     }
-  }, [isPlaying, isYouTube, setIsPlaying]);
+  }, [isPlaying, isYouTube, isIframe, setIsPlaying]);
 
   const handleMouseMove = () => {
     setShowControls(true);
@@ -91,6 +92,22 @@ export function VideoPlayer({ url, title, setIsPlaying }: VideoPlayerProps) {
     return (
       <div className="relative w-full h-full bg-black flex items-center justify-center">
         <p className="text-white">No video URL provided</p>
+      </div>
+    );
+  }
+
+  if (isIframe) {
+    return (
+      <div className="relative w-full h-full bg-black">
+        <div 
+          dangerouslySetInnerHTML={{ 
+            __html: url.replace(
+              '<iframe',
+              '<iframe style="width:100%; height:100%; border:0; object-fit:contain;"'
+            )
+          }} 
+          className="absolute inset-0"
+        />
       </div>
     );
   }
@@ -109,7 +126,7 @@ export function VideoPlayer({ url, title, setIsPlaying }: VideoPlayerProps) {
             className="absolute inset-0 w-full h-full"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
-            crossOrigin="anonymous"
+            style={{ border: 0 }}
           />
         ) : (
           <>
@@ -132,7 +149,7 @@ export function VideoPlayer({ url, title, setIsPlaying }: VideoPlayerProps) {
               onWaiting={() => setIsBuffering(true)}
               onCanPlay={() => setIsBuffering(false)}
               playsInline
-              crossOrigin="anonymous"
+              style={{ backgroundColor: 'black' }}
             />
 
             <VideoLoading isBuffering={isBuffering} isReady={isReady} error={error} />
