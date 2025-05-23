@@ -59,31 +59,11 @@ export function ImageLightbox({
           />
         </div>
 
-        {/* Navigation buttons */}
-        <div className="absolute inset-x-0 bottom-4 flex justify-center gap-4 z-[202]">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onPrevious();
-            }}
-            className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm transition-colors"
-            disabled={displayableIndex === 0}
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-          <span className="flex items-center text-white">
+        {/* Image counter */}
+        <div className="absolute inset-x-0 bottom-4 flex justify-center z-[202]">
+          <span className="px-4 py-2 bg-black/50 rounded-full text-white backdrop-blur-sm">
             {displayableIndex + 1} / {displayableImages.length}
           </span>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onNext();
-            }}
-            className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm transition-colors"
-            disabled={displayableIndex === displayableImages.length - 1}
-          >
-            <ChevronRight className="w-6 h-6" />
-          </button>
         </div>
       </motion.div>
     </AnimatePresence>
