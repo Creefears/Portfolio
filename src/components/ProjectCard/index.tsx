@@ -10,6 +10,7 @@ import { ProjectOverlay } from './ProjectOverlay';
 import { TabContent } from './TabContent';
 import ShareDialog from '../ShareDialog';
 import { useToolStore } from '../../store/toolStore';
+import { VideoSelector } from './VideoSelector';
 
 function ProjectCard({
   title,
