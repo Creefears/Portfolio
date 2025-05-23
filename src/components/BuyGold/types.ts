@@ -28,7 +28,6 @@ export interface FormErrors {
 export interface Video {
   title: string;
   url: string;
-  thumbnail?: string;
 }
 
 export interface SoftwareFormData {
