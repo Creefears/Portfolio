@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Image, Film, Plus, Trash2 } from 'lucide-react';
+import { Image, Film, Plus, Trash2, Edit2 } from 'lucide-react';
 import { Input } from '../../ui/Input';
 import { TextArea } from '../../ui/TextArea';
 import { FormData, FormErrors, Video } from '../types';
@@ -30,15 +30,37 @@ export function MediaSection({
   const [videoUrl, setVideoUrl] = useState('');
   const [videoThumbnail, setVideoThumbnail] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [editingVideoIndex, setEditingVideoIndex] = useState<number | null>(null);
 
   const handleAddVideo = (e: React.MouseEvent) => {
     e.preventDefault();
     if (videoTitle && videoUrl) {
-      onVideoAdd(videoTitle, videoUrl, videoThumbnail);
+      if (editingVideoIndex !== null) {
+        // Update existing video
+        const updatedVideos = [...videos];
+        updatedVideos[editingVideoIndex] = {
+          title: videoTitle,
+          url: videoUrl,
+          thumbnail: videoThumbnail || undefined
+        };
+        videos = updatedVideos;
+        setEditingVideoIndex(null);
+      } else {
+        // Add new video
+        onVideoAdd(videoTitle, videoUrl, videoThumbnail || undefined);
+      }
       setVideoTitle('');
       setVideoUrl('');
       setVideoThumbnail('');
     }
+  };
+
+  const handleEditVideo = (index: number) => {
+    const video = videos[index];
+    setVideoTitle(video.title);
+    setVideoUrl(video.url);
+    setVideoThumbnail(video.thumbnail || '');
+    setEditingVideoIndex(index);
   };
 
   const handleAddImage = (e: React.MouseEvent) => {
@@ -174,6 +196,16 @@ export function MediaSection({
             placeholder="URL de l'image de couverture (optionnel)"
             type="url"
           />
+          <motion.button
+            type="button"
+            onClick={handleAddVideo}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Plus className="w-5 h-5" />
+            <span>{editingVideoIndex !== null ? 'Mettre à jour' : 'Ajouter'} la vidéo</span>
+          </motion.button>
         </div>
         
         {videos.length > 0 && (
@@ -195,19 +227,30 @@ export function MediaSection({
                   <Film className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                 )}
                 <span className="flex-1 text-gray-700 dark:text-gray-300">{video.title}</span>
-                <motion.button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onVideoRemove(index);
-                  }}
-                  className="p-1 text-red-600 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-all"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </motion.button>
+                <div className="flex gap-2">
+                  <motion.button
+                    type="button"
+                    onClick={() => handleEditVideo(index)}
+                    className="p-1 text-indigo-600 hover:text-indigo-700 opacity-0 group-hover:opacity-100 transition-all"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <Edit2 className="w-4 h-4" />
+                  </motion.button>
+                  <motion.button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onVideoRemove(index);
+                    }}
+                    className="p-1 text-red-600 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-all"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </motion.button>
+                </div>
               </motion.div>
             ))}
           </div>
