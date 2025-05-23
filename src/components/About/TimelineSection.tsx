@@ -124,7 +124,7 @@ export function TimelineSection() {
                     {item.link ? (
                       <Link to={item.link}>
                         <motion.div 
-                          className={`p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer ${
+                          className={`group p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer ${
                             index % 2 === 0 ? 'md:ml-auto' : 'md:mr-auto'
                           }`}
                           whileHover={{ y: -5, scale: 1.05 }}
@@ -142,6 +142,9 @@ export function TimelineSection() {
                           </div>
                           <p className="text-gray-600 dark:text-gray-400">
                             {item.description}
+                          </p>
+                          <p className="mt-3 text-sm text-indigo-600 dark:text-indigo-400 group-hover:underline">
+                            Voir les projets associés →
                           </p>
                         </motion.div>
                       </Link>
