@@ -8,13 +8,16 @@ const handleSubmit = async (e: React.FormEvent) => {
 
   try {
     if (activeTab === 'projects') {
+      // Ensure videos are properly formatted with string values
+      const formattedVideos = videos?.map(video => ({
+        title: String(video.title || ''),
+        url: String(video.url || ''),
+        thumbnail: video.thumbnail ? String(video.thumbnail) : ''
+      }));
+
       const projectData = {
         ...formData,
-        videos: videos && videos.length > 0 ? videos.map(video => ({
-          title: video.title || '',
-          url: video.url || '',
-          thumbnail: video.thumbnail || ''
-        })) : undefined
+        videos: formattedVideos && formattedVideos.length > 0 ? formattedVideos : undefined
       };
 
       if (editingIndex !== null) {
