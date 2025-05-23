@@ -43,12 +43,12 @@ export function CompactView({
 }: CompactViewProps) {
   return (
     <motion.div 
-      className="h-full flex flex-col"
+      className="flex flex-col h-full"
       variants={contentVariants}
       initial="hidden"
       animate="visible"
     >
-      <div className="relative w-full pb-[56.25%] overflow-hidden">
+      <div className="relative w-full pb-[56.25%]">
         <div className="absolute inset-0">
           <img 
             src={image} 
@@ -81,7 +81,7 @@ export function CompactView({
         </div>
       </div>
       <motion.div 
-        className="p-6 flex-1 flex flex-col"
+        className="flex flex-col flex-grow p-6"
         variants={contentVariants}
       >
         <motion.h3 
@@ -95,17 +95,17 @@ export function CompactView({
           variants={itemVariants}
         />
         <motion.p 
-          className="text-gray-600 dark:text-gray-400 mb-4 flex-grow text-center"
+          className="text-gray-600 dark:text-gray-400 mb-4 text-center flex-grow"
           variants={itemVariants}
         >
           {shortDescription}
         </motion.p>
         <motion.div 
-          className="mt-auto"
+          className="mt-auto space-y-4"
           variants={contentVariants}
         >
           <motion.div 
-            className="flex flex-col items-center gap-4 mb-4"
+            className="flex flex-col items-center gap-4"
             variants={itemVariants}
           >
             <RoleBadges role={role} />
