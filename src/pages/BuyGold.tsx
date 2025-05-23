@@ -10,9 +10,9 @@ const handleSubmit = async (e: React.FormEvent) => {
     if (activeTab === 'projects') {
       // Ensure videos are properly formatted with string values
       const formattedVideos = videos?.map(video => ({
-        title: String(video.title || ''),
-        url: String(video.url || ''),
-        thumbnail: video.thumbnail ? String(video.thumbnail) : ''
+        title: typeof video.title === 'string' ? video.title : String(video.title || ''),
+        url: typeof video.url === 'string' ? video.url : String(video.url || ''),
+        thumbnail: video.thumbnail ? (typeof video.thumbnail === 'string' ? video.thumbnail : String(video.thumbnail)) : ''
       }));
 
       const projectData = {
