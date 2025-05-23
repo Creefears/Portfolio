@@ -5,11 +5,9 @@ import { ProjectCardProps } from '../../types/project';
 import { CompactView } from './CompactView';
 import { ProjectMedia } from './ProjectMedia';
 import { ProjectHeader } from './ProjectHeader';
-import { ProjectInfo } from './ProjectInfo';
 import { ProjectNavigation } from './ProjectNavigation';
 import { ProjectOverlay } from './ProjectOverlay';
-import VideoSelector from './VideoSelector';
-import Carousel from './Carousel';
+import { TabContent } from './TabContent';
 import ShareDialog from '../ShareDialog';
 import { useToolStore } from '../../store/toolStore';
 
@@ -209,7 +207,7 @@ function ProjectCard({
             />
           ) : (
             <div className="h-full flex flex-col">
-              <div className="w-full h-[30vh] md:h-[50vh] relative">
+              <div className="w-full h-[30vh] md:h-[40vh] relative">
                 <ProjectMedia
                   project={currentProject}
                   isVideoPlaying={isVideoPlaying}
@@ -220,42 +218,30 @@ function ProjectCard({
                 />
               </div>
 
-              <div className="flex-1 p-6 md:p-8 overflow-y-auto project-content">
-                <ProjectHeader
-                  title={currentProject.title}
-                  handleShare={handleShare}
-                  showCopied={showCopied}
-                />
+              <ProjectHeader
+                title={currentProject.title}
+                handleShare={handleShare}
+                showCopied={showCopied}
+              />
 
-                {currentProject.videos && (
+              {currentProject.videos && (
+                <div className="px-6 md:px-8">
                   <VideoSelector
                     videos={currentProject.videos}
                     currentIndex={currentVideoIndex}
                     onSelect={setCurrentVideoIndex}
                   />
-                )}
+                </div>
+              )}
 
-                <ProjectInfo
-                  year={currentProject.year}
-                  role={currentProject.role}
-                  tools={currentTools}
-                />
-
-                <p className="text-gray-600 dark:text-gray-400 text-base md:text-lg leading-relaxed mb-8 whitespace-pre-wrap">
-                  {currentProject.fulldescription}
-                </p>
-
-                {currentProject.images && currentProject.images.length > 0 && (
-                  <Carousel
-                    currentImageIndex={currentImageIndex}
-                    onPrevious={handlePrevious}
-                    onNext={handleNext}
-                    onSelect={setCurrentImageIndex}
-                    images={currentProject.images}
-                    setIsLightboxOpen={setIsLightboxOpen}
-                  />
-                )}
-              </div>
+              <TabContent
+                project={currentProject}
+                currentImageIndex={currentImageIndex}
+                handlePrevious={handlePrevious}
+                handleNext={handleNext}
+                handleImageSelect={setCurrentImageIndex}
+                setIsLightboxOpen={setIsLightboxOpen}
+              />
             </div>
           )}
         </div>
