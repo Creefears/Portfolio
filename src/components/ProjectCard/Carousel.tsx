@@ -49,7 +49,7 @@ const Carousel = React.memo(function Carousel({
   };
 
   return (
-    <div className="mt-4" onClick={e => e.stopPropagation()}>
+    <div className="mt-8" onClick={e => e.stopPropagation()}>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
           Galerie Photos
