@@ -1,25 +1,10 @@
 import { Video } from '../types/project';
 
 export const transformGoogleDriveLink = (url: string): string => {
-  // Handle direct Google Drive links
   const driveMatch = url.match(/\/file\/d\/([^/]+)/);
   if (driveMatch) {
     return `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
   }
-
-  // Handle DrivePlyr links
-  const drivePlyrMatch = url.match(/id=([^"&]+)/);
-  if (drivePlyrMatch) {
-    try {
-      const decoded = JSON.parse(atob(drivePlyrMatch[1]));
-      if (decoded.id?.[0]) {
-        return `https://drive.google.com/file/d/${decoded.id[0]}/preview`;
-      }
-    } catch (e) {
-      console.error('Error parsing DrivePlyr URL:', e);
-    }
-  }
-
   return url;
 };
 
@@ -54,11 +39,6 @@ export const formatVideoUrl = (url: string): string => {
     if (url.includes('drive.google.com')) {
       return transformGoogleDriveLink(url);
     }
-
-    // Handle iframe code
-    if (url.startsWith('<iframe')) {
-      return url;
-    }
   } catch (error) {
     console.error('Error formatting video URL:', error);
     throw error;
@@ -68,10 +48,6 @@ export const formatVideoUrl = (url: string): string => {
 };
 
 export const createIframeElement = (url: string, title?: string): string => {
-  if (url.startsWith('<iframe')) {
-    return url;
-  }
-
   const formattedUrl = formatVideoUrl(url);
   return `<iframe 
     src="${formattedUrl}"

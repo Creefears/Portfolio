@@ -62,12 +62,10 @@ export const renderMedia = (
 
   if (project.videos) {
     const currentVideo = project.videos[currentVideoIndex];
-    const iframeHtml = createIframeElement(currentVideo.url, currentVideo.title);
-    
     return (
       <div className={containerClasses}>
         <div 
-          dangerouslySetInnerHTML={{ __html: iframeHtml }}
+          dangerouslySetInnerHTML={{ __html: createIframeElement(currentVideo.url, currentVideo.title) }}
           className={mediaClasses}
           onLoad={() => setIsPlaying && setIsPlaying(true)}
         />
@@ -76,47 +74,10 @@ export const renderMedia = (
   }
 
   if (project.video) {
-    if (!isVideoPlaying) {
-      return (
-        <motion.div
-          className={containerClasses}
-          onClick={handleVideoClick}
-          whileHover="hover"
-        >
-          <motion.img
-            src={project.image}
-            alt={project.title}
-            loading="lazy"
-            className={mediaClasses}
-            variants={{
-              hover: { scale: 1.05 }
-            }}
-            transition={{ duration: 0.3 }}
-          />
-          <motion.div
-            className="absolute inset-0 flex items-center justify-center bg-black/40"
-            variants={{
-              hover: { backgroundColor: 'rgba(0, 0, 0, 0.5)' }
-            }}
-          >
-            <motion.div
-              className="w-24 h-24 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <Play className="w-14 h-14 text-white" />
-            </motion.div>
-          </motion.div>
-        </motion.div>
-      );
-    }
-
-    const iframeHtml = createIframeElement(project.video, project.title);
-    
     return (
       <div className={containerClasses}>
         <div 
-          dangerouslySetInnerHTML={{ __html: iframeHtml }}
+          dangerouslySetInnerHTML={{ __html: createIframeElement(project.video, project.title) }}
           className={mediaClasses}
           onLoad={() => setIsPlaying && setIsPlaying(true)}
         />
