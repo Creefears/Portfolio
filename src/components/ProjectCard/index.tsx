@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useSwipeable } from 'react-swipeable';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ProjectCardProps } from '../../types/project';
 import { CompactView } from './CompactView';
 import { ProjectMedia } from './ProjectMedia';
