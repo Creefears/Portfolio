@@ -13,12 +13,6 @@ export interface CustomRole {
   icon: string;
 }
 
-export interface Video {
-  title: string;
-  url: string;
-  thumbnail?: string;
-}
-
 export interface Project {
   id?: string;
   title: string;
@@ -26,7 +20,7 @@ export interface Project {
   fulldescription: string;
   image: string;
   video?: string;
-  videos?: Video[];
+  videos?: Array<{ title: string; url: string; }>;
   images?: string[];
   year: string;
   role: string;
@@ -41,7 +35,7 @@ export interface ProjectCardProps {
   fulldescription: string;
   image: string;
   video?: string;
-  videos?: Video[];
+  videos?: Array<{ title: string; url: string; }>;
   images?: string[];
   year: string;
   role: string;
