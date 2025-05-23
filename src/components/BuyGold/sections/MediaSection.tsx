@@ -12,7 +12,7 @@ interface MediaSectionProps {
   errors: FormErrors;
   videos: Video[];
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  onVideoAdd: (title: string, url: string, thumbnail?: string) => void;
+  onVideoAdd: (title: string, url: string) => void;
   onVideoRemove: (index: number) => void;
   onImagesChange: (images: string[]) => void;
 }
@@ -28,16 +28,14 @@ export function MediaSection({
 }: MediaSectionProps) {
   const [videoTitle, setVideoTitle] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
-  const [videoThumbnail, setVideoThumbnail] = useState('');
   const [imageUrl, setImageUrl] = useState('');
 
   const handleAddVideo = (e: React.MouseEvent) => {
     e.preventDefault();
     if (videoTitle && videoUrl) {
-      onVideoAdd(videoTitle, videoUrl, videoThumbnail);
+      onVideoAdd(videoTitle, videoUrl);
       setVideoTitle('');
       setVideoUrl('');
-      setVideoThumbnail('');
     }
   };
 
@@ -168,12 +166,6 @@ export function MediaSection({
             onSubmit={handleAddVideo}
             showPreview={false}
           />
-          <Input
-            type="url"
-            value={videoThumbnail}
-            onChange={(e) => setVideoThumbnail(e.target.value)}
-            placeholder="URL de l'image de couverture (optionnel)"
-          />
         </div>
         
         {videos.length > 0 && (
@@ -185,17 +177,7 @@ export function MediaSection({
                 animate={{ opacity: 1, x: 0 }}
                 className="flex items-center gap-4 p-3 bg-white dark:bg-gray-600 rounded-lg group hover:bg-gray-50 dark:hover:bg-gray-500 transition-colors"
               >
-                {video.thumbnail ? (
-                  <img 
-                    src={video.thumbnail} 
-                    alt={video.title}
-                    className="w-16 h-12 object-cover rounded"
-                  />
-                ) : (
-                  <div className="w-16 h-12 bg-gray-800 rounded flex items-center justify-center">
-                    <Film className="w-6 h-6 text-gray-400" />
-                  </div>
-                )}
+                <Film className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                 <span className="flex-1 text-gray-700 dark:text-gray-300">{video.title}</span>
                 <motion.button
                   type="button"
