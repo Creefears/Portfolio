@@ -122,7 +122,7 @@ export function VideoPlayer({ url, title, setIsPlaying }: VideoPlayerProps) {
       <div className="absolute inset-0 flex items-center justify-center">
         {isYouTube ? (
           <iframe
-            src={`https://www.youtube.com/embed/${formattedUrl}?autoplay=1&controls=1&modestbranding=1&rel=0&showinfo=0`}
+            src={`${formattedUrl}?autoplay=1&controls=1&modestbranding=1&rel=0&showinfo=0`}
             className="absolute inset-0 w-full h-full"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
