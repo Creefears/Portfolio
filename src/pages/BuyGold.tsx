@@ -10,10 +10,10 @@ const handleSubmit = async (e: React.FormEvent) => {
     if (activeTab === 'projects') {
       const projectData = {
         ...formData,
-        videos: videos.length > 0 ? videos.map(video => ({
-          title: video.title,
-          url: video.url,
-          thumbnail: video.thumbnail
+        videos: videos && videos.length > 0 ? videos.map(video => ({
+          title: video.title || '',
+          url: video.url || '',
+          thumbnail: video.thumbnail || ''
         })) : undefined
       };
 
