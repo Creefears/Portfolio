@@ -38,13 +38,17 @@ export function ProjectMedia({
       initial="hidden"
       animate="visible"
     >
-      {renderMedia(
-        project,
-        isVideoPlaying,
-        currentVideoIndex,
-        handleVideoClick,
-        setIsPlaying
-      )}
+      <div className="relative w-full h-full">
+        <div className="absolute inset-0">
+          {renderMedia(
+            project,
+            isVideoPlaying,
+            currentVideoIndex,
+            handleVideoClick,
+            setIsPlaying
+          )}
+        </div>
+      </div>
     </motion.div>
   );
 }

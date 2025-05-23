@@ -12,6 +12,7 @@ import { TabContent } from './TabContent';
 import ShareDialog from '../ShareDialog';
 import { useToolStore } from '../../store/toolStore';
 import VideoSelector from './VideoSelector';
+import { X } from 'lucide-react';
 
 function ProjectCard({
   title,
@@ -38,12 +39,17 @@ function ProjectCard({
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const currentProject = allProjects[currentIndex];
   const location = useLocation();
   const { tools: allTools, fetchTools } = useToolStore();
 
   useEffect(() => {
     fetchTools();
+    setIsMobile(window.innerWidth < 768);
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [fetchTools]);
 
   const slugify = (text: string) =>
@@ -181,7 +187,7 @@ function ProjectCard({
       >
         <div
           className={`bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden flex flex-col ${
-            isExpanded ? 'fixed inset-4 md:inset-8 max-w-5xl mx-auto left-0 right-0 h-[95vh]' : 'h-full'
+            isExpanded ? 'fixed inset-0 md:inset-8 max-w-5xl mx-auto left-0 right-0 h-[100vh] md:h-[95vh]' : 'h-full'
           }`}
           {...(isExpanded ? handlers : {})}
         >
@@ -199,7 +205,18 @@ function ProjectCard({
             />
           ) : (
             <div className="h-full flex flex-col">
-              <div className="w-full h-[30vh] md:h-[40vh] relative">
+              {isMobile && (
+                <motion.button
+                  onClick={handleClose}
+                  className="absolute top-4 right-4 z-50 p-2 bg-black/50 rounded-full text-white backdrop-blur-sm"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <X className="w-6 h-6" />
+                </motion.button>
+              )}
+              
+              <div className="w-full h-[40vh] md:h-[40vh] relative">
                 <ProjectMedia
                   project={currentProject}
                   isVideoPlaying={isVideoPlaying}
@@ -217,7 +234,7 @@ function ProjectCard({
               />
 
               {currentProject.videos && (
-                <div className="px-6 md:px-8">
+                <div className="px-4 md:px-8">
                   <VideoSelector
                     videos={currentProject.videos}
                     currentIndex={currentVideoIndex}
@@ -245,7 +262,7 @@ function ProjectCard({
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
             onClick={handleClose}
           />
-          {!isLightboxOpen && (
+          {!isLightboxOpen && !isMobile && (
             <ProjectNavigation
               currentIndex={currentIndex}
               totalProjects={totalProjects}
