@@ -18,7 +18,7 @@ interface ProjectFormProps {
   onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
   onRoleToggle: (role: string) => void;
   onToolToggle: (toolName: string) => void;
-  onVideoAdd: (title: string, url: string) => void;
+  onVideoAdd: (title: string, url: string, thumbnail?: string) => void;
   onVideoRemove: (index: number) => void;
   onImagesChange: (images: string[]) => void;
   onReset: () => void;
