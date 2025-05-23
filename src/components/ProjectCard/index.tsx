@@ -7,6 +7,7 @@ import { ProjectMedia } from './ProjectMedia';
 import { ProjectHeader } from './ProjectHeader';
 import { ProjectInfo } from './ProjectInfo';
 import { ProjectNavigation } from './ProjectNavigation';
+import { ProjectOverlay } from './ProjectOverlay';
 import VideoSelector from './VideoSelector';
 import Carousel from './Carousel';
 import ShareDialog from '../ShareDialog';
