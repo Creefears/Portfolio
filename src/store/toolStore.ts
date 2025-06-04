@@ -16,7 +16,7 @@ interface ToolStore {
 
 export const useToolStore = create<ToolStore>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       tools: [],
       isLoading: false,
       error: null,

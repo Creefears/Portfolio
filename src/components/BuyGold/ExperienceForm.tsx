@@ -79,6 +79,12 @@ export function ExperienceForm({
             onChange={onChange}
             required
           />
+          <Input
+            name="company_en"
+            label="Company (EN)"
+            value={data.company_en || ''}
+            onChange={onChange}
+          />
         </div>
 
         <Input
@@ -88,6 +94,12 @@ export function ExperienceForm({
           onChange={onChange}
           required
         />
+        <Input
+          name="role_en"
+          label="Role (EN)"
+          value={data.role_en || ''}
+          onChange={onChange}
+        />
 
         <TextArea
           name="description"
@@ -95,6 +107,12 @@ export function ExperienceForm({
           value={data.description}
           onChange={onChange}
           required
+        />
+        <TextArea
+          name="description_en"
+          label="Description (EN)"
+          value={data.description_en || ''}
+          onChange={onChange}
         />
 
         <Input

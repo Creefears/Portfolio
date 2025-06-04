@@ -3,8 +3,11 @@ import { Tool, CustomRole } from '../../types/project';
 export interface FormData {
   type: string;
   title: string;
+  title_en?: string;
   shortdescription: string;
+  shortdescription_en?: string;
   fulldescription: string;
+  fulldescription_en?: string;
   image: string;
   video?: string;
   videos?: Video[];

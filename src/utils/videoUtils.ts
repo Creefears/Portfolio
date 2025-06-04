@@ -1,4 +1,3 @@
-import { Video } from '../types/project';
 
 export const transformGoogleDriveLink = (url: string): string => {
   // Handle direct Google Drive links

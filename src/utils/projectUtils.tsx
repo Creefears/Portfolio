@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
 import { Project } from '../types/project';
-import { formatVideoUrl, createIframeElement } from './videoUtils';
+import { createIframeElement } from './videoUtils';
 
 interface FormattedRole {
   role: string;

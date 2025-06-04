@@ -1,14 +1,17 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Experience } from '../types/experience';
-import { supabase, saveExperience, updateExperience, deleteExperience, getExperiences } from '../lib/supabase';
+import { saveExperience, updateExperience, deleteExperience, getExperiences } from '../lib/supabase';
 
 const defaultExperiences: Experience[] = [
   {
     year: "Futur",
     role: "Votre Entreprise ?",
+    role_en: "Your company?",
     company: "À définir",
+    company_en: "To be defined",
     description: "Ensemble, créons des expériences visuelles exceptionnelles et donnons vie à vos projets les plus ambitieux.",
+    description_en: "Together let's create outstanding visual experiences and bring your ambitious projects to life.",
     icon: "Briefcase",
     color: "#6366f1",
     link: "mailto:vics.jacob@gmail.com"
@@ -16,16 +19,22 @@ const defaultExperiences: Experience[] = [
   {
     year: "2024-Présent",
     role: "3D Artist",
+    role_en: "3D Artist",
     company: "Eco-Campus du Bâtiment",
+    company_en: "Eco-Campus du Bâtiment",
     description: "Création de chantiers en 3D, animation de personnages, intégration des éléments et déploiement dans Unity, au service de formations dédiées aux métiers du bâtiment.",
+    description_en: "Creation of 3D worksites, character animation and asset integration in Unity for training dedicated to building trades.",
     icon: "Building2",
     color: "#8b5cf6"
   },
   {
     year: "2023",
     role: "Lead 3D Artist",
+    role_en: "Lead 3D Artist",
     company: "PLETORY",
+    company_en: "PLETORY",
     description: "Modélisation d'univers 3D, modélisation et animation de personnages 3D, intégration des éléments et mise en production dans Unity.",
+    description_en: "Modeling of 3D worlds and characters with integration and production in Unity.",
     icon: "Gamepad2",
     color: "#ec4899",
     link: "/cgi"
@@ -233,7 +242,7 @@ export const useCareerStore = create<CareerStore>()(
     {
       name: 'career-storage-v4',
       version: 4,
-      migrate: (persistedState: any, version: number) => {
+      migrate: (persistedState: unknown, version: number) => {
         if (version < 4) {
           return { 
             experiences: sortExperiences(defaultExperiences),

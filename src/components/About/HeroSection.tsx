@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useTranslation } from '../../hooks/useTranslation';
 
 const profileImage = "https://i.imgur.com/f9X3Y7v.jpg";
 
 export function HeroSection() {
+  const { t } = useTranslation();
   return (
     <div className="relative bg-gradient-to-b from-gray-900 to-gray-800 overflow-hidden mt-16">
       <div className="absolute inset-0 opacity-20">
@@ -41,13 +43,13 @@ export function HeroSection() {
                 href="mailto:vics.jacob@gmail.com"
                 className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full transition-colors"
               >
-                Me contacter
+                {t('hero.contact')}
               </a>
               <Link
                 to="/portfolio"
                 className="px-6 py-3 border-2 border-white text-white hover:bg-white hover:text-gray-900 rounded-full transition-colors"
               >
-                Voir mon portfolio
+                {t('hero.viewPortfolio')}
               </Link>
             </div>
           </motion.div>
