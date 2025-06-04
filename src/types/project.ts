@@ -16,8 +16,11 @@ export interface CustomRole {
 export interface Project {
   id?: string;
   title: string;
+  title_en?: string;
   shortdescription: string;
+  shortdescription_en?: string;
   fulldescription: string;
+  fulldescription_en?: string;
   image: string;
   video?: string;
   videos?: Array<{ title: string; url: string; }>;
@@ -31,8 +34,11 @@ export interface Project {
 export interface ProjectCardProps {
   id?: string;
   title: string;
+  title_en?: string;
   shortdescription: string;
+  shortdescription_en?: string;
   fulldescription: string;
+  fulldescription_en?: string;
   image: string;
   video?: string;
   videos?: Array<{ title: string; url: string; }>;

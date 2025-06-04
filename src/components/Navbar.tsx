@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { useTranslation } from '../hooks/useTranslation';
+import { LanguageToggle } from './LanguageToggle';
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -31,10 +33,12 @@ function Navbar() {
     return () => window.removeEventListener('modalStateChange' as any, handleModalStateChange);
   }, []);
 
+  const { t } = useTranslation();
+
   const navItems = [
-    { path: '/', label: 'Accueil' },
-    { path: '/portfolio', label: 'Portfolio' },
-    { path: '/a-propos', label: 'À propos' }
+    { path: '/', label: t('navbar.home') },
+    { path: '/portfolio', label: t('navbar.portfolio') },
+    { path: '/a-propos', label: t('navbar.about') }
   ];
 
   const menuVariants = {
@@ -117,7 +121,7 @@ function Navbar() {
             </Link>
           </motion.div>
           
-          <div className="hidden md:flex space-x-1">
+          <div className="hidden md:flex space-x-1 items-center">
             {navItems.map((item) => {
               const isActive = location.pathname === item.path;
               return (
@@ -143,6 +147,7 @@ function Navbar() {
                 </Link>
               );
             })}
+            <LanguageToggle />
           </div>
 
           <motion.button
@@ -197,6 +202,9 @@ function Navbar() {
                   </motion.div>
                 );
               })}
+              <div className="px-3 py-2">
+                <LanguageToggle />
+              </div>
             </div>
           </motion.div>
         )}

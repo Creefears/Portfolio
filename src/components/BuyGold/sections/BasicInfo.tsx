@@ -28,6 +28,12 @@ export function BasicInfo({ formData, errors, onChange }: BasicInfoProps) {
           required
         />
         <Input
+          name="title_en"
+          label="Title (EN)"
+          value={formData.title_en || ''}
+          onChange={onChange}
+        />
+        <Input
           name="year"
           label="Année"
           value={formData.year}
@@ -46,6 +52,12 @@ export function BasicInfo({ formData, errors, onChange }: BasicInfoProps) {
         error={errors.shortdescription}
         required
       />
+      <Input
+        name="shortdescription_en"
+        label="Short description (EN)"
+        value={formData.shortdescription_en || ''}
+        onChange={onChange}
+      />
 
       <TextArea
         name="fulldescription"
@@ -54,6 +66,12 @@ export function BasicInfo({ formData, errors, onChange }: BasicInfoProps) {
         onChange={onChange}
         error={errors.fulldescription}
         required
+      />
+      <TextArea
+        name="fulldescription_en"
+        label="Full description (EN)"
+        value={formData.fulldescription_en || ''}
+        onChange={onChange}
       />
     </div>
   );

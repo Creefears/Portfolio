@@ -14,8 +14,10 @@ import { ExperienceList } from '../components/BuyGold/ExperienceList';
 import { RoleManager } from '../components/BuyGold/RoleManager';
 import ToolManager from '../components/BuyGold/ToolManager';
 import { Toast } from '../components/ui/Toast';
+import { useTranslation } from '../hooks/useTranslation';
 
 export default function BuyGold() {
+  const { t, language } = useTranslation();
   const { userCGIProjects, userRealProjects, addProject, updateProject, deleteProject, isLoading: projectsLoading, error: projectsError } = useProjectStore();
   const { experiences, addExperience, updateExperience, deleteExperience, isLoading: experiencesLoading, error: experiencesError } = useCareerStore();
   const { roles, fetchRoles } = useRoleStore();
@@ -27,8 +29,11 @@ export default function BuyGold() {
   const [formData, setFormData] = useState<FormData>({
     type: 'cgi',
     title: '',
+    title_en: '',
     shortdescription: '',
+    shortdescription_en: '',
     fulldescription: '',
+    fulldescription_en: '',
     image: '',
     video: '',
     images: [],
@@ -40,8 +45,11 @@ export default function BuyGold() {
   const [experienceData, setExperienceData] = useState<Experience>({
     year: '',
     role: '',
+    role_en: '',
     company: '',
+    company_en: '',
     description: '',
+    description_en: '',
     icon: 'Briefcase',
     color: '#6366f1',
     link: ''
@@ -65,8 +73,11 @@ export default function BuyGold() {
       setFormData({
         type: 'cgi',
         title: '',
+        title_en: '',
         shortdescription: '',
+        shortdescription_en: '',
         fulldescription: '',
+        fulldescription_en: '',
         image: '',
         video: '',
         images: [],
@@ -83,8 +94,11 @@ export default function BuyGold() {
       setExperienceData({
         year: '',
         role: '',
+        role_en: '',
         company: '',
+        company_en: '',
         description: '',
+        description_en: '',
         icon: 'Briefcase',
         color: '#6366f1',
         link: ''
@@ -258,11 +272,11 @@ export default function BuyGold() {
           transition={{ delay: 0.2 }}
         >
           <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-            Administration
+            {t('admin.title')}
           </h1>
           <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Gérez vos projets et expériences depuis cette interface.
-            {(projectsLoading || experiencesLoading) && " Chargement en cours..."}
+            {t('admin.subtitle')}
+            {(projectsLoading || experiencesLoading) && ' ...'}
           </p>
         </motion.div>
 
@@ -273,7 +287,7 @@ export default function BuyGold() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            Gérer les logiciels
+            {t('admin.manageTools')}
           </motion.button>
           <motion.button
             onClick={() => setShowRoleManager(true)}
@@ -281,14 +295,14 @@ export default function BuyGold() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            Gérer les rôles
+            {t('admin.manageRoles')}
           </motion.button>
         </div>
 
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'projects' | 'experiences')}>
           <TabsList className="mb-8">
-            <TabsTrigger value="projects">Projets</TabsTrigger>
-            <TabsTrigger value="experiences">Expériences</TabsTrigger>
+            <TabsTrigger value="projects">{language === 'fr' ? 'Projets' : 'Projects'}</TabsTrigger>
+            <TabsTrigger value="experiences">{language === 'fr' ? 'Expériences' : 'Experiences'}</TabsTrigger>
           </TabsList>
 
           <AnimatePresence mode="wait">

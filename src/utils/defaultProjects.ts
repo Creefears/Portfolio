@@ -3,8 +3,11 @@ import { Project } from '../types/project';
 export const defaultCGIProjects: Project[] = [
   {
     title: "Naturewave",
+    title_en: "Naturewave",
     shortDescription: "Fond d'écran animé en cell-shading",
+    shortDescription_en: "Animated cell-shading wallpaper",
     fulldescription: "J'ai créé ce projet dans le but d'obtenir un fond d'écran animé pour mon double écran. Pour atteindre ce style d'aplats de couleurs dans un moteur 3D, j'ai opté pour un rendu en cell-shading, ce qui m'a permis de maîtriser pleinement la palette de couleurs, aussi bien pour l'ambiance de jour que pour celle de nuit.",
+    fulldescription_en: "I created this project to get an animated dual-screen wallpaper. To achieve this flat color style in a 3D engine, I used a cell-shading render allowing me to fully control the color palette for both day and night moods.",
     image: "https://i.imgur.com/pq17cvI.jpg",
     video: "https://drive.google.com/file/d/1Z-szd00Icw4cDRkyRD186_a7Eb2U1DXD/preview",
     year: "2024",

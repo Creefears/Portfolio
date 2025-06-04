@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Project } from '../types/project';
 import { defaultCGIProjects, defaultRealProjects } from '../utils/defaultProjects';
-import { supabase, saveProject, updateProject, deleteProject, getProjects } from '../lib/supabase';
+import { saveProject, updateProject, deleteProject, getProjects } from '../lib/supabase';
 
 interface ProjectStore {
   userCGIProjects: Project[];
@@ -168,7 +168,7 @@ export const useProjectStore = create<ProjectStore>()(
     {
       name: 'project-storage',
       version: 1,
-      migrate: (persistedState: any) => {
+      migrate: (persistedState: unknown) => {
         return {
           userCGIProjects: persistedState?.userCGIProjects || defaultCGIProjects,
           userRealProjects: persistedState?.userRealProjects || defaultRealProjects,
