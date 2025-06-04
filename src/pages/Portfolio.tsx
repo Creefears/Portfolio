@@ -19,7 +19,9 @@ function Portfolio() {
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+      if (typeof navigator !== 'undefined') {
+        setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+      }
     };
     checkMobile();
 
@@ -37,12 +39,15 @@ function Portfolio() {
         }
       };
 
-      window.addEventListener('deviceorientation', handleOrientation);
-      return () => window.removeEventListener('deviceorientation', handleOrientation);
+      if (typeof window !== 'undefined') {
+        window.addEventListener('deviceorientation', handleOrientation);
+        return () => window.removeEventListener('deviceorientation', handleOrientation);
+      }
+      return () => {};
     };
 
     const requestGyroPermission = async () => {
-      if (isMobile && typeof DeviceOrientationEvent !== 'undefined') {
+      if (isMobile && typeof window !== 'undefined' && typeof DeviceOrientationEvent !== 'undefined') {
         try {
           if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
             const permission = await (DeviceOrientationEvent as any).requestPermission();
@@ -77,7 +82,7 @@ function Portfolio() {
 
   const handleTouchStart = () => {
     setIsTouchActive(true);
-    if (isMobile && !isGyroAvailable) {
+    if (isMobile && !isGyroAvailable && typeof window !== 'undefined' && typeof DeviceOrientationEvent !== 'undefined') {
       const requestPermission = async () => {
         try {
           if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
